@@ -16,34 +16,6 @@ add_action('sim_module_activated', function($moduleSlug){
 	wp_create_category('Prayer');
 });
 
-add_filter('sim_submenu_description', function($description, $moduleSlug){
-	//module slug should be the same as the constant
-	if($moduleSlug != MODULE_SLUG)	{
-		return $description;
-	}
-
-	ob_start();
-
-	?>
-	<p>
-		This module adds 1 post category: 'Prayer'<br>
-		You should add a new post with the prayer category each month.
-		This post should have a prayer request for each day on seperate lines.<br>
-		The lines should have this format: '1(T) – '<br>
-		So an example will look like this:<br>
-		<code>
-			1(M) – Prayer for day 1<br>
-			2(T) – Prayer for day 2
-		</code>
-		<br>
-		<br>
-		If such a post is available the daily prayerrequest will be displayed on the homepage and will be available via the rest-api.<br>
-	</p>
-	<?php
-
-	return ob_get_clean();
-}, 10, 2);
-
 add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings){
 	//module slug should be the same as grandparent folder name
 	if($moduleSlug != MODULE_SLUG || !SIM\getModuleOption('signal', 'enable')){
