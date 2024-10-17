@@ -5,6 +5,7 @@
 
 ### Changed
 - redering of asset urls
+- removed css
 
 ### Fixed
 
