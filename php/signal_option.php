@@ -2,7 +2,8 @@
 namespace SIM\PRAYER;
 use SIM;
 
-add_filter('sim_personal_signal_settings', function($settings, $user, $prefs){
+add_filter('sim_personal_signal_settings', __NAMESPACE__.'\signalSettings', 10, 3);
+function signalSettings($settings, $user, $prefs){
     $prayerTime = '';
     if(isset($prefs['prayertime'])){
         $prayerTime = $prefs['prayertime'];
@@ -14,9 +15,10 @@ add_filter('sim_personal_signal_settings', function($settings, $user, $prefs){
     $settings   .= "</label>";
 
     return $settings;
-}, 10, 3);
+}
 
-add_action('sim_signal_before_pref_save', function($userId, $prefs){
+add_action('sim_signal_before_pref_save', __NAMESPACE__.'\beforePrevSafe', 10, 2);
+function beforePrevSafe($userId, $prefs){
     $prayerTimes    = (array)get_option('signal_prayers');
     $time           = $prefs['prayertime'];
     $oldTime        = get_user_meta($userId, 'signal_preferences', true);
@@ -66,4 +68,4 @@ add_action('sim_signal_before_pref_save', function($userId, $prefs){
         update_option("prayer_schedule_$date", $schedule);
     }
 
-}, 10, 2);
+}

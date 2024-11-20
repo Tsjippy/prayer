@@ -7,16 +7,18 @@ const MODULE_VERSION		= '8.0.2';
 DEFINE(__NAMESPACE__.'\MODULE_SLUG', strtolower(basename(dirname(__DIR__))));
 
 //run on module activation
-add_action('sim_module_activated', function($moduleSlug){
+add_action('sim_module_activated', __NAMESPACE__.'\moduleActivated');
+function moduleActivated($moduleSlug){
 	//module slug should be the same as grandparent folder name
 	if($moduleSlug != MODULE_SLUG)	{
 		return;
 	}
 	
 	wp_create_category('Prayer');
-});
+}
 
-add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings){
+add_filter('sim_submenu_options', __NAMESPACE__.'\moduleOptions', 10, 3);
+function moduleOptions($optionsHtml, $moduleSlug, $settings){
 	//module slug should be the same as grandparent folder name
 	if($moduleSlug != MODULE_SLUG || !SIM\getModuleOption('signal', 'enable')){
 		return $optionsHtml;
@@ -112,9 +114,10 @@ add_filter('sim_submenu_options', function($optionsHtml, $moduleSlug, $settings)
 	<?php
 
 	return ob_get_clean();
-}, 10, 3);
+}
 
-add_filter('sim_module_updated', function($newOptions, $moduleSlug, $oldOptions){
+add_filter('sim_module_updated', __NAMESPACE__.'\moduleUpdated', 10, 3);
+function moduleUpdated($newOptions, $moduleSlug, $oldOptions){
 	//module slug should be the same as grandparent folder name
 	if($moduleSlug != MODULE_SLUG){
 		return $newOptions;
@@ -169,5 +172,16 @@ add_filter('sim_module_updated', function($newOptions, $moduleSlug, $oldOptions)
 	}
 	update_option("prayer_schedule_$date", $schedule);
 
+	$roleSet = get_role( 'contributor' )->capabilities;
+
+	// Only add the new role if it does not exist
+	if(!wp_roles()->is_role( 'prayercoordinator' )){
+		add_role(
+			'prayercoordinator',
+			'Prayer coordinator',
+			$roleSet
+		);
+	}
+
 	return $newOptions;
-}, 10, 3);
+}

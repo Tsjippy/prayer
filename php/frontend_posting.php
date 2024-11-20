@@ -9,7 +9,8 @@ use WP_Error;
  * 
  * returns an error when it does not have the month and year in the title
  */
-add_filter('sim_frontend_content_validation', function($error, $frontEndContent){
+add_filter('sim_frontend_content_validation', __NAMESPACE__.'\contentValidation', 10, 2);
+function contentValidation($error, $frontEndContent){
     // do not continue if the post content contains less than 28 prayerpoints
     if(is_wp_error($error) || preg_match_all('/\d{1,2}\([S|M|T|W|F]\)/i', strip_tags($frontEndContent->postContent), $matches) < 20){
         return $error;
@@ -54,4 +55,4 @@ add_filter('sim_frontend_content_validation', function($error, $frontEndContent)
 
     //month year
     return $error;
-}, 10, 2);
+}

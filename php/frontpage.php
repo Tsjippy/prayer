@@ -2,7 +2,8 @@
 namespace SIM\PRAYER;
 use SIM;
 
-add_action('sim_frontpage_before_main_content', function(){
+add_action('sim_frontpage_before_main_content', __NAMESPACE__.'\beforeMainContent', 5);
+function beforeMainContent(){
     if(!is_user_logged_in()){
         return;
     }
@@ -47,4 +48,4 @@ add_action('sim_frontpage_before_main_content', function(){
         <p><?php echo $message;?></p>
     </div>
     <?php
-}, 5);
+}

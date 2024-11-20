@@ -2,7 +2,8 @@
 namespace SIM\PRAYER;
 use SIM;
 
-add_action('delete_user', function ($userId){
+add_action('delete_user', __NAMESPACE__.'\onUserDelete');
+function onUserDelete($userId){
 	$schedule		= (array)get_option('signal_prayers');
 	$updated		= false;
 
@@ -23,4 +24,4 @@ add_action('delete_user', function ($userId){
 	if($updated){
 		update_option('signal_prayers', $schedule);
 	}
-});
+}

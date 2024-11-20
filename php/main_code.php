@@ -3,7 +3,8 @@ namespace SIM\PRAYER;
 use SIM;
 
 //give prayer coordinator acces to prayer items
-add_filter('sim_frontend_content_edit_rights', function($editRight, $postCategory){
+add_filter('sim_frontend_content_edit_rights', __NAMESPACE__.'\editRights', 10, 2);
+function editRights($editRight, $postCategory){
 	
 	if(
 		!$editRight														&&	// If we currently have no edit right
@@ -17,7 +18,7 @@ add_filter('sim_frontend_content_edit_rights', function($editRight, $postCategor
 	}
 
 	return $editRight;
-}, 10, 2);
+}
 
 /**
  *
