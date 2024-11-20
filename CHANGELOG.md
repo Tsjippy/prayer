@@ -6,6 +6,7 @@
 ### Changed
 - redering of asset urls
 - removed css
+- removed anonymous functions
 
 ### Fixed
 
