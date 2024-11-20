@@ -4,13 +4,18 @@
 ### Added
 
 ### Changed
-- redering of asset urls
-- removed css
-- removed anonymous functions
 
 ### Fixed
 
 ### Updated
+
+## [8.0.3] - 2024-11-20
+
+
+### Changed
+- redering of asset urls
+- removed css
+- removed anonymous functions
 
 ## [8.0.1] - 2024-10-07
 
