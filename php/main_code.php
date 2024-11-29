@@ -64,7 +64,10 @@ function prayerRequest($plainText = false, $verified=false, $date='') {
 		)
 	);
 
-	//Loop over them to find the post for this month
+	$params			= [];
+	$international	= '';
+
+	//Loop over them to find the post(s) for this month
 	foreach($posts as $post){
 		// double check if the current month and year is in the title as the s parameter searches everywhere
 		if(!str_contains($post->post_title, date("F")) && !str_contains($post->post_title, date("Y"))){
@@ -72,99 +75,70 @@ function prayerRequest($plainText = false, $verified=false, $date='') {
 		}
 
 		//Content of page with all prayer requests of this month
+		$content	= strip_tags($post->post_content, ['strong', 'b', 'em', 'i', 'details', 's']);
+
 		if($plainText){
-			$content 	= wp_strip_all_tags($post->post_content);
-			$content	= str_replace(["&nbsp;", '&amp;'], [' ','&'], $content);
-		}else{
-			$content	= $post->post_content;
+			$content	= str_replace(
+				[
+					"&nbsp;", 
+					'&amp;',
+					'<strong>',
+					'</strong>',
+					'<em>',
+					'</em>',
+					'<details>',
+					'</details>',
+					'<s>',
+					'</s>'
+				], 
+				[
+					' ',
+					'&',
+					'<b>',
+					'</b>',
+					'<i>',
+					'</i>',
+					'<spoiler>',
+					'</spoiler>',
+					'<ss>',
+					'</ss>'
+				], 
+				$content
+			);
 		}
 		
 		if ($content != null){
-			//Current day of the month
-			$today 		= date('d-m-Y', $datetime);
-			$tomorrow 	= date('d-m-Y', strtotime('+1 day', $datetime));
-
-			//Find the request of the current day, Remove the daynumber (dayletter) - from the request
-			//space(A)space-space
-			$genericStart	= "\s*\(\s*[A-Za-z]{1,2}\s*\)\s*[\W]\s*";
-			$reStart		= "$today$genericStart";
-			$reNext			= "$tomorrow$genericStart";
-
-			//look for the start of a prayer line, get everything after "30(T) – " until you find a B* or the next "30(T) – " or the end of the document
-			$re			= "/(*UTF8)$reStart(.+?)((B\*)|$reNext|$)/m";
-			preg_match_all($re, strip_tags($content), $matches, PREG_SET_ORDER, 0);
-			
-			//prayer request found
-			if (isset($matches[0][1]) && !empty($matches[0][1])){
-				//Return the prayer request
-				$prayer		= $matches[0][1];
-				$urls		= [];
-				$pictures	= [];
-				$usersFound	= [];
-				$postFound	= $post->ID;
-
-				$userIds	= SIM\findUsers($prayer, false);
-
-				foreach($userIds as $userId=>$match){
-					// family picture
-					$family			= get_user_meta($userId, 'family', true);
-
-					if(!empty($family['picture'])){
-						if(is_array($family['picture'])){
-							$attachmentId	= $family['picture'][0];
-						}elseif(is_numeric($family['picture'])){
-							$attachmentId	= $family['picture'];
-						}								
-					}else{
-						$attachmentId	= get_user_meta($userId, 'profile_picture', true);
-						if(is_array($attachmentId)){
-							if (isset($attachmentId[0])){
-								$attachmentId	= $attachmentId[0];
-							}else{
-								$attachmentId	= 0;						}
-						}
-					}
-
-					if(is_numeric($attachmentId)){
-						$pictures[] 	= get_attached_file($attachmentId);
-					}else{
-						$pictures[] 	= SIM\urlToPath($attachmentId);
-					}
-
-					// user page url
-					$url		= SIM\maybeGetUserPageUrl($userId);
-					if($url){
-						$urls[]	= $url;
-					}
-
-					$usersFound[]	= $userId;
-
-					if(!empty($family['partner'])){
-						$usersFound[]	= $family['partner'];
-					}
+			if(empty($params)){
+				$result		= parseSimNigeria($datetime, $content, $post, $plainText);
+				if($result){
+					$params	= $result;
 				}
+			}
 
-				$params	= [
-					'message'	=> $prayer,
-					'urls'		=> $urls,
-					'pictures'	=> $pictures,
-					'users'		=> $usersFound,
-					'post'		=> $postFound
-				];
-				
-				// skip filter if not for today
-				if($plainText && empty($date)){
-					$params	= apply_filters('sim_after_bot_payer', $params);
+			if(empty($international)){
+				$result		= parseSimInternational($datetime, $content, $plainText);
 
-					//prevent duplicate urls
-					$params['urls']		= array_unique($params['urls']);
-
-					$params['message']	= $params['message']."\n\n".implode("\n", $params['urls']);
+				if($result){
+					$international	= $result;
 				}
-
-				return $params;
 			}
 		}
+	}
+
+	if(!empty($params)){
+		if(!empty($international)){
+			if($plainText){
+				$params['message']	= "<i>SIM Nigeria</i>\n{$params['message']}\n\n<i>SIM International</i>\n$international";
+			}else{
+				$params['message']	= "<div style='text-align:center'><i>SIM International</i></div>$international<br><br><div style='text-align:center'><i>SIM Nigeria</i></div> {$params['message']}";
+			}
+		}
+
+		return $params;
+	}elseif(!empty($international)){
+		$params['message']	= $international;
+
+		return $params;
 	}
 
 	if($plainText){
@@ -174,4 +148,135 @@ function prayerRequest($plainText = false, $verified=false, $date='') {
 		];
 	}
 	return false;
+}
+
+/**
+ * Parses SIM Nigeria Format
+ */
+function parseSimNigeria($datetime, $content, $post, $plainText){
+	//Current day of the month
+	$today 		= date('d-m-Y', $datetime);
+	$tomorrow 	= date('d-m-Y', strtotime('+1 day', $datetime));
+
+	//Find the request of the current day, Remove the daynumber (dayletter) - from the request
+	//space(A)space-space
+	$genericStart	= "\s*\(\s*[A-Za-z]{1,2}\s*\)\s*[\W]\s*";
+	$reStart		= "$today$genericStart";
+	$reNext			= "$tomorrow$genericStart";
+
+	//look for the start of a prayer line, get everything after "30(T) – " until you find a B* or the next "30(T) – " or the end of the document
+	$re			= "/(*UTF8)$reStart(.+?)((B\*)|$reNext|$)/m";
+	preg_match_all($re, $content, $matches, PREG_SET_ORDER, 0);
+	
+	// prayer request not found
+	if (!isset($matches[0][1]) || empty($matches[0][1])){
+		return false;
+	}
+
+	//Return the prayer request
+	$prayer		= cleanMessage($matches[0][1]);
+	$urls		= [];
+	$pictures	= [];
+	$usersFound	= [];
+	$postFound	= $post->ID;
+
+	$userIds	= SIM\findUsers($prayer, false);
+
+	foreach($userIds as $userId=>$match){
+		// family picture
+		$family			= get_user_meta($userId, 'family', true);
+
+		if(!empty($family['picture'])){
+			if(is_array($family['picture'])){
+				$attachmentId	= $family['picture'][0];
+			}elseif(is_numeric($family['picture'])){
+				$attachmentId	= $family['picture'];
+			}								
+		}else{
+			$attachmentId	= get_user_meta($userId, 'profile_picture', true);
+			if(is_array($attachmentId)){
+				if (isset($attachmentId[0])){
+					$attachmentId	= $attachmentId[0];
+				}else{
+					$attachmentId	= 0;						}
+			}
+		}
+
+		if(is_numeric($attachmentId)){
+			$pictures[] 	= get_attached_file($attachmentId);
+		}else{
+			$pictures[] 	= SIM\urlToPath($attachmentId);
+		}
+
+		// user page url
+		$url		= SIM\maybeGetUserPageUrl($userId);
+		if($url){
+			$urls[]	= $url;
+		}
+
+		$usersFound[]	= $userId;
+
+		if(!empty($family['partner'])){
+			$usersFound[]	= $family['partner'];
+		}
+	}
+
+	$params	= [
+		'message'	=> $prayer,
+		'urls'		=> $urls,
+		'pictures'	=> $pictures,
+		'users'		=> $usersFound,
+		'post'		=> $postFound
+	];
+	
+	// skip filter if not for today
+	if($plainText && empty($date)){
+		$params	= apply_filters('sim_after_bot_payer', $params);
+
+		//prevent duplicate urls
+		$params['urls']		= array_unique($params['urls']);
+
+		$params['message']	= $params['message']."\n\n".implode("\n", $params['urls']);
+	}
+
+	return $params;
+}
+
+function parseSimInternational($datetime, $content, $plainText){
+	$start		= date('l F j, Y', $datetime);
+	$end		= date('l F j, Y', strtotime('+1 day', $datetime));
+
+	//look for the start of a prayer line until you find the next or the end of the document
+	$re			= "/(*UTF8)$start(.+?)($end|$)/s";
+	preg_match_all($re, $content, $matches, PREG_SET_ORDER, 0);
+
+	// prayer request not found
+	if (!isset($matches[0][1]) || empty($matches[0][1])){
+		return false;
+	}
+
+	$result	= cleanMessage($matches[0][1]);
+
+	// Replace linebreaks with <br>
+	if(!$plainText){
+		$result	= str_replace("\n", "<br>", $result);
+	}
+
+	return $result;
+}
+
+/**
+ * Removes and balances html tags
+ */
+function cleanMessage($msg){
+	//Remove empty tags
+	$msg	= trim(preg_replace("/<[^>]*>(?:\s|&nbsp;)*<\/[^>]*>/", '', $msg));
+
+	// Balance
+	$msg	= force_balance_tags($msg);
+
+	//Remove empty tags again after balancing
+	$msg	= trim(preg_replace("/<[^>]*>(?:\s|&nbsp;)*<\/[^>]*>/", '', $msg));
+
+	return $msg;
 }
