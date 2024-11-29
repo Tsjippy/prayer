@@ -76,36 +76,6 @@ function prayerRequest($plainText = false, $verified=false, $date='') {
 
 		//Content of page with all prayer requests of this month
 		$content	= strip_tags($post->post_content, ['strong', 'b', 'em', 'i', 'details', 's']);
-
-		if($plainText){
-			$content	= str_replace(
-				[
-					"&nbsp;", 
-					'&amp;',
-					'<strong>',
-					'</strong>',
-					'<em>',
-					'</em>',
-					'<details>',
-					'</details>',
-					'<s>',
-					'</s>'
-				], 
-				[
-					' ',
-					'&',
-					'<b>',
-					'</b>',
-					'<i>',
-					'</i>',
-					'<spoiler>',
-					'</spoiler>',
-					'<ss>',
-					'</ss>'
-				], 
-				$content
-			);
-		}
 		
 		if ($content != null){
 			if(empty($params)){
@@ -122,6 +92,39 @@ function prayerRequest($plainText = false, $verified=false, $date='') {
 					$international	= $result;
 				}
 			}
+		}
+
+		// Convert to Signal Friendly Content
+		if($plainText){
+			$content	= str_replace(
+				[
+					"&nbsp;", 
+					'&amp;',
+					'<br>',
+					'<strong>',
+					'</strong>',
+					'<em>',
+					'</em>',
+					'<details>',
+					'</details>',
+					'<s>',
+					'</s>'
+				], 
+				[
+					' ',
+					'&',
+					"\n",
+					'<b>',
+					'</b>',
+					'<i>',
+					'</i>',
+					'<spoiler>',
+					'</spoiler>',
+					'<ss>',
+					'</ss>'
+				], 
+				$content
+			);
 		}
 	}
 
@@ -174,13 +177,26 @@ function parseSimNigeria($datetime, $content, $post, $plainText){
 	}
 
 	//Return the prayer request
-	$prayer		= cleanMessage($matches[0][1]);
+	$result		= $matches[0][1];
+	$exploded	= explode('- </strong>', $matches[0][1]);
+	if(isset($exploded[1])){
+		$result	= "<b>".trim($exploded[0])."</b>";
+		
+		if($plainText){
+			$result	.= "\n";
+		}else{
+			$result	.= "<br>";
+		}
+		
+		$result	.= $exploded[1];
+	}
+	$prayer		= cleanMessage($result);
 	$urls		= [];
 	$pictures	= [];
 	$usersFound	= [];
 	$postFound	= $post->ID;
 
-	$userIds	= SIM\findUsers($prayer, false);
+	$userIds	= SIM\findUsers($matches[0][1], false);
 
 	foreach($userIds as $userId=>$match){
 		// family picture
