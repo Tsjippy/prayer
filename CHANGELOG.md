@@ -2,13 +2,18 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- sim international
 
 ### Changed
 
 ### Fixed
 
 ### Updated
+
+## [8.0.4] - 2024-11-29
+
+
+### Added
+- sim international
 
 ## [8.0.3] - 2024-11-20
 
