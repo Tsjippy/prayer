@@ -4,12 +4,19 @@
 ### Added
 
 ### Changed
+
+### Fixed
+
+### Updated
+
+## [8.0.5] - 2024-12-01
+
+
+### Changed
 - moved signal layout to signal module
 
 ### Fixed
 - user urls
-
-### Updated
 
 ## [8.0.4] - 2024-11-29
 
