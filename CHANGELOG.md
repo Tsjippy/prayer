@@ -4,6 +4,7 @@
 ### Added
 
 ### Changed
+- moved signal layout to signal module
 
 ### Fixed
 - user urls
