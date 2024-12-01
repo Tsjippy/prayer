@@ -93,39 +93,6 @@ function prayerRequest($plainText = false, $verified=false, $date='') {
 				}
 			}
 		}
-
-		// Convert to Signal Friendly Content
-		if($plainText){
-			$content	= str_replace(
-				[
-					"&nbsp;", 
-					'&amp;',
-					'<br>',
-					'<strong>',
-					'</strong>',
-					'<em>',
-					'</em>',
-					'<details>',
-					'</details>',
-					'<s>',
-					'</s>'
-				], 
-				[
-					' ',
-					'&',
-					"\n",
-					'<b>',
-					'</b>',
-					'<i>',
-					'</i>',
-					'<spoiler>',
-					'</spoiler>',
-					'<ss>',
-					'</ss>'
-				], 
-				$content
-			);
-		}
 	}
 
 	if(!empty($params)){
@@ -136,21 +103,22 @@ function prayerRequest($plainText = false, $verified=false, $date='') {
 				$params['message']	= "<div style='text-align:center'><i>SIM International</i></div>$international<br><br><div style='text-align:center'><i>SIM Nigeria</i></div> {$params['message']}";
 			}
 		}
-
-		return $params;
 	}elseif(!empty($international)){
 		$params['message']	= $international;
-
-		return $params;
 	}
 
-	if($plainText){
-		return [
-			'message'	=> 'Sorry I could not find any prayer request for today', 
-			'pictures'	=> []
-		];
+	if(empty($params)){
+		if($plainText){
+			
+			return [
+				'message'	=> 'Sorry I could not find any prayer request for today', 
+				'pictures'	=> []
+			];
+		}
+		return false;
 	}
-	return false;
+
+	return $params;
 }
 
 /**
