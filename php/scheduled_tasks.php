@@ -132,7 +132,7 @@ function checkPrayerRequests(){
 	$dateTime		= strtotime("+$days day", time());
 	$dateString		= date('d-m-Y', $dateTime);
 	$prayerRequest  = prayerRequest(true, true, $dateString);
-	$exploded		= explode('-', $prayerRequest['message']);
+	$exploded		= explode("\n", $prayerRequest['message']);
 
 	if(count($exploded) < 2){
 		return;
@@ -140,7 +140,7 @@ function checkPrayerRequests(){
 	
 	$message 		= trim($exploded[1]);
 
-	$signalMessage	= "Good day %name%, $days days from now your prayer request will be send out\n\nPlease reply to me with an updated request if needed.\n\nThis is the request I have now:\n\n$message\n\nIt will be send on $dateString\n\nStart your reply with 'update prayer'";
+	$signalMessage	= "Good day %name%, $days days from now your prayer request will be send out.\n\nPlease reply to me with an updated request if needed.\n\nThis is the request I have now:\n\n$message\n\nIt will be send on $dateString\n\nStart your reply with 'update prayer'";
 
 	foreach($prayerRequest['users'] as $userId){
 		$user		= get_userdata($userId);
