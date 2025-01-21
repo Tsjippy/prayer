@@ -2,13 +2,18 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- module_path constant
 
 ### Changed
 
 ### Fixed
 
 ### Updated
+
+## [8.0.7] - 2025-01-21
+
+
+### Added
+- module_path constant
 
 ## [8.0.6] - 2025-01-10
 
