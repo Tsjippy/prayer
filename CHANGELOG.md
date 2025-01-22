@@ -6,6 +6,7 @@
 ### Changed
 
 ### Fixed
+- issue with <br />
 
 ### Updated
 
