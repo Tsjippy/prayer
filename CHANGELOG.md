@@ -6,9 +6,14 @@
 ### Changed
 
 ### Fixed
-- issue with <br />
 
 ### Updated
+
+## [8.0.8] - 2025-01-22
+
+
+### Fixed
+- issue with <br />
 
 ## [8.0.7] - 2025-01-21
 
