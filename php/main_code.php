@@ -96,6 +96,7 @@ function prayerRequest($plainText = false, $verified=false, $date='') {
 	}
 
 	if(!empty($params)){
+		$params['message']	= str_replace('<br />', '<br/>', $params['message']);
 		if(!empty($international)){
 			if($plainText){
 				$params['message']	= "<i>SIM Nigeria</i>\n{$params['message']}\n\n<i>SIM International</i>\n$international";
@@ -239,7 +240,11 @@ function parseSimInternational($datetime, $content, $plainText){
 		return false;
 	}
 
-	$result	= cleanMessage($matches[0][1]);
+	$result		= cleanMessage($matches[0][1]);
+
+	$exploded	= explode("\n", $result, 2);
+
+	$result	= "<b>{$exploded[0]}</b>\n{$exploded[1]}";
 
 	// Replace linebreaks with <br>
 	if(!$plainText){
