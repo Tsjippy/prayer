@@ -244,7 +244,13 @@ function parseSimInternational($datetime, $content, $plainText){
 
 	$exploded	= explode("\n", $result, 2);
 
-	$result	= "<b>{$exploded[0]}</b>\n{$exploded[1]}";
+	$heading	= $exploded[0];
+	if(!str_contains($heading, '<b>') && !str_contains($heading, '<strong>')){
+		$heading	= "<b>$heading</b>";
+	}
+
+	// TO DO: check if bold
+	$result	= "$heading\n{$exploded[1]}";
 
 	// Replace linebreaks with <br>
 	if(!$plainText){
