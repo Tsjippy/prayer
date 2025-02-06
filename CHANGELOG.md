@@ -6,9 +6,14 @@
 ### Changed
 
 ### Fixed
-- prayer request update request
 
 ### Updated
+
+## [8.1.0] - 2025-02-06
+
+
+### Fixed
+- prayer request update request
 
 ## [8.0.9] - 2025-02-06
 
