@@ -6,9 +6,14 @@
 ### Changed
 
 ### Fixed
-- bold in international message
 
 ### Updated
+
+## [8.0.9] - 2025-02-06
+
+
+### Fixed
+- bold in international message
 
 ## [8.0.8] - 2025-01-22
 
