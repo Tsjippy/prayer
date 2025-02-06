@@ -6,6 +6,7 @@
 ### Changed
 
 ### Fixed
+- prayer request update request
 
 ### Updated
 
