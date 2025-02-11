@@ -130,7 +130,7 @@ function checkPrayerRequests(){
 
 	// Get the actual prayer request this warning is for
 	$dateTime		= strtotime("+$days day", time());
-	$dateString		= date('d-m-Y', $dateTime);
+	$dateString		= date(DATEFORMAT, $dateTime);
 	$prayerRequest  = prayerRequest(true, true, $dateString);
 	$exploded		= explode("\n", $prayerRequest['message']);
 

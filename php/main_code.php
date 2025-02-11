@@ -127,8 +127,8 @@ function prayerRequest($plainText = false, $verified=false, $date='') {
  */
 function parseSimNigeria($datetime, $content, $post, $plainText){
 	//Current day of the month
-	$today 		= date('d-m-Y', $datetime);
-	$tomorrow 	= date('d-m-Y', strtotime('+1 day', $datetime));
+	$today 		= date(DATEFORMAT, $datetime);
+	$tomorrow 	= date(DATEFORMAT, strtotime('+1 day', $datetime));
 
 	//Find the request of the current day, Remove the daynumber (dayletter) - from the request
 	//space(A)space-space
