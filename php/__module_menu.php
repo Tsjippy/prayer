@@ -9,25 +9,14 @@ DEFINE(__NAMESPACE__.'\MODULE_SLUG', strtolower(basename(dirname(__DIR__))));
 DEFINE(__NAMESPACE__.'\MODULE_PATH', plugin_dir_path(__DIR__));
 
 //run on module activation
-add_action('sim_module_activated', __NAMESPACE__.'\moduleActivated');
-function moduleActivated($moduleSlug){
-	//module slug should be the same as grandparent folder name
-	if($moduleSlug != MODULE_SLUG)	{
-		return;
-	}
-	
+add_action('sim_module_prayer_activated', __NAMESPACE__.'\moduleActivated');
+function moduleActivated(){
 	wp_create_category('Prayer');
 }
 
-add_filter('sim_submenu_options', __NAMESPACE__.'\moduleOptions', 10, 3);
-function moduleOptions($optionsHtml, $moduleSlug, $settings){
-	//module slug should be the same as grandparent folder name
-	if($moduleSlug != MODULE_SLUG || !SIM\getModuleOption('signal', 'enable')){
-		return $optionsHtml;
-	}
-
+add_filter('sim_submenu_prayer_options', __NAMESPACE__.'\moduleOptions', 10, 2);
+function moduleOptions($optionsHtml, $settings){
 	ob_start();
-	
 	
 	if(empty($settings['groups'])){
 		$groups	= [''];
@@ -115,7 +104,7 @@ function moduleOptions($optionsHtml, $moduleSlug, $settings){
 
 	<?php
 
-	return ob_get_clean();
+	return $optionsHtml.ob_get_clean();
 }
 
 add_filter('sim_module_prayer_after_save', __NAMESPACE__.'\moduleUpdated', 10, 2);

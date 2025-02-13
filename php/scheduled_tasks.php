@@ -153,13 +153,8 @@ function checkPrayerRequests(){
 
 
 // Remove scheduled tasks upon module deactivatio
-add_action('sim_module_deactivated', __NAMESPACE__.'\moduleDeActivated');
-function moduleDeActivated($moduleSlug){
-	//module slug should be the same as grandparent folder name
-	if($moduleSlug != MODULE_SLUG)	{
-		return;
-	}
-
+add_action('sim_module_prayer_deactivated', __NAMESPACE__.'\moduleDeActivated');
+function moduleDeActivated(){
 	wp_clear_scheduled_hook( 'send_prayer_action' );
 
 	wp_clear_scheduled_hook( 'check_prayer_action' );
