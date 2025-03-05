@@ -6,9 +6,14 @@
 ### Changed
 
 ### Fixed
-- bold heading
 
 ### Updated
+
+## [8.1.3] - 2025-03-05
+
+
+### Fixed
+- bold heading
 
 ## [8.1.2] - 2025-02-13
 
