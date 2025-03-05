@@ -149,7 +149,10 @@ function parseSimNigeria($datetime, $content, $post, $plainText){
 	$result		= $matches[0][1];
 	$exploded	= explode('- </strong>', $matches[0][1]);
 	if(isset($exploded[1])){
-		$result	= "<b>".trim($exploded[0])."</b>";
+		$heading	= $exploded[0];
+		if(!str_contains($heading, '<b>') && !str_contains($heading, '<strong>')){
+			$result	= "<b>$heading</b>";
+		}
 		
 		if($plainText){
 			$result	.= "\n";
