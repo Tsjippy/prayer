@@ -6,6 +6,7 @@
 ### Changed
 
 ### Fixed
+- bold heading
 
 ### Updated
 
