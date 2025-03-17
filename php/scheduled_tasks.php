@@ -138,7 +138,7 @@ function checkPrayerRequests(){
 		return;
 	}
 	
-	$message 		= trim($exploded[2]);
+	$message 		= trim($exploded[1]);
 
 	$signalMessage	= "Good day %name%, $days days from now your prayer request will be sent out.\n\nPlease reply to me with an updated request if needed.\n\nThis is the request I have now:\n\n$message\n\nIt will be sent on $dateString\n\nStart your reply with 'update prayer'";
 

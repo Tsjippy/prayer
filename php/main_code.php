@@ -146,8 +146,9 @@ function parseSimNigeria($datetime, $content, $post, $plainText){
 	}
 
 	//Return the prayer request
-	$result		= $matches[0][1];
-	$exploded	= explode('- </strong>', $matches[0][1]);
+	$result		= str_replace(["\u{002D}", "\u{058A}", "\u{05BE}", "\u{2010}", "\u{2011}", "\u{2012}", "\u{2013}", "\u{2014}", "\u{2015}", "\u{2E3A}", "\u{2E3B}", "\u{FE58}", "\u{FE63}", "\u{FF0D}"], '-', $matches[0][1] );
+	$exploded	= explode('- </strong>', $result);
+	
 	if(isset($exploded[1])){
 		$heading	= $exploded[0];
 		if(!str_contains($heading, '<b>') && !str_contains($heading, '<strong>')){
