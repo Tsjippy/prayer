@@ -3,6 +3,7 @@
 
 ### Added
 - 	= apply_filters('sim-prayer-params', , , , , );
+- signal daemon responses
 
 ### Changed
 
