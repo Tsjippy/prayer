@@ -63,9 +63,14 @@ function prayerRequest($plainText = false, $verified=false, $date='') {
 			//'sentence'			=> true
 		)
 	);
-
-	$params			= [];
-	$international	= '';
+	
+	$params	= [
+		'message'	=> '',
+		'urls'		=> [],
+		'pictures'	=> [],
+		'users'		=> [],
+		'post'		=> -1
+	];
 
 	//Loop over them to find the post(s) for this month
 	foreach($posts as $post){
@@ -78,34 +83,8 @@ function prayerRequest($plainText = false, $verified=false, $date='') {
 		$content	= strip_tags($post->post_content, ['strong', 'b', 'em', 'i', 'details', 's']);
 		
 		if ($content != null){
-			if(empty($params)){
-				$result		= parseSimNigeria($datetime, $content, $post, $plainText);
-				if($result){
-					$params	= $result;
-				}
-			}
-
-			if(empty($international)){
-				$result		= parseSimInternational($datetime, $content, $plainText);
-
-				if($result){
-					$international	= $result;
-				}
-			}
+			$params	= apply_filters('sim-prayer-params', $params, $datetime, $content, $post, $plainText);
 		}
-	}
-
-	if(!empty($params)){
-		$params['message']	= str_replace('<br />', '<br/>', $params['message']);
-		if(!empty($international)){
-			if($plainText){
-				$params['message']	= "<i>SIM Nigeria</i>\n{$params['message']}\n\n<i>SIM International</i>\n$international";
-			}else{
-				$params['message']	= "<div style='text-align:center'><i>SIM International</i></div>$international<br><br><div style='text-align:center'><i>SIM Nigeria</i></div> {$params['message']}";
-			}
-		}
-	}elseif(!empty($international)){
-		$params['message']	= $international;
 	}
 
 	if(empty($params)){
@@ -120,162 +99,4 @@ function prayerRequest($plainText = false, $verified=false, $date='') {
 	}
 
 	return $params;
-}
-
-/**
- * Parses SIM Nigeria Format
- */
-function parseSimNigeria($datetime, $content, $post, $plainText){
-	//Current day of the month
-	$today 		= date(DATEFORMAT, $datetime);
-	$tomorrow 	= date(DATEFORMAT, strtotime('+1 day', $datetime));
-
-	//Find the request of the current day, Remove the daynumber (dayletter) - from the request
-	//space(A)space-space
-	$genericStart	= "\s*\(\s*[A-Za-z]{1,2}\s*\)\s*[\W]\s*";
-	$reStart		= "$today$genericStart";
-	$reNext			= "$tomorrow$genericStart";
-
-	//look for the start of a prayer line, get everything after "30(T) – " until you find a B* or the next "30(T) – " or the end of the document
-	$re			= "/(*UTF8)$reStart(.+?)((B\*)|$reNext|$)/m";
-	preg_match_all($re, $content, $matches, PREG_SET_ORDER, 0);
-	
-	// prayer request not found
-	if (!isset($matches[0][1]) || empty($matches[0][1])){
-		return false;
-	}
-
-	//Return the prayer request
-	$result		= str_replace(["\u{002D}", "\u{058A}", "\u{05BE}", "\u{2010}", "\u{2011}", "\u{2012}", "\u{2013}", "\u{2014}", "\u{2015}", "\u{2E3A}", "\u{2E3B}", "\u{FE58}", "\u{FE63}", "\u{FF0D}"], '-', $matches[0][1] );
-	$exploded	= explode('- </strong>', $result);
-	
-	if(isset($exploded[1])){
-		$heading	= $exploded[0];
-		if(!str_contains($heading, '<b>') && !str_contains($heading, '<strong>')){
-			$result	= "<b>$heading</b>";
-		}
-		
-		if($plainText){
-			$result	.= "\n";
-		}else{
-			$result	.= "<br>";
-		}
-		
-		$result	.= $exploded[1];
-	}
-	$prayer		= cleanMessage($result);
-	$urls		= [];
-	$pictures	= [];
-	$usersFound	= [];
-	$postFound	= $post->ID;
-
-	$userIds	= SIM\findUsers($matches[0][1], false);
-
-	foreach($userIds as $userId=>$match){
-		// family picture
-		$family			= get_user_meta($userId, 'family', true);
-
-		if(!empty($family['picture'])){
-			if(is_array($family['picture'])){
-				$attachmentId	= $family['picture'][0];
-			}elseif(is_numeric($family['picture'])){
-				$attachmentId	= $family['picture'];
-			}								
-		}else{
-			$attachmentId	= get_user_meta($userId, 'profile_picture', true);
-			if(is_array($attachmentId)){
-				if (isset($attachmentId[0])){
-					$attachmentId	= $attachmentId[0];
-				}else{
-					$attachmentId	= 0;						}
-			}
-		}
-
-		if(is_numeric($attachmentId)){
-			$pictures[] 	= get_attached_file($attachmentId);
-		}else{
-			$pictures[] 	= SIM\urlToPath($attachmentId);
-		}
-
-		// user page url
-		$url		= SIM\maybeGetUserPageUrl($userId);
-		if($url){
-			$urls[]	= $url;
-		}
-
-		$usersFound[]	= $userId;
-
-		if(!empty($family['partner'])){
-			$usersFound[]	= $family['partner'];
-		}
-	}
-
-	$params	= [
-		'message'	=> $prayer,
-		'urls'		=> $urls,
-		'pictures'	=> $pictures,
-		'users'		=> $usersFound,
-		'post'		=> $postFound
-	];
-	
-	// skip filter if not for today
-	if($plainText && empty($date)){
-		$params	= apply_filters('sim_after_bot_payer', $params);
-
-		//prevent duplicate urls
-		$params['urls']		= array_unique($params['urls']);
-
-		$params['message']	= $params['message']."\n\n".implode("\n", $params['urls']);
-	}
-
-	return $params;
-}
-
-function parseSimInternational($datetime, $content, $plainText){
-	$start		= date('l F j, Y', $datetime);
-	$end		= date('l F j, Y', strtotime('+1 day', $datetime));
-
-	//look for the start of a prayer line until you find the next or the end of the document
-	$re			= "/(*UTF8)$start(.+?)($end|$)/s";
-	preg_match_all($re, $content, $matches, PREG_SET_ORDER, 0);
-
-	// prayer request not found
-	if (!isset($matches[0][1]) || empty($matches[0][1])){
-		return false;
-	}
-
-	$result		= cleanMessage($matches[0][1]);
-
-	$exploded	= explode("\n", $result, 2);
-
-	$heading	= $exploded[0];
-	if(!str_contains($heading, '<b>') && !str_contains($heading, '<strong>')){
-		$heading	= "<b>$heading</b>";
-	}
-
-	// TO DO: check if bold
-	$result	= "$heading\n{$exploded[1]}";
-
-	// Replace linebreaks with <br>
-	if(!$plainText){
-		$result	= str_replace("\n", "<br>", $result);
-	}
-
-	return $result;
-}
-
-/**
- * Removes and balances html tags
- */
-function cleanMessage($msg){
-	//Remove empty tags
-	$msg	= trim(preg_replace("/<[^>]*>(?:\s|&nbsp;)*<\/[^>]*>/", '', $msg));
-
-	// Balance
-	$msg	= force_balance_tags($msg);
-
-	//Remove empty tags again after balancing
-	$msg	= trim(preg_replace("/<[^>]*>(?:\s|&nbsp;)*<\/[^>]*>/", '', $msg));
-
-	return $msg;
 }
