@@ -2,15 +2,22 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- 	= apply_filters('sim-prayer-params', , , , , );
-- signal daemon responses
 
 ### Changed
 
 ### Fixed
-- prayer message parsing
 
 ### Updated
+
+## [8.1.4] - 2025-03-19
+
+
+### Added
+- 	= apply_filters('sim-prayer-params', , , , , );
+- signal daemon responses
+
+### Fixed
+- prayer message parsing
 
 ## [8.1.3] - 2025-03-05
 
