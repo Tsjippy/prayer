@@ -2,6 +2,7 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- 	= apply_filters('sim-prayer-params', , , , , );
 
 ### Changed
 
