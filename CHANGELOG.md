@@ -6,6 +6,7 @@
 ### Changed
 
 ### Fixed
+- prayer message parsing
 
 ### Updated
 
