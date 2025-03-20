@@ -54,12 +54,7 @@ function moduleOptions($optionsHtml, $settings){
 							?>
 							<select  name="groups[<?php echo $index;?>][name]">
 								<?php
-								if(str_contains(php_uname(), 'Linux')){
-									//$signal 		= new SIM\SIGNAL\SignalBus();
-									$signal 		= new SIM\SIGNAL\SignalJsonRpc();
-								}else{
-									$signal 		= new SIM\SIGNAL\SignalCommandLine();
-								}
+								$signal 		= SIM\SIGNAL\getSignalInstance();
 
 								foreach($signal->listGroups() as $g){
 									if(empty($g->name)){
