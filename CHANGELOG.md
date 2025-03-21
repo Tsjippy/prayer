@@ -4,11 +4,16 @@
 ### Added
 
 ### Changed
-- use getSignalInstance
 
 ### Fixed
 
 ### Updated
+
+## [8.1.5] - 2025-03-21
+
+
+### Changed
+- use getSignalInstance
 
 ## [8.1.4] - 2025-03-19
 
