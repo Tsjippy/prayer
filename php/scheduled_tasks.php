@@ -59,6 +59,10 @@ function createNewSchedule($schedule){
  * a seperate schedule for each day to be sure everyone gets what they requested
  */
 function sendPrayerRequests(){
+	if (!function_exists('SIM\SIGNAL\sendSignalMessage')) {
+		return;
+	}
+
 	//Change the user to the admin account otherwise get_users will not work
 	wp_set_current_user(1);
 
@@ -103,7 +107,8 @@ function sendPrayerRequests(){
 					
 					$dayPart	.= " ".$userdata->first_name;
 				}
-				SIM\trySendSignal("Good $dayPart,\n\n$message", $user, false, $prayerRequest['pictures'], false);
+
+				SIM\SIGNAL\sendSignalMessage("Good $dayPart,\n\n$message", $user, $prayerRequest['pictures'], 0, '', '', false);
 			}
 		}
 	}
@@ -115,6 +120,10 @@ function sendPrayerRequests(){
  * Check if a prayer request needs an update
  */
 function checkPrayerRequests(){
+	if (!function_exists('SIM\SIGNAL\sendSignalMessage')) {
+		return;
+	}
+
 	global $wpdb;
 
 	// clean up expired meta keys
@@ -145,7 +154,8 @@ function checkPrayerRequests(){
 	foreach($prayerRequest['users'] as $userId){
 		$user		= get_userdata($userId);
 		$msg		= str_replace('%name%', $user->first_name, $signalMessage);
-		$timestamp	= SIM\trySendSignal($msg, $user, false, $prayerRequest['pictures']);
+
+		$timestamp	= SIM\SIGNAL\sendSignalMessage($msg, $user, $prayerRequest['pictures']);
 
 		update_user_meta($user->ID, 'pending-prayer-update', $timestamp);
 	}
