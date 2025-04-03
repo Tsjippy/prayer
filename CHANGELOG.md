@@ -7,6 +7,7 @@
 - removed signal messaging
 
 ### Fixed
+- replacing prayer requests
 
 ### Updated
 
