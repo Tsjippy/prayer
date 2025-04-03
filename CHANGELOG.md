@@ -4,12 +4,19 @@
 ### Added
 
 ### Changed
+
+### Fixed
+
+### Updated
+
+## [8.1.6] - 2025-04-03
+
+
+### Changed
 - removed signal messaging
 
 ### Fixed
 - replacing prayer requests
-
-### Updated
 
 ## [8.1.5] - 2025-03-21
 
