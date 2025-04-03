@@ -16,7 +16,16 @@ function addPrayerResponse($response, $message, $source, $users, $name, $signal)
 }
 
 function updatePrayerRequest($message, $users, $signal){
-    $timeStamp      = get_user_meta($users[0]->ID, 'pending-prayer-update', true);
+    foreach($users as $user){
+        $timeStamp      = get_user_meta($user->ID, 'pending-prayer-update', true);
+
+        if(!$timeStamp || !is_numeric($timeStamp)){
+            continue;
+        }
+
+        break;
+    }
+
     if(!$timeStamp || !is_numeric($timeStamp)){
         return "You do not have a pending prayer request";
     }
@@ -31,22 +40,27 @@ function updatePrayerRequest($message, $users, $signal){
 
     // get the prayer request to be replaced
     $prayer         = prayerRequest(false, false, $replaceDate);
-    $prayer         = apply_filters('sim-prayer-request-to-update', $prayer, $replaceDate);
+    $prayer         = apply_filters('sim-prayer-request-to-update', $prayer, $replaceDate, $message);
 
     if(!$prayer){
         return "Could not find prayer request to update for $replaceDate";
     }
 
-    $prayerMessage = trim($prayer['message']);
+    $prayerMessage  = trim($prayer['message']);
 
     // perform the replacement
     if($message == 'update prayer correct'){
         foreach($users as $user){
             delete_user_meta($user->ID, 'pending-prayer-update');
-        }
 
-        $replacetext    = get_user_meta($user->ID, 'pending-prayer-update-text', true);
-        delete_user_meta($user->ID, 'pending-prayer-update-text');
+            $replacetext    = get_user_meta($user->ID, 'pending-prayer-update-text', true);
+            
+            delete_user_meta($user->ID, 'pending-prayer-update-text');
+
+            if(empty($replacetext)){
+                continue;
+            }
+        }
 
         if(empty($replacetext)){
             return 'Something went wrong';
@@ -59,6 +73,7 @@ function updatePrayerRequest($message, $users, $signal){
         }
 
         $post->post_content = str_replace($prayerMessage, $replacetext, $post->post_content);
+        
         // do the actual replacement
         wp_update_post(
             $post,

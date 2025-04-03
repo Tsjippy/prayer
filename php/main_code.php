@@ -69,7 +69,8 @@ function prayerRequest($plainText = false, $verified=false, $date='') {
 		'urls'		=> [],
 		'pictures'	=> [],
 		'users'		=> [],
-		'post'		=> -1
+		'post'		=> -1,
+		'html'		=> ''
 	];
 
 	//Loop over them to find the post(s) for this month
