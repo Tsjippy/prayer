@@ -127,7 +127,7 @@ function checkPrayerRequests(){
 	global $wpdb;
 
 	// clean up expired meta keys
-	$query			= "DELETE FROM `{$wpdb->usermeta}` WHERE `meta_key` = 'pending-prayer-update' AND `meta_value` < ".time().'000';
+	$query			= "DELETE FROM `{$wpdb->usermeta}` WHERE `meta_key` = 'pending-prayer-update' AND (`meta_value` < ".time()."000 OR `meta_value` IS NULL)";
 
 	$wpdb->query($query);
 
