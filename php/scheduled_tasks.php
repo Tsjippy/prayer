@@ -157,6 +157,15 @@ function checkPrayerRequests(){
 
 		$timestamp	= SIM\SIGNAL\sendSignalMessage($msg, $user, $prayerRequest['pictures']);
 
+		if(is_wp_error($timestamp)){
+			SIM\printArray($timestamp->get_error_message());
+			continue;
+		}
+		elseif(!is_numeric($timestamp)){
+			SIM\printArray("Timestamp is not numeric: $timestamp");
+			continue;
+		}
+
 		update_user_meta($user->ID, 'pending-prayer-update', $timestamp);
 	}
 }
