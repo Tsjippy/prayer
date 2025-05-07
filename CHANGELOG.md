@@ -5,6 +5,7 @@
 - error checking
 
 ### Changed
+- also clean empty entries
 
 ### Fixed
 
