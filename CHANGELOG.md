@@ -6,9 +6,14 @@
 ### Changed
 
 ### Fixed
-- updating of prayer
 
 ### Updated
+
+## [8.1.8] - 2025-05-15
+
+
+### Fixed
+- updating of prayer
 
 ## [8.1.7] - 2025-05-08
 
