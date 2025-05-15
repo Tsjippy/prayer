@@ -141,13 +141,7 @@ function checkPrayerRequests(){
 	$dateTime		= strtotime("+$days day", time());
 	$dateString		= date(DATEFORMAT, $dateTime);
 	$prayerRequest  = prayerRequest(true, true, $dateString);
-	$exploded		= explode("\n", $prayerRequest['message']);
-
-	if(count($exploded) < 3){
-		return;
-	}
-	
-	$message 		= trim($exploded[2]);
+	$message 		= wp_strip_all_tags($prayerRequest['html']);
 
 	$signalMessage	= "Good day %name%, $days days from now your prayer request will be sent out.\n\nPlease reply to me with an updated request if needed.\n\nThis is the request I have now:\n\n$message\n\nIt will be sent on $dateString\n\nStart your reply with 'update prayer'";
 
@@ -169,7 +163,6 @@ function checkPrayerRequests(){
 		update_user_meta($user->ID, 'pending-prayer-update', $timestamp);
 	}
 }
-
 
 // Remove scheduled tasks upon module deactivatio
 add_action('sim_module_prayer_deactivated', __NAMESPACE__.'\moduleDeActivated');
