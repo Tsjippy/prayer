@@ -2,14 +2,21 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- error checking
 
 ### Changed
-- also clean empty entries
 
 ### Fixed
 
 ### Updated
+
+## [8.1.7] - 2025-05-08
+
+
+### Added
+- error checking
+
+### Changed
+- also clean empty entries
 
 ## [8.1.6] - 2025-04-03
 
