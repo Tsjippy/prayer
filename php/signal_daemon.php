@@ -16,7 +16,47 @@ function addPrayerResponse($response, $message, $source, $users, $name, $signal)
 }
 
 function updatePrayerRequest($message, $users, $signal){
+    // perform the replacement
+    if($message == 'update prayer correct'){
+        // mark as updated for affected users
+        foreach($users as $user){
+            delete_user_meta($user->ID, 'pending-prayer-update');
+
+            $replacementData    = get_user_meta($user->ID, 'pending-prayer-update-data', true);
+            
+            delete_user_meta($user->ID, 'pending-prayer-update-data');
+
+            if(empty($replacementData)){
+                continue;
+            }
+        }
+
+        if(empty($replacementData)){
+            return 'Something went wrong';
+        }
+
+        $post               = get_post($replacementData['post_id']);
+
+        if(empty($post)){
+            return "Post with id '{$replacementData->post_id}' not found";
+        }
+
+        $post->post_content = str_replace($replacementData['original'], $replacementData['replacement'], $post->post_content, $count);
+        
+        // do the actual replacement
+        wp_update_post(
+            $post,
+            false,
+            false
+        );
+
+        return "Replaced:\n'{$replacementData['message']}'\n\nwith:\n'{$replacementData['replacement']}'";
+    }
+
+
     foreach($users as $user){
+        clean_user_cache($user);
+
         $timeStamp      = get_user_meta($user->ID, 'pending-prayer-update', true);
 
         if(!$timeStamp || !is_numeric($timeStamp)){
@@ -48,47 +88,20 @@ function updatePrayerRequest($message, $users, $signal){
 
     $prayerMessage  = trim($prayer['message']);
 
-    // perform the replacement
-    if($message == 'update prayer correct'){
-        foreach($users as $user){
-            delete_user_meta($user->ID, 'pending-prayer-update');
-
-            $replacetext    = get_user_meta($user->ID, 'pending-prayer-update-text', true);
-            
-            delete_user_meta($user->ID, 'pending-prayer-update-text');
-
-            if(empty($replacetext)){
-                continue;
-            }
-        }
-
-        if(empty($replacetext)){
-            return 'Something went wrong';
-        }
-
-        $post               = get_post($prayer['post']);
-
-        if(empty($post)){
-            return 'no post found to replace in'.implode(';', $prayer);
-        }
-
-        $post->post_content = str_replace($prayerMessage, $replacetext, $post->post_content);
-        
-        // do the actual replacement
-        wp_update_post(
-            $post,
-            false,
-            false
-        );
-
-        return "Replaced:\n'$prayerMessage'\n\nwith:\n'$replacetext'";
-    }
-
     // confirm the replacement
     $replacetext    = trim(str_ireplace('update prayer', '', $message));
 
     foreach($users as $user){
-        update_user_meta($user->ID, 'pending-prayer-update-text', $replacetext);
+        update_user_meta(
+            $user->ID, 
+            'pending-prayer-update-data', 
+            [
+                'original'      => $prayer['html'],
+                'message'       => $prayerMessage,
+                'replacement'   => $replacetext,
+                'post_id'       => $prayer['post']
+            ]
+        );
     }
 
 	return "I am going to replace:\n'$prayerMessage'\n\nwith\n'$replacetext'\n\nReply with 'update prayer correct' if I should continue";

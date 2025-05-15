@@ -79,13 +79,8 @@ function prayerRequest($plainText = false, $verified=false, $date='') {
 		if(!str_contains($post->post_title, date("F")) && !str_contains($post->post_title, date("Y"))){
 			continue;
 		}
-
-		//Content of page with all prayer requests of this month
-		$content	= strip_tags($post->post_content, ['strong', 'b', 'em', 'i', 'details', 's']);
 		
-		if ($content != null){
-			$params	= apply_filters('sim-prayer-params', $params, $datetime, $content, $post, $plainText);
-		}
+		$params	= apply_filters('sim-prayer-params', $params, $datetime, $post, $plainText);
 	}
 
 	if(empty($params)){
