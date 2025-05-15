@@ -4,6 +4,7 @@
 ### Added
 
 ### Changed
+- better message parsing
 
 ### Fixed
 
