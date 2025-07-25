@@ -59,10 +59,6 @@ function createNewSchedule($schedule){
  * a seperate schedule for each day to be sure everyone gets what they requested
  */
 function sendPrayerRequests(){
-	if (!function_exists('SIM\SIGNAL\sendSignalMessage')) {
-		return;
-	}
-
 	//Change the user to the admin account otherwise get_users will not work
 	wp_set_current_user(1);
 
@@ -108,7 +104,12 @@ function sendPrayerRequests(){
 					$dayPart	.= " ".$userdata->first_name;
 				}
 
-				SIM\SIGNAL\sendSignalMessage("Good $dayPart,\n\n$message", $user, $prayerRequest['pictures'], 0, '', '', false);
+				do_action(
+					'sim-prayer-send-message',
+					"Good $dayPart,\n\n$message", 
+					$user, 
+					$prayerRequest['pictures']
+				);
 			}
 		}
 	}
@@ -120,16 +121,7 @@ function sendPrayerRequests(){
  * Check if a prayer request needs an update
  */
 function checkPrayerRequests(){
-	if (!function_exists('SIM\SIGNAL\sendSignalMessage')) {
-		return;
-	}
-
 	global $wpdb;
-
-	// clean up expired meta keys
-	$query			= "DELETE FROM `{$wpdb->usermeta}` WHERE `meta_key` = 'pending-prayer-update' AND (`meta_value` < ".time()."000 OR `meta_value` IS NULL)";
-
-	$wpdb->query($query);
 
 	// Get the amount of days between this check and the actual publishing
 	$days			= SIM\getModuleOption('prayer', 'prayercheck');
@@ -149,18 +141,11 @@ function checkPrayerRequests(){
 		$user		= get_userdata($userId);
 		$msg		= str_replace('%name%', $user->first_name, $signalMessage);
 
-		$timestamp	= SIM\SIGNAL\sendSignalMessage($msg, $user, $prayerRequest['pictures']);
-
-		if(is_wp_error($timestamp)){
-			SIM\printArray($timestamp->get_error_message());
-			continue;
-		}
-		elseif(!is_numeric($timestamp)){
-			SIM\printArray("Timestamp is not numeric: $timestamp");
-			continue;
-		}
-
-		update_user_meta($user->ID, 'pending-prayer-update', $timestamp);
+		do_action(
+			'sim-prayer-send-message',
+			$msg, 
+			$user
+		);
 	}
 }
 
