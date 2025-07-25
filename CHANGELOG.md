@@ -2,6 +2,7 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+- 'sim-prayer-send-message' action hook
 
 ### Changed
 - better message parsing
