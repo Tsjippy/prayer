@@ -4,12 +4,17 @@
 ### Added
 
 ### Changed
-- cleaner admin js
-- classnames replace _ with -
 
 ### Fixed
 
 ### Updated
+
+## [8.2.0] - 2025-09-26
+
+
+### Changed
+- cleaner admin js
+- classnames replace _ with -
 
 ## [8.1.9] - 2025-07-25
 
