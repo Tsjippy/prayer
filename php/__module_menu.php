@@ -40,11 +40,11 @@ function moduleOptions($optionsHtml, $settings){
 	<br>
 	<div class="">
 		<h4>Give optional Signal group name(s) to send a daily prayer message to:</h4>
-		<div class="clone_divs_wrapper">
+		<div class="clone-divs-wrapper">
 			<?php
 			foreach($groups as $index=>$group){
 				?>
-				<div class="clone_div" data-divid="<?php echo $index;?>" style="display:flex;border: #dedede solid; padding: 10px; margin-bottom: 10px;">
+				<div class="clone-div" data-divid="<?php echo $index;?>" style="display:flex;border: #dedede solid; padding: 10px; margin-bottom: 10px;">
 					<div class="multi_input_wrapper">
 						<label>
 							<h4 style='margin: 0px;'>Signal groupname <?php echo $index+1;?></h4>
