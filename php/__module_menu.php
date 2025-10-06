@@ -80,7 +80,7 @@ function moduleOptions($optionsHtml, $settings){
 							<input type='time' name="groups[<?php echo $index;?>][time]" value='<?php if(!empty($group['time'])){echo $group['time'];}?>'>
 						</label>
 					</div>
-					<div class='buttonwrapper' style='margin:auto;'>
+					<div class='button-wrapper' style='margin:auto;'>
 						<button type="button" class="add button" style="flex: 1;">+</button>
 						<?php
 						if(count($groups)> 1){
