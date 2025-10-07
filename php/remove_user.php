@@ -13,7 +13,7 @@ function onUserDelete($userId){
 			// loop over all the user id's in this time slot
 			foreach($slot as $i=>$id){
 				if($id == $userId){
-					// remove this userid from the timeslot
+					// remove this user-id from the timeslot
 					unset($schedule[$index][$i]);
 					$updated	= true;
 				}
