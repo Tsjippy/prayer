@@ -99,7 +99,7 @@ function updatePrayerRequest($message, $users, $signal){
                 'original'      => $prayer['html'],
                 'message'       => $prayerMessage,
                 'replacement'   => $replacetext,
-                'post_id'       => $prayer['post']
+                'post-id'       => $prayer['post']
             ]
         );
     }
