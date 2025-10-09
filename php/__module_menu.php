@@ -44,7 +44,7 @@ function moduleOptions($optionsHtml, $settings){
 			<?php
 			foreach($groups as $index=>$group){
 				?>
-				<div class="clone-div" data-divid="<?php echo $index;?>" style="display:flex;border: #dedede solid; padding: 10px; margin-bottom: 10px;">
+				<div class="clone-div" data-div-id="<?php echo $index;?>" style="display:flex;border: #dedede solid; padding: 10px; margin-bottom: 10px;">
 					<div class="multi-input-wrapper">
 						<label>
 							<h4 style='margin: 0px;'>Signal groupname <?php echo $index+1;?></h4>
