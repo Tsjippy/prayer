@@ -1,5 +1,78 @@
 <?php
 
+function dateRegex(){
+    $year = [
+        'Y' => "d{4}",
+        'y' => "d{2}"
+    ];
+    $years = "(?:".implode('|', $year).")";
+    
+    $month = [
+        'F' => "(:?January|February|March|April|May|June|July|August|September|October|November|December)",
+        'M' => "(:?Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sept|Oct|Nov|Dec)",
+        'm' => "d{2}",
+        'n' => "d{1,2}"
+    ];
+    $months = "(?:".implode('|', $month).")";
+    
+    $day = [
+      'd' => "d{2}(?:nd|th)?",
+        'j' => "d{1,2}(?:nd|th)?",
+        'D' => "(:?Sun|Mon|Tues|Tue|Tu|Wed|Thurs|Thu|Th|Fri|Sat)",
+        'l' => "(:?Sunday|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday)"
+    ];
+    $days = "(?:".implode('|', $day).")";
+    
+    $seperators = "(?:/|.|-|\s|, )";
+    
+    $regex = "($years$seperators$months$seperators$days|$years$seperators$days$seperators$months|$months$seperators$days$seperators$years?|$days$seperators$months$seperators$years?);
+    
+    return $regex;
+}
+
+/**
+ * Parse Prayers Post
+ */
+function parsePostContent($post){
+	$text		= preg_replace("/(*UTF8)(\x{002D}|\x{058A}|\x{05BE}|\x{2010}|\x{2011}|\x{2012}|\x{2013}|\x{2014}|\x{2015}|\x{2E3A}|\x{2E3B}|\x{FE58}|\x{FE63}|\x{FF0D})/mus", "-", $post->post_content);
+	
+	// build the regex
+	$dateRegex = dateRegex();
+    $re			= "/(*UTF8)$dateRegex.*?(?:<br>|<br \/>|<br\/>)(.+?)(?:<br>|<br \/>|<br\/>)(.+?)($dateRegex|$)/s";
+	preg_match_all($re, $text, $matches, PREG_SET_ORDER, 0);
+	
+    if(count($matches) < 28){
+        rerurn new WP_Error('prayer', ' Less than 28 prayer requests found!);
+    }
+    
+	// prayer request not found
+	if (!isset($matches[0][2]) || empty($matches[0][2])){
+		return false;
+	}
+    
+    $prayerRequests = [];
+
+    foreach($matches as $match){
+    	$html		= $match[3];
+    
+    	$heading	= stripTags($match[2]);
+    	if(!str_contains($heading, '<b>') && !str_contains($heading, '<strong>')){
+    		$heading	= "<b>$heading</b>";
+    	}
+    	
+        $prayerRequests[$match[1]] = [
+            'heading'   => $heading,
+            
+        	'html'	    => stripTags($html),
+        
+        	'prayer'	=> cleanMessage($html),
+        
+        	'userIds'	=> SIM\findUsers($heading, false),
+        ];
+    }
+    
+    return $prayerRequests;
+}
 
 function createPrayerPosts( $postId, $post, $update ) {
     // Check if it's an autosave or a revision
@@ -13,7 +86,7 @@ function createPrayerPosts( $postId, $post, $update ) {
         wp_delete_post($prevPost->ID);
     }
 
-    $prayerRequests = [];
+    $prayerRequests = parsePostContent($post);
     
     foreach($prayerRequests as $date => $prayerRequest){
         $postData = array(
