@@ -25,7 +25,7 @@ function dateRegex(){
     
     $seperators = "(?:/|.|-|\s|, )";
     
-    $regex = "($years$seperators$months$seperators$days|$years$seperators$days$seperators$months|$months$seperators$days$seperators$years?|$days$seperators$months$seperators$years?);
+    $regex = "($years$seperators$months$seperators$days|$years$seperators$days$seperators$months|$months$seperators$days$seperators$years?|$days$seperators$months$seperators$years?)";
     
     return $regex;
 }
