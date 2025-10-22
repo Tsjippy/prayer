@@ -42,7 +42,7 @@ function parsePostContent($post){
 	preg_match_all($re, $text, $matches, PREG_SET_ORDER, 0);
 	
     if(count($matches) < 28){
-        rerurn new WP_Error('prayer', ' Less than 28 prayer requests found!);
+        rerurn new WP_Error('prayer', ' Less than 28 prayer requests found!');
     }
     
 	// prayer request not found
