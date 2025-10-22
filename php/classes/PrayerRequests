@@ -1,0 +1,10 @@
+<?php
+namespace SIM\PRAYER;
+use SIM;
+
+class PrayerRequests{
+	public function __construct(){
+	}
+
+  
+}
