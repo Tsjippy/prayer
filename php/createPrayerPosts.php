@@ -107,18 +107,7 @@ function createPrayerPosts( $postId, $post, $update ) {
             echo 'Post inserted successfully with ID: ' . $postId;
         }
         
-        
-    }
-        
-    // Perform actions only when updating an existing post
-    if ( $update ) {
-        // Your custom code for post updates
-        // For example, update custom meta fields, send notifications, etc.
-        update_post_meta( $post_id, 'my_custom_field', 'new_value' );
-    } else {
-        // Your custom code for new post creation
-        // For example, set default custom meta fields
-        add_post_meta( $post_id, 'my_custom_field', 'default_value', true );
+        add_post_meta( $postId, 'date', $date, true );
     }
 }
 add_action( 'save_post', __NAMESPACE__.'\createPrayerPosts', 10, 3 );
