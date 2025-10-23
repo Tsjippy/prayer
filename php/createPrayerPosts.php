@@ -107,7 +107,7 @@ function createPrayerPosts( $postId, $post, $update ) {
             echo 'Post inserted successfully with ID: ' . $postId;
         }
         
-        add_post_meta( $postId, 'date', $date, true );
+        add_post_meta( $postId, 'date', date('Y-m-d', strtotime($date)), true );
     }
 }
 add_action( 'save_post', __NAMESPACE__.'\createPrayerPosts', 10, 3 );
