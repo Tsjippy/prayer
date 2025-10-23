@@ -42,7 +42,7 @@ function parsePostContent($post){
 	preg_match_all($re, $text, $matches, PREG_SET_ORDER, 0);
 	
     if(count($matches) < 28){
-        rerurn new WP_Error('prayer', ' Less than 28 prayer requests found!');
+        return new WP_Error('prayer', ' Less than 28 prayer requests found!');
     }
     
 	// prayer request not found
@@ -74,9 +74,39 @@ function parsePostContent($post){
     return $prayerRequests;
 }
 
+function stripTags($content){
+	//Content of page with all prayer requests of this month
+	return trim(strip_tags($content, ['strong', 'b', 'em', 'i', 'details', 's', 'br']));
+}
+
+/**
+ * Removes and balances html tags
+ */
+function cleanMessage($msg){
+	// < SOME TAG > one or more spaces followed by the same tag closing </ (\g1) >
+	$re		= "/<([^>]*)>(?:\s|&nbsp;)*<\/\g1>/";
+
+	//Remove empty tags
+	$msg	= trim(preg_replace($re, '', $msg));
+
+	// Balance
+	$msg	= force_balance_tags($msg);
+
+	//Remove empty tags again after balancing
+	$msg	= trim(preg_replace($re, '', $msg));
+
+	// Remove starting and ending line breaks
+	$msg	= preg_replace("/(^(<br\s*\/?>)|(<br\s*\/?>\s*)+$)/", "", $msg	);
+
+	// Replace '<br>' with "\n"
+	$msg	= preg_replace("/(<br\s*\/?>)/", "\n", $msg	);
+
+	return $msg;
+}
+
 function createPrayerPosts( $postId, $post, $update ) {
     // Check if it's an autosave or a revision
-    if ( wp_is_post_autosave( $post_id ) || wp_is_post_revision( $post_id ) ) {
+    if ( wp_is_post_autosave( $postId ) || wp_is_post_revision( $postId ) ) {
         return;
     }
     
@@ -91,11 +121,11 @@ function createPrayerPosts( $postId, $post, $update ) {
     foreach($prayerRequests as $date => $prayerRequest){
         $postData = array(
             'post_title'    => "Prayer Request for $date",
-            'post_content'  => $prayer['message'],
+            'post_content'  => $prayerRequest['message'],
             'post_status'   => 'publish', // or 'draft', 'pending', 'private'
             'post_type'     => 'prayer',    // or 'page', 'custom_post_type'
             'post_author'   => isset($prayer['userid']) ? $prayer['userid'] : $post->post_author,         // ID of the author
-            'post_parent'.   => $post->ID
+            'post_parent'   => $post->ID
         );
         
         // Insert the post into the database

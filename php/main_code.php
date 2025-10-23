@@ -96,3 +96,26 @@ function prayerRequest($plainText = false, $verified=false, $date='') {
 
 	return $params;
 }
+
+add_filter('sim-prayer-request-to-update', __NAMESPACE__.'\prayerToBeUpdated', 10, 3);
+function prayerToBeUpdated($prayer, $replaceDate, $receivedMessage){
+	// Make sure we send back the raw html message to be replaced with a new one
+	if($receivedMessage == 'update prayer correct'){
+		$exploded			= explode(' - ', $prayer['html']);
+		
+		$prayer['message']	= $exploded[1];
+	}else{
+		$exploded	= explode('<i>SIM Nigeria</i></div>', $prayer['message']);
+
+		if(isset($exploded[1])){
+			$exploded2	= explode('</b><br/>', $exploded[1]);
+			if(isset($exploded2[1])){
+				$prayer['message']	= $exploded2[1];
+			}else{
+				$prayer['message']	= $exploded[1];
+			}
+		}
+	}
+
+	return $prayer;
+}
