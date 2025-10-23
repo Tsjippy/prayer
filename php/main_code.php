@@ -37,10 +37,7 @@ function prayerRequest($plainText = false, $verified=false, $date='') {
 	}
 
 	if(empty($date)){
-		$s			= date("F Y");
-
-		//Current date
-		$datetime 	= time();
+		$date = date("Y-m-d");
 	}else{
 		// epoch
 		if(is_numeric($date)){
@@ -50,40 +47,21 @@ function prayerRequest($plainText = false, $verified=false, $date='') {
 			$datetime 	= strtotime($date);
 		}
 
-		$s			= date("F Y", $datetime);
+		$date			= date("Y-m-d", $datetime);
 	}
 
-	//Get all the post belonging to the prayer category
+	//Get all the prayer posts for this date
 	$posts = get_posts(
 		array(
-			'category'  		=> get_cat_ID('Prayer'),
-			's'					=> $s,
+			'post_type'  		=> 'prayer',
+			'post_status'  => 'publish',
+			'meta_key'					=> 'date',
+			'meta_value'   => $date,
 			'numberposts'		=> -1,
-			'search_columns'	=> ['post_title'],
-			//'sentence'			=> true
 		)
 	);
 	
-	$params	= [
-		'message'	=> '',
-		'urls'		=> [],
-		'pictures'	=> [],
-		'users'		=> [],
-		'post'		=> -1,
-		'html'		=> ''
-	];
-
-	//Loop over them to find the post(s) for this month
-	foreach($posts as $post){
-		// double check if the current month and year is in the title as the s parameter searches everywhere
-		if(!str_contains($post->post_title, date("F")) && !str_contains($post->post_title, date("Y"))){
-			continue;
-		}
-		
-		$params	= apply_filters('sim-prayer-params', $params, $datetime, $post, $plainText);
-	}
-
-	if(empty($params)){
+	if(empty($posts)){
 		if($plainText){
 			
 			return [
@@ -93,6 +71,28 @@ function prayerRequest($plainText = false, $verified=false, $date='') {
 		}
 		return false;
 	}
+	
+	$message = '';
+	$users = [];
+	foreach($posts as $post){
+		$message .= $post->post_title.'<br>';
+		$message .= $post->post_content.'<br>';
+		
+		$users[] = $post->post_author;
+	}
+	
+	if($plainText){
+		$message = stripTags($message);
+	}
+	
+	$params	= [
+		'message'	=> $message,
+		'urls'		=> [],
+		'pictures'	=> [],
+		'users'		=> $users
+	];
+
+	$params	= apply_filters('sim-prayer-params', $params, $date, $post, $plainText);
 
 	return $params;
 }
