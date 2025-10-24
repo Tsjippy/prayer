@@ -132,7 +132,7 @@ function checkPrayerRequests(){
 	// Get the actual prayer request this warning is for
 	$dateTime		= strtotime("+$days day", time());
 	$dateString		= date(DATEFORMAT, $dateTime);
-	$prayerRequest  = prayerRequest(true, true, $dateString);
+	$prayerRequest  = prayerRequest(true, true, date('Y-m-d', $dateTime));
 	$message 		= wp_strip_all_tags($prayerRequest['html']);
 
 	$signalMessage	= "Good day %name%, $days days from now your prayer request will be sent out.\n\nPlease reply to me with an updated request if needed.\n\nThis is the request I have now:\n\n$message\n\nIt will be sent on $dateString\n\nStart your reply with 'update prayer'";
