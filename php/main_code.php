@@ -57,11 +57,11 @@ function prayerRequest($plainText = false, $verified=false, $date='') {
 	//Get all the prayer posts for this date
 	$posts = get_posts(
 		array(
-			'post_type'  		=> 'prayer',
-			'post_status'  => 'publish',
-			'meta_key'					=> 'date',
-			'meta_value'   => $date,
-			'numberposts'		=> -1,
+			'post_type'		=> 'prayer-request',
+			'post_status'  	=> 'publish',
+			'meta_key'		=> 'date',
+			'meta_value'   	=> $date,
+			'numberposts'	=> -1,
 		)
 	);
 	
@@ -76,27 +76,76 @@ function prayerRequest($plainText = false, $verified=false, $date='') {
 		return false;
 	}
 	
-	$message = '';
-	$users = [];
+	$message	= '';
+	$users 		= [];
+	$pictures	= [];
+	$urls		= [];
+
 	foreach($posts as $post){
-		$message .= $post->post_title.'<br>';
-		$message .= $post->post_content.'<br>';
+		$message	.= trim(explode(':', $post->post_title)[1]).'<br>';
+		$message	.= $post->post_content.'<br>';
 		
-		$users[] = $post->post_author;
+		$users		 = array_merge(get_post_meta($post->ID, 'user-id'), $users);
+	}
+
+	foreach($users as $userId ){
+		// family picture
+		$family			= get_user_meta($userId, 'family', true);
+
+		if(!empty($family['picture'])){
+			if(is_array($family['picture'])){
+				$attachmentId	= $family['picture'][0];
+			}elseif(is_numeric($family['picture'])){
+				$attachmentId	= $family['picture'];
+			}								
+		}else{
+			$attachmentId	= get_user_meta($userId, 'profile_picture', true);
+			if(is_array($attachmentId)){
+				if (isset($attachmentId[0])){
+					$attachmentId	= $attachmentId[0];
+				}else{
+					$attachmentId	= 0;						}
+			}
+		}
+
+		if(is_numeric($attachmentId)){
+			$picture 	= get_attached_file($attachmentId);
+		}else{
+			$picture 	= SIM\urlToPath($attachmentId);
+		}
+
+		if(!in_array($picture, $pictures)){
+			$pictures[]	= $picture;
+		}
+
+		// user page url
+		$url		= SIM\maybeGetUserPageUrl($userId);
+		if($url && !in_array($url, $urls)){
+			$urls[]	= $url;
+		}
 	}
 	
 	if($plainText){
-		$message = stripTags($message);
+		$message	= str_replace(['<br>', '</br>', '</ br>', '<br />'], "\n", $message);
+		$message 	= stripTags($message);
 	}
 	
 	$params	= [
 		'message'	=> $message,
-		'urls'		=> [],
-		'pictures'	=> [],
+		'pictures'	=> $pictures,
+		'urls'		=> $urls,
 		'users'		=> $users
 	];
 
-	$params	= apply_filters('sim-prayer-params', $params, $date, $post, $plainText);
+	// skip filter if we are not returning it for a signal message for today
+	if($plainText && $date == date("Y-m-d")){
+		$params	= apply_filters('sim_after_bot_payer', $params);
+
+		//prevent duplicate urls
+		$params['urls']		= array_unique($params['urls']);
+
+		$params['message']	= $params['message']."\n\n".implode("\n", $params['urls']);
+	}
 
 	return $params;
 }

@@ -15,7 +15,7 @@ function beforeMainContent(){
     }
 
     $message        = SIM\userPageLinks(apply_filters('sim_prayer_message', $prayerRequest['message']));
-    foreach($prayerRequest['pictures'] as $index=>$path){
+    foreach($prayerRequest['pictures'] as $index => $path){
         $url        = $prayerRequest['urls'][$index];
         $pictureUrl = SIM\pathToUrl($path);
 

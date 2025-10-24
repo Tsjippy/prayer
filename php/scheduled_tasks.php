@@ -62,7 +62,7 @@ function sendPrayerRequests(){
 	//Change the user to the admin account otherwise get_users will not work
 	wp_set_current_user(1);
 
-	$prayerRequest	= prayerRequest(true);
+ 	$prayerRequest	= prayerRequest(true);
 
 	$message	 	= "The prayer request of today is:\n";
 	$message 		.= $prayerRequest['message'];
@@ -104,6 +104,7 @@ function sendPrayerRequests(){
 					$dayPart	.= " ".$userdata->first_name;
 				}
 
+				// make this available thrue an action to be used by the signal module, potentially others
 				do_action(
 					'sim-prayer-send-message',
 					"Good $dayPart,\n\n$message", 
@@ -121,8 +122,6 @@ function sendPrayerRequests(){
  * Check if a prayer request needs an update
  */
 function checkPrayerRequests(){
-	global $wpdb;
-
 	// Get the amount of days between this check and the actual publishing
 	$days			= SIM\getModuleOption('prayer', 'prayercheck');
 	if(empty($days)){
@@ -141,6 +140,7 @@ function checkPrayerRequests(){
 		$user		= get_userdata($userId);
 		$msg		= str_replace('%name%', $user->first_name, $signalMessage);
 
+		// make this available thrue an action to be used by the signal module, potentially others
 		do_action(
 			'sim-prayer-send-message',
 			$msg, 
@@ -156,3 +156,7 @@ function moduleDeActivated(){
 
 	wp_clear_scheduled_hook( 'check_prayer_action' );
 }
+
+add_action('init', function(){
+	//sendPrayerRequests();
+});

@@ -33,7 +33,7 @@ function dateRegex(){
     $regex .= "$years$seperators$days$seperators$months|";
     $regex .= "$months$seperators$days$seperators?$years?|";
     $regex .= "$days$seperators$months$seperators?$years?";
-    
+
     return $regex;
 }
 
@@ -41,38 +41,10 @@ function dateRegex(){
  * Parse Prayers Post
  */
 function parsePostContent($post){
-    $years = "(?:20)?(?:0[1-9]|[12]\d)";
-    
-    $month = [
-        'F' => "(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|June?|July?|Aug(?:ust)?|Sept?(?:ember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)",
-        //'M' => "(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sept|Oct|Nov|Dec)",
-        'm' => "(?:0?[1-9]|1[0-2])",
-        //'n' => "(?:[1-9]|1[0-2])"
-    ];
-    $months = "(?:".implode('|', $month).")";
-    
-    $day = [
-        'd' => "(?:0?[1-9]|[12]\d|3[01])(?:nd|th)?",
-        //'j' => "(?:[1-9]|[12]\d|3[0-1]])(?:nd|th)?",
-        //'D' => "(?:Sun|Mon|Tues|Tue|Tu|Wed|Thurs|Thu|Th|Fri|Sat)",
-        'l' => "(?:Sun(?:day)?|Mon(?:day)?|Tue?s?(?:day)?|Wed(?:nesday)?|Thu?r?s?(?:day)?|Fri(?:day)?|Sat(?:urday)?)"
-    ];
-    $days = "\b(?:".implode('|', $day).")\b";
-    
-    $seperators = "(?:\/|\.|-|\s|,\s)";
-    
-    $regex  = "$days$seperators$months$seperators$days$seperators?$years?|";
-    $regex .= "$years$seperators$months$seperators$days|";
-    $regex .= "$years$seperators$days$seperators$months|";
-    $regex .= "$months$seperators$days$seperators?$years?|";
-    $regex .= "$days$seperators$months$seperators?$years?";
-
 	$text		= preg_replace("/(*UTF8)(\x{002D}|\x{058A}|\x{05BE}|\x{2010}|\x{2011}|\x{2012}|\x{2013}|\x{2014}|\x{2015}|\x{2E3A}|\x{2E3B}|\x{FE58}|\x{FE63}|\x{FF0D})/mus", "-", $post->post_content);
 	
 	// build the regex
 	$dateRegex  = dateRegex();
-
-    $dateRegex  = $regex;
 
     $re			= "/(*UTF8)(?P<date>$dateRegex)(?=(?:\R|<|\s)).{0,10}?(?:<br>|<br \/>|<br\/>)(?P<heading>.+?)(?:<br>|<br \/>|<br\/>)(?P<message>.+?)(?=(?:(?:$dateRegex)|$))/s";
 	preg_match_all($re, $text, $matches, PREG_SET_ORDER, 0);
