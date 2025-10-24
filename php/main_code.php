@@ -2,6 +2,10 @@
 namespace SIM\PRAYER;
 use SIM;
 
+add_action('init', function(){
+	SIM\registerPostTypeAndTax('prayer-request', 'prayer-requests');
+});
+
 //give prayer coordinator acces to prayer items
 add_filter('sim_frontend_content_edit_rights', __NAMESPACE__.'\editRights', 10, 2);
 function editRights($editRight, $postCategory){

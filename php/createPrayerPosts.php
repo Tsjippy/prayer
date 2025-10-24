@@ -1,31 +1,38 @@
 <?php
+namespace SIM\PRAYER;
+use SIM;
 
 function dateRegex(){
-    $year = [
-        'Y' => "d{4}",
-        'y' => "d{2}"
+    /* $year = [
+        'Y' => "20(?:0[1-9]|[12]\d)",
+        'y' => "(?:0[1-9]|[12]\d)"
     ];
-    $years = "(?:".implode('|', $year).")";
+    $years = "(?:".implode('|', $year).")"; */
+    $years = "(?:20)?(?:0[1-9]|[12]\d)";
     
     $month = [
-        'F' => "(:?January|February|March|April|May|June|July|August|September|October|November|December)",
-        'M' => "(:?Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sept|Oct|Nov|Dec)",
-        'm' => "d{2}",
-        'n' => "d{1,2}"
+        'F' => "(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|June?|July?|Aug(?:ust)?|Sept?(?:ember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)",
+        //'M' => "(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sept|Oct|Nov|Dec)",
+        'm' => "(?:0?[1-9]|1[0-2])",
+        //'n' => "(?:[1-9]|1[0-2])"
     ];
     $months = "(?:".implode('|', $month).")";
     
     $day = [
-      'd' => "d{2}(?:nd|th)?",
-        'j' => "d{1,2}(?:nd|th)?",
-        'D' => "(:?Sun|Mon|Tues|Tue|Tu|Wed|Thurs|Thu|Th|Fri|Sat)",
-        'l' => "(:?Sunday|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday)"
+        'd' => "(?:0?[1-9]|[12]\d|3[0-1]])(?:nd|th)?",
+        //'j' => "(?:[1-9]|[12]\d|3[0-1]])(?:nd|th)?",
+        //'D' => "(?:Sun|Mon|Tues|Tue|Tu|Wed|Thurs|Thu|Th|Fri|Sat)",
+        'l' => "(?:Sun(?:day)?|Mon(?:day)?|Tue?s?(?:day)?|Wed(?:nesday)?|Thu?r?s?(?:day)?|Fri(?:day)?|Sat(?:urday)?)"
     ];
-    $days = "(?:".implode('|', $day).")";
+    $days = "\b(?:".implode('|', $day).")\b";
     
-    $seperators = "(?:/|.|-|\s|, )";
+    $seperators = "(?:\/|\.|-|\s|,\s)";
     
-    $regex = "($years$seperators$months$seperators$days|$years$seperators$days$seperators$months|$months$seperators$days$seperators$years?|$days$seperators$months$seperators$years?)";
+    $regex  = "$days$seperators$months$seperators$days$seperators?$years?|";
+    $regex .= "$years$seperators$months$seperators$days|";
+    $regex .= "$years$seperators$days$seperators$months|";
+    $regex .= "$months$seperators$days$seperators?$years?|";
+    $regex .= "$days$seperators$months$seperators?$years?";
     
     return $regex;
 }
@@ -37,37 +44,30 @@ function parsePostContent($post){
 	$text		= preg_replace("/(*UTF8)(\x{002D}|\x{058A}|\x{05BE}|\x{2010}|\x{2011}|\x{2012}|\x{2013}|\x{2014}|\x{2015}|\x{2E3A}|\x{2E3B}|\x{FE58}|\x{FE63}|\x{FF0D})/mus", "-", $post->post_content);
 	
 	// build the regex
-	$dateRegex = dateRegex();
-    $re			= "/(*UTF8)$dateRegex.*?(?:<br>|<br \/>|<br\/>)(.+?)(?:<br>|<br \/>|<br\/>)(.+?)($dateRegex|$)/s";
+	$dateRegex  = dateRegex();
+    $re			= "/(*UTF8)(?P<date>$dateRegex)\R.*?(?:<br>|<br \/>|<br\/>)(?P<heading>.+?)(?:<br>|<br \/>|<br\/>)(?P<message>.+?)(?=(?:(?:$dateRegex\R)|$))/s";
 	preg_match_all($re, $text, $matches, PREG_SET_ORDER, 0);
 	
     if(count($matches) < 28){
-        return new WP_Error('prayer', ' Less than 28 prayer requests found!');
+        return false; // Less than 28 prayer requests found
     }
-    
-	// prayer request not found
-	if (!isset($matches[0][2]) || empty($matches[0][2])){
-		return false;
-	}
     
     $prayerRequests = [];
 
     foreach($matches as $match){
-    	$html		= $match[3];
+    	$html		= $match['message'];
     
-    	$heading	= stripTags($match[2]);
+    	$heading	= stripTags($match['heading']);
     	if(!str_contains($heading, '<b>') && !str_contains($heading, '<strong>')){
     		$heading	= "<b>$heading</b>";
     	}
     	
-        $prayerRequests[$match[1]] = [
+        $prayerRequests[$match['date']] = [
             'heading'   => $heading,
-            
-        	'html'	    => stripTags($html),
         
         	'prayer'	=> cleanMessage($html),
         
-        	'userIds'	=> SIM\findUsers($heading, false),
+        	'userIds'	=> array_keys(SIM\findUsers($heading, false)),
         ];
     }
     
@@ -75,7 +75,7 @@ function parsePostContent($post){
 }
 
 function stripTags($content){
-	//Content of page with all prayer requests of this month
+	// Content of page with all prayer requests of this month
 	return trim(strip_tags($content, ['strong', 'b', 'em', 'i', 'details', 's', 'br']));
 }
 
@@ -98,46 +98,64 @@ function cleanMessage($msg){
 	// Remove starting and ending line breaks
 	$msg	= preg_replace("/(^(<br\s*\/?>)|(<br\s*\/?>\s*)+$)/", "", $msg	);
 
-	// Replace '<br>' with "\n"
-	$msg	= preg_replace("/(<br\s*\/?>)/", "\n", $msg	);
-
 	return $msg;
 }
 
 function createPrayerPosts( $postId, $post, $update ) {
     // Check if it's an autosave or a revision
-    if ( wp_is_post_autosave( $postId ) || wp_is_post_revision( $postId ) ) {
+    if ( 
+        wp_is_post_autosave( $postId ) || 
+        wp_is_post_revision( $postId ) || 
+        $post->post_status != 'publish' ||
+        !empty($post->post_parent)
+    ) {
         return;
     }
-    
+
+    $prayerRequests = parsePostContent($post);
+
+    if(!$prayerRequests){
+        return;
+    }
+
     // remove old prayer posts with this post id
-    $posts = get_posts();
+    $posts = get_posts(
+		array(
+			'post_type'     => 'prayer-request',
+			'posts_per_page'=> -1,
+			'post_parent'	=> $post->ID
+		)
+	);
     foreach($posts as $prevPost){
         wp_delete_post($prevPost->ID);
     }
 
-    $prayerRequests = parsePostContent($post);
+    // remove the action to prevent a loop
+    //remove_action( 'save_post', __NAMESPACE__.'\createPrayerPosts', 10);
     
     foreach($prayerRequests as $date => $prayerRequest){
-        $postData = array(
-            'post_title'    => "Prayer Request for $date",
-            'post_content'  => $prayerRequest['message'],
+        $date       = date(DATEFORMAT, strtotime($date));
+        $postData   = array(
+            'post_title'    => "Prayer Request for $date: {$prayerRequest['heading']}",
+            'post_content'  => $prayerRequest['prayer'],
             'post_status'   => 'publish', // or 'draft', 'pending', 'private'
             'post_type'     => 'prayer',    // or 'page', 'custom_post_type'
-            'post_author'   => isset($prayer['userid']) ? $prayer['userid'] : $post->post_author,         // ID of the author
+            'post_author'   => isset($prayerRequest['userIds'][0]) ? $prayerRequest['userIds'][0] : $post->post_author,         // ID of the author
             'post_parent'   => $post->ID
         );
         
         // Insert the post into the database
-        $postId = wp_insert_post( $postData );
+        $postId = wp_insert_post( $postData, false, false );
         
         if ( is_wp_error( $postId ) ) {
-            echo 'Error inserting post: ' . $postId->get_error_message();
-        } else {
-            echo 'Post inserted successfully with ID: ' . $postId;
-        }
+            SIM\printArray('Error inserting post: ' . $postId->get_error_message());
+        } 
         
         add_post_meta( $postId, 'date', date('Y-m-d', strtotime($date)), true );
+
+        foreach($prayerRequest['userIds'] as $userId){
+            add_post_meta( $postId, 'user-id', $userId, false );
+        }
     }
 }
 add_action( 'save_post', __NAMESPACE__.'\createPrayerPosts', 10, 3 );

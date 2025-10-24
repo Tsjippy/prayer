@@ -11,6 +11,4 @@ function loadAssets($hook) {
 	}
 
 	wp_enqueue_script('sim_prayer_admin', SIM\pathToUrl(MODULE_PATH.'js/admin.min.js'), array(), MODULE_VERSION, true);
-
-	SIM\registerPostTypeAndTax('prayer', 'prayers');
 }
