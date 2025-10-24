@@ -9,6 +9,7 @@
 ### Fixed
 - bugs
 - prayer message updating via signal
+- bug in retrieving pictures
 
 ### Updated
 
