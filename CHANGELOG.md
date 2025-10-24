@@ -8,6 +8,7 @@
 
 ### Fixed
 - bugs
+- prayer message updating via signal
 
 ### Updated
 
