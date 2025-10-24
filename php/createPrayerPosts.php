@@ -19,7 +19,7 @@ function dateRegex(){
     $months = "(?:".implode('|', $month).")";
     
     $day = [
-        'd' => "(?:0?[1-9]|[12]\d|3[0-1]])(?:nd|th)?",
+        'd' => "(?:0?[1-9]|[12]\d|3[01])(?:nd|th)?",
         //'j' => "(?:[1-9]|[12]\d|3[0-1]])(?:nd|th)?",
         //'D' => "(?:Sun|Mon|Tues|Tue|Tu|Wed|Thurs|Thu|Th|Fri|Sat)",
         'l' => "(?:Sun(?:day)?|Mon(?:day)?|Tue?s?(?:day)?|Wed(?:nesday)?|Thu?r?s?(?:day)?|Fri(?:day)?|Sat(?:urday)?)"
@@ -41,11 +41,40 @@ function dateRegex(){
  * Parse Prayers Post
  */
 function parsePostContent($post){
+    $years = "(?:20)?(?:0[1-9]|[12]\d)";
+    
+    $month = [
+        'F' => "(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|June?|July?|Aug(?:ust)?|Sept?(?:ember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)",
+        //'M' => "(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sept|Oct|Nov|Dec)",
+        'm' => "(?:0?[1-9]|1[0-2])",
+        //'n' => "(?:[1-9]|1[0-2])"
+    ];
+    $months = "(?:".implode('|', $month).")";
+    
+    $day = [
+        'd' => "(?:0?[1-9]|[12]\d|3[01])(?:nd|th)?",
+        //'j' => "(?:[1-9]|[12]\d|3[0-1]])(?:nd|th)?",
+        //'D' => "(?:Sun|Mon|Tues|Tue|Tu|Wed|Thurs|Thu|Th|Fri|Sat)",
+        'l' => "(?:Sun(?:day)?|Mon(?:day)?|Tue?s?(?:day)?|Wed(?:nesday)?|Thu?r?s?(?:day)?|Fri(?:day)?|Sat(?:urday)?)"
+    ];
+    $days = "\b(?:".implode('|', $day).")\b";
+    
+    $seperators = "(?:\/|\.|-|\s|,\s)";
+    
+    $regex  = "$days$seperators$months$seperators$days$seperators?$years?|";
+    $regex .= "$years$seperators$months$seperators$days|";
+    $regex .= "$years$seperators$days$seperators$months|";
+    $regex .= "$months$seperators$days$seperators?$years?|";
+    $regex .= "$days$seperators$months$seperators?$years?";
+
 	$text		= preg_replace("/(*UTF8)(\x{002D}|\x{058A}|\x{05BE}|\x{2010}|\x{2011}|\x{2012}|\x{2013}|\x{2014}|\x{2015}|\x{2E3A}|\x{2E3B}|\x{FE58}|\x{FE63}|\x{FF0D})/mus", "-", $post->post_content);
 	
 	// build the regex
 	$dateRegex  = dateRegex();
-    $re			= "/(*UTF8)(?P<date>$dateRegex)\R.*?(?:<br>|<br \/>|<br\/>)(?P<heading>.+?)(?:<br>|<br \/>|<br\/>)(?P<message>.+?)(?=(?:(?:$dateRegex\R)|$))/s";
+
+    $dateRegex  = $regex;
+
+    $re			= "/(*UTF8)(?P<date>$dateRegex)(?=(?:\R|<|\s)).{0,10}?(?:<br>|<br \/>|<br\/>)(?P<heading>.+?)(?:<br>|<br \/>|<br\/>)(?P<message>.+?)(?=(?:(?:$dateRegex)|$))/s";
 	preg_match_all($re, $text, $matches, PREG_SET_ORDER, 0);
 	
     if(count($matches) < 28){
@@ -104,10 +133,11 @@ function cleanMessage($msg){
 function createPrayerPosts( $postId, $post, $update ) {
     // Check if it's an autosave or a revision
     if ( 
+        $post->post_type != 'prayer-request' || // We should only process prayer-request posts
+        $post->post_status != 'publish' ||      // Only process if published
         wp_is_post_autosave( $postId ) || 
         wp_is_post_revision( $postId ) || 
-        $post->post_status != 'publish' ||
-        !empty($post->post_parent)
+        !empty($post->post_parent)              // only process if this is not a child itself
     ) {
         return;
     }
@@ -118,7 +148,7 @@ function createPrayerPosts( $postId, $post, $update ) {
         return;
     }
 
-    // remove old prayer posts with this post id
+    // remove any children of this post
     $posts = get_posts(
 		array(
 			'post_type'     => 'prayer-request',
@@ -127,20 +157,17 @@ function createPrayerPosts( $postId, $post, $update ) {
 		)
 	);
     foreach($posts as $prevPost){
-        wp_delete_post($prevPost->ID);
+        wp_delete_post($prevPost->ID, true);
     }
-
-    // remove the action to prevent a loop
-    //remove_action( 'save_post', __NAMESPACE__.'\createPrayerPosts', 10);
     
     foreach($prayerRequests as $date => $prayerRequest){
         $date       = date(DATEFORMAT, strtotime($date));
         $postData   = array(
             'post_title'    => "Prayer Request for $date: {$prayerRequest['heading']}",
             'post_content'  => $prayerRequest['prayer'],
-            'post_status'   => 'publish', // or 'draft', 'pending', 'private'
-            'post_type'     => 'prayer',    // or 'page', 'custom_post_type'
-            'post_author'   => isset($prayerRequest['userIds'][0]) ? $prayerRequest['userIds'][0] : $post->post_author,         // ID of the author
+            'post_status'   => 'publish',
+            'post_type'     => 'prayer-request',
+            'post_author'   => isset($prayerRequest['userIds'][0]) ? $prayerRequest['userIds'][0] : $post->post_author, 
             'post_parent'   => $post->ID
         );
         
@@ -158,4 +185,4 @@ function createPrayerPosts( $postId, $post, $update ) {
         }
     }
 }
-add_action( 'save_post', __NAMESPACE__.'\createPrayerPosts', 10, 3 );
+add_action( 'save_post_prayer-request', __NAMESPACE__.'\createPrayerPosts', 10, 3 );

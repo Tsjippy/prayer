@@ -56,24 +56,25 @@ function updatePrayerRequest($message, $users, $signal){
 function checkPrayerRequestToUpdate($message, $users, $signal){
     foreach($users as $user){
         // get the prayer request to be replaced
-        $prayer         = get_post(
+        $prayerRequests        = get_posts(
             [
-                'post_type' => 'prayer',
-                'post_author' => $user->ID
+                'post_type'     => 'prayer-request',
+                //'post_author'   => $user->ID,
+                'meta_key'      => 'user-id',
+                'meta_value'    => $user->ID
             ]
         );
         
-        if($prayer){
+        if($prayerRequests){
             break;
         }
     }
-    $prayer         = apply_filters('sim-prayer-request-to-update', $prayer, $replaceDate, $message);
 
-    if(!$prayer){
-        return "Could not find prayer request to update for $replaceDate";
+    if(!$prayerRequests){
+        return "Could not find prayer request to update for you, sorry";
     }
 
-    $prayerMessage  = trim($prayer->post_content);
+    $prayerMessage  = trim($prayerRequests[0]->post_content);
 
     // confirm the replacement
     $replacetext    = trim(str_ireplace('update prayer', '', $message));
@@ -84,7 +85,7 @@ function checkPrayerRequestToUpdate($message, $users, $signal){
             'pending-prayer-update-data', 
             [
                 'replacement'   => $replacetext,
-                'post-id'       => $prayer['post']
+                'post-id'       => $prayerRequests[0]->ID
             ]
         );
     }
