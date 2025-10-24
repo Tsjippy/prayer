@@ -131,6 +131,15 @@ function createPrayerPosts( $postId, $post, $update ) {
     foreach($posts as $prevPost){
         wp_delete_post($prevPost->ID, true);
     }
+
+    // Get the categrories from post
+    if(!empty($_POST['prayer-requests-ids'])){
+        $cats   = $_POST['prayer-requests-ids'];
+
+        $cats   = array_map( 'intval', $cats );
+    }else{
+        $cats   = wp_get_post_categories($post->ID);
+    }
     
     foreach($prayerRequests as $date => $prayerRequest){
         $date       = date(DATEFORMAT, strtotime($date));
@@ -155,6 +164,9 @@ function createPrayerPosts( $postId, $post, $update ) {
         foreach($prayerRequest['userIds'] as $userId){
             add_post_meta( $postId, 'user-id', $userId, false );
         }
+
+        // Store the cat
+        wp_set_post_terms($postId, $cats, 'prayer-requests');
     }
 }
 add_action( 'save_post_prayer-request', __NAMESPACE__.'\createPrayerPosts', 10, 3 );

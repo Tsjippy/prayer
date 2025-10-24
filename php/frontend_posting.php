@@ -3,6 +3,20 @@ namespace SIM\PRAYER;
 use SIM;
 use WP_Error;
 
+add_action('sim_frontend_post_before_content', __NAMESPACE__.'\prayerSpecificFields');
+function prayerSpecificFields($frontEndContent){
+	$frontEndContent->showCategories('prayer-request', 'prayer-requests');
+}
+
+add_action('sim_after_post_save', __NAMESPACE__.'\afterPostSave', 1, 2);
+function afterPostSave($post, $frontEndPost){
+	if($post->post_type != 'prayer-request'){
+		return;
+	}
+
+	$frontEndPost->storeCustomCategories($post, 'prayer-requests');
+}
+
 /**
  * Checks if the current post has the prayer category
  * if so checks if it has an word attachment

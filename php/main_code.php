@@ -82,6 +82,11 @@ function prayerRequest($plainText = false, $verified=false, $date='') {
 	$urls		= [];
 
 	foreach($posts as $post){
+		$cats		 = wp_get_post_terms($post->ID, 'prayer-requests');
+		foreach($cats as $cat){
+			$message	.= "<i>$cat->name</i><br>";
+		}
+
 		$message	.= trim(explode(':', $post->post_title)[1]).'<br>';
 		$message	.= $post->post_content.'<br>';
 		
