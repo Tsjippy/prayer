@@ -3,20 +3,6 @@ namespace SIM\PRAYER;
 use SIM;
 use WP_Error;
 
-add_action('sim_frontend_post_before_content', __NAMESPACE__.'\prayerSpecificFields');
-function prayerSpecificFields($frontEndContent){
-	$frontEndContent->showCategories('prayer-request', 'prayer-requests');
-}
-
-add_action('sim_after_post_save', __NAMESPACE__.'\afterPostSave', 1, 2);
-function afterPostSave($post, $frontEndPost){
-	if($post->post_type != 'prayer-request'){
-		return;
-	}
-
-	$frontEndPost->storeCustomCategories($post, 'prayer-requests');
-}
-
 /**
  * Checks if the current post has the prayer category
  * if so checks if it has an word attachment
@@ -26,32 +12,12 @@ function afterPostSave($post, $frontEndPost){
 add_filter('sim_frontend_content_validation', __NAMESPACE__.'\contentValidation', 10, 2);
 function contentValidation($error, $frontEndContent){
     // do not continue if the post content contains less than 28 prayerpoints
-    if(is_wp_error($error) || preg_match_all('/\d{1,2}\([S|M|T|W|F]\)/i', strip_tags($frontEndContent->postContent), $matches) < 20){
+    if(
+        $frontEndContent->postType   != 'prayer' ||
+        is_wp_error($error) || 
+        preg_match_all('/\d{1,2}\([S|M|T|W|F]\)/i', strip_tags($frontEndContent->postContent), $matches) < 20
+    ){
         return $error;
-    }
-
-    $prayerCatId    = get_cat_ID('prayer');
-    if(!$prayerCatId && !in_array($prayerCatId, $frontEndContent->categories)){
-        return new WP_Error('prayer', "I guess you are submitting a post with prayerpoints.<br><br>Please add the prayer category.");
-    }
-
-    $months = [];
-    setlocale(LC_TIME, get_locale());
-    for($m=1; $m<=12; $m++){
-        $months[]   = strftime("%B", mktime(0, 0, 0, $m, 12));
-    }
-
-    // Check if the title contains the month
-    $found  = false;
-    foreach($months as $month){
-        if(str_contains($frontEndContent->postTitle, $month)){
-            $found  = true;
-            break;
-        }
-    }
-
-    if(!$found){
-        return new WP_Error('prayer', "I guess you are submitting a post with prayerpoints?<br><br>Please make sure the monthname is included in the post title.");
     }
 
     $years  = [Date('Y')-2, Date('Y')-1, Date('Y'), Date('Y')+1];

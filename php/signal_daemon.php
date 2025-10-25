@@ -4,6 +4,10 @@ use SIM;
 
 add_filter('sim-signal-daemon-response', __NAMESPACE__.'\addPrayerResponse', 10, 6);
 function addPrayerResponse($response, $message, $source, $users, $name, $signal){
+    if($response['message'] != 'I have no clue, do you know?'){
+        return $response;
+    }
+
     if(str_starts_with($message, 'update prayer correct')){
         $response['message']    = updatePrayerRequest($message, $users, $signal);
     }
@@ -59,7 +63,6 @@ function checkPrayerRequestToUpdate($message, $users, $signal){
         $prayerRequests        = get_posts(
             [
                 'post_type'     => 'prayer-request',
-                //'post_author'   => $user->ID,
                 'meta_key'      => 'user-id',
                 'meta_value'    => $user->ID
             ]
