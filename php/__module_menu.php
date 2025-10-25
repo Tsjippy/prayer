@@ -2,7 +2,7 @@
 namespace SIM\PRAYER;
 use SIM;
 
-const MODULE_VERSION		= '8.2.1';
+const MODULE_VERSION		= '8.3.0';
 //module slug is the same as grandparent folder name
 DEFINE(__NAMESPACE__.'\MODULE_SLUG', strtolower(basename(dirname(__DIR__))));
 
