@@ -2,17 +2,24 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- prayer-request post type
 
 ### Changed
+
+### Fixed
+
+### Updated
+
+## [8.3.0] - 2025-10-25
+
+
+### Added
+- prayer-request post type
 
 ### Fixed
 - bugs
 - prayer message updating via signal
 - bug in retrieving pictures
 - show prayer categories above praer request
-
-### Updated
 
 ## [8.2.1] - 2025-10-13
 
