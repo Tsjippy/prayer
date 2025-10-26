@@ -131,21 +131,46 @@ function checkPrayerRequests(){
 	// Get the actual prayer request this warning is for
 	$dateTime		= strtotime("+$days day", time());
 	$dateString		= date(DATEFORMAT, $dateTime);
-	$prayerRequest  = prayerRequest(true, true, date('Y-m-d', $dateTime));
-	$message 		= wp_strip_all_tags($prayerRequest['html']);
 
-	$signalMessage	= "Good day %name%, $days days from now your prayer request will be sent out.\n\nPlease reply to me with an updated request if needed.\n\nThis is the request I have now:\n\n$message\n\nIt will be sent on $dateString\n\nStart your reply with 'update prayer'";
+	$prayerRequests = get_posts(
+		array(
+			'post_type'		=> 'prayer-request',
+			'post_status'  	=> 'publish',
+			'numberposts'	=> -1,
+			'meta_query'     => array(
+        		'relation' => 'AND',
+				array(
+					'key'     => 'date',
+					'value'   => date('Y-m-d', $dateTime)),
+				array(
+					'key'     => 'user-id',
+					'compare' => 'EXISTS',
+				),
+			)
+		)
+	);
 
-	foreach($prayerRequest['users'] as $userId){
-		$user		= get_userdata($userId);
-		$msg		= str_replace('%name%', $user->first_name, $signalMessage);
+	// loop over all found prayer requests for the date with users attached to it. 
+	foreach($prayerRequests as $prayerRequest){
+		$message 		= wp_strip_all_tags($prayerRequest->post_content);
 
-		// make this available thrue an action to be used by the signal module, potentially others
-		do_action(
-			'sim-prayer-send-message',
-			$msg, 
-			$user
-		);
+		if(empty($message)){
+			continue;
+		}
+
+		$signalMessage	= "Good day %name%, $days days from now your prayer request will be sent out.\n\nPlease reply to me with an updated request if needed.\n\nThis is the request I have now:\n\n$message\n\nIt will be sent on $dateString\n\nStart your reply with 'update prayer'";
+
+		foreach($prayerRequest['users'] as $userId){
+			$user		= get_userdata($userId);
+			$msg		= str_replace('%name%', $user->first_name, $signalMessage);
+
+			// make this available thrue an action to be used by the signal module, potentially others
+			do_action(
+				'sim-prayer-send-message',
+				$msg, 
+				$user
+			);
+		}
 	}
 }
 
@@ -158,5 +183,5 @@ function moduleDeActivated(){
 }
 
 add_action('init', function(){
-	//sendPrayerRequests();
+	checkPrayerRequests()();
 });
