@@ -7,6 +7,7 @@
 - new format for frontendcontent
 
 ### Fixed
+- casing in new prayer messages
 
 ### Updated
 
