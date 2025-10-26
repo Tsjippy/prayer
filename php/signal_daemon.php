@@ -8,13 +8,15 @@ function addPrayerResponse($response, $message, $source, $users, $name, $signal)
         return $response;
     }
 
+    $lowerMessage = strtolower($message);
+
     if(str_starts_with($message, 'update prayer correct')){
         $response['message']    = updatePrayerRequest($message, $users, $signal);
     }
     
-    elseif(str_starts_with($message, 'update prayer')){
+    elseif(str_starts_with($lowerMessage, 'update prayer')){
         $response['message']    = checkPrayerRequestToUpdate($message, $users, $signal);
-    }elseif(str_contains($message, 'prayer') && $name){
+    }elseif(str_contains($lowerMessage, 'prayer') && $name){
         $prayerRequest  = prayerRequest(true, true);
         $response['message']    = "This is the prayer for today:\n\n{$prayerRequest['message']}";
         $response['pictures']   = $prayerRequest['pictures'];
@@ -49,12 +51,16 @@ function updatePrayerRequest($message, $users, $signal){
     
     // do the actual replacement
     wp_update_post(
-        $post,
+        [
+            'ID'            => $post->ID,
+            'post_content'  => $replacementData['replacement']
+        ],
         false,
         false
     );
 
-    return "Updated your prayer request for '{$replacementData['date']}'\n\nto:\n'{$replacementData['replacement']}'";
+    $date   = date(DATEFORMAT, strtotime($replacementData['date']));
+    return "Updated your prayer request for $date\n\nto:\n'{$replacementData['replacement']}'";
 }
 
 function checkPrayerRequestToUpdate($message, $users, $signal){
@@ -82,13 +88,22 @@ function checkPrayerRequestToUpdate($message, $users, $signal){
     // confirm the replacement
     $replacetext    = trim(str_ireplace('update prayer', '', $message));
 
+    if(empty($replacetext)){
+        return "You did not supply me with the new prayer request.";
+    }
+
+    if($replacetext == $prayerMessage){
+        return "The prayer message is already just as you want";
+    }
+
     foreach($users as $user){
         update_user_meta(
             $user->ID, 
             'pending-prayer-update-data', 
             [
                 'replacement'   => $replacetext,
-                'post-id'       => $prayerRequests[0]->ID
+                'post-id'       => $prayerRequests[0]->ID,
+                'date'          => get_post_meta($prayerRequests[0]->ID, 'date', true)
             ]
         );
     }
