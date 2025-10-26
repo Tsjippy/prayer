@@ -8,6 +8,7 @@
 
 ### Fixed
 - casing in new prayer messages
+- prayer reminder
 
 ### Updated
 
