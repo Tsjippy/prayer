@@ -4,14 +4,21 @@
 ### Added
 
 ### Changed
+
+### Fixed
+
+### Updated
+
+## [8.3.1] - 2025-10-27
+
+
+### Changed
 - new format for frontendcontent
 
 ### Fixed
 - casing in new prayer messages
 - prayer reminder
 - prayer reminder message
-
-### Updated
 
 ## [8.3.0] - 2025-10-25
 
