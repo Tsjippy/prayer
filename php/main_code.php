@@ -59,6 +59,8 @@ function prayerRequest($plainText = false, $verified=false, $date='') {
 		array(
 			'post_type'		=> 'prayer-request',
 			'post_status'  	=> 'publish',
+			'orderby'       => 'date',
+			'order'         => 'ASC',
 			'meta_key'		=> 'date',
 			'meta_value'   	=> $date,
 			'numberposts'	=> -1,

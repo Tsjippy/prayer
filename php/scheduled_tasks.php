@@ -137,11 +137,12 @@ function checkPrayerRequests(){
 			'post_type'		=> 'prayer-request',
 			'post_status'  	=> 'publish',
 			'numberposts'	=> -1,
-			'meta_query'     => array(
+			'meta_query'    => array(
         		'relation' => 'AND',
 				array(
 					'key'     => 'date',
-					'value'   => date('Y-m-d', $dateTime)),
+					'value'   => date('Y-m-d', $dateTime)
+				),
 				array(
 					'key'     => 'user-id',
 					'compare' => 'EXISTS',
@@ -160,7 +161,7 @@ function checkPrayerRequests(){
 
 		$signalMessage	= "Good day %name%, $days days from now your prayer request will be sent out.\n\nPlease reply to me with an updated request if needed.\n\nThis is the request I have now:\n\n$message\n\nIt will be sent on $dateString\n\nStart your reply with 'update prayer'";
 
-		foreach($prayerRequest['users'] as $userId){
+		foreach(get_post_meta($prayerRequest->ID, 'user-id') as $userId){
 			$user		= get_userdata($userId);
 			$msg		= str_replace('%name%', $user->first_name, $signalMessage);
 
@@ -174,14 +175,10 @@ function checkPrayerRequests(){
 	}
 }
 
-// Remove scheduled tasks upon module deactivatio
+// Remove scheduled tasks upon module deactivation
 add_action('sim_module_prayer_deactivated', __NAMESPACE__.'\moduleDeActivated');
 function moduleDeActivated(){
 	wp_clear_scheduled_hook( 'send_prayer_action' );
 
 	wp_clear_scheduled_hook( 'check_prayer_action' );
 }
-
-add_action('init', function(){
-	checkPrayerRequests()();
-});
