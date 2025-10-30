@@ -40,6 +40,8 @@ function prayerRequest($plainText = false, $verified=false, $date='') {
 		return false;
 	}
 
+	$family	= new SIM\FAMILY\Family();
+
 	if(empty($date)){
 		$date = date("Y-m-d");
 	}else{
@@ -97,14 +99,10 @@ function prayerRequest($plainText = false, $verified=false, $date='') {
 
 	foreach($users as $userId ){
 		// family picture
-		$family			= get_user_meta($userId, 'family', true);
+		$picture = $family->getFamilyMeta($userId, 'picture');
 
-		if(!empty($family['picture'])){
-			if(is_array($family['picture'])){
-				$attachmentId	= $family['picture'][0];
-			}elseif(is_numeric($family['picture'])){
-				$attachmentId	= $family['picture'];
-			}								
+		if(is_numeric($picture)){
+			$attachmentId	= $picture;								
 		}else{
 			$attachmentId	= get_user_meta($userId, 'profile_picture', true);
 			if(is_array($attachmentId)){
