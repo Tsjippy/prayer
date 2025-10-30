@@ -43,10 +43,30 @@ function dateRegex(){
 function parsePostContent($post){
 	$text		= preg_replace("/(*UTF8)(\x{002D}|\x{058A}|\x{05BE}|\x{2010}|\x{2011}|\x{2012}|\x{2013}|\x{2014}|\x{2015}|\x{2E3A}|\x{2E3B}|\x{FE58}|\x{FE63}|\x{FF0D})/mus", "-", $post->post_content);
 	
-	// build the regex
-	$dateRegex  = dateRegex();
+	/**
+     * build the regex
+     **/
 
-    $re			= "/(*UTF8)(?P<date>$dateRegex)(?=(?:\R|<|\s)).{0,10}?(?:<br>|<br \/>|<br\/>)(?P<heading>.+?)(?:<br>|<br \/>|<br\/>)(?P<message>.+?)(?=(?:(?:$dateRegex)|$))/s";
+    // the date pattern itself
+	$dateRegex      = dateRegex(); 
+
+    // makes sure the date is not part of a bigger word and is on its own line
+    $charsAfterDate = "(?=(?:\R|<|\s)).{0,10}?(?:<br>|<br \/>|<br\/>)"; 
+
+    // This captures the first line, the date
+    $dateLine       = "(?P<date>$dateRegex)$charsAfterDate";
+
+    // Captures the heading of the prayer request
+    $heading        = "(?P<heading>.+?)(?:<br>|<br \/>|<br\/>)"; 
+
+    // The actual message
+    $message        = "(?P<message>.+?)";
+
+    // the line of the next prayer request or the end of the document
+    $end            = "(?=(?:(?:$dateRegex)$charsAfterDate|$))";
+    
+    // All combined
+    $re			    = "/(*UTF8)$dateLine$heading$message$end/s";
 	preg_match_all($re, $text, $matches, PREG_SET_ORDER, 0);
 	
     if(count($matches) < 28){
