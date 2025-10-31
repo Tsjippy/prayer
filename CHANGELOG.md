@@ -7,6 +7,7 @@
 
 ### Fixed
 - bug in regex
+- getting family picture
 
 ### Updated
 
