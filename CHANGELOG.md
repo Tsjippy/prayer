@@ -6,10 +6,15 @@
 ### Changed
 
 ### Fixed
-- bug in regex
-- getting family picture
 
 ### Updated
+
+## [8.3.3] - 2025-10-31
+
+
+### Fixed
+- bug in regex
+- getting family picture
 
 ## [8.3.2] - 2025-10-30
 
