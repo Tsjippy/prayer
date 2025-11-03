@@ -87,12 +87,17 @@ function prayerRequest($plainText = false, $verified=false, $date='') {
 
 	foreach($posts as $post){
 		$cats		 = wp_get_post_terms($post->ID, 'prayer-requests');
+
+		// Show the category name
 		foreach($cats as $cat){
 			$message	.= "<i>$cat->name</i><br>";
 		}
 
+		// Add the heading
 		$message	.= trim(explode(':', $post->post_title)[1]).'<br>';
-		$message	.= $post->post_content.'<br>';
+
+		// Main message
+		$message	.= $post->post_content.'<br><br>';
 		
 		$users		 = array_merge(get_post_meta($post->ID, 'user-id'), $users);
 	}
