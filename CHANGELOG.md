@@ -6,11 +6,16 @@
 ### Changed
 
 ### Fixed
+
+### Updated
+
+## [8.3.4] - 2025-11-03
+
+
+### Fixed
 - bug in regex
 - getting family picture
 - there should be an empty line in between prayer requests
-
-### Updated
 
 ## [8.3.2] - 2025-10-30
 
