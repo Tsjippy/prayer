@@ -8,6 +8,7 @@
 ### Fixed
 - bug in regex
 - getting family picture
+- there should be an empty line in between prayer requests
 
 ### Updated
 
