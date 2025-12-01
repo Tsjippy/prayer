@@ -5,6 +5,7 @@
 
 ### Changed
 - implemented new userpagelinks
+- implemented new userpagelink class
 
 ### Fixed
 
