@@ -4,12 +4,17 @@
 ### Added
 
 ### Changed
-- implemented new userpagelinks
-- implemented new userpagelink class
 
 ### Fixed
 
 ### Updated
+
+## [8.3.5] - 2025-12-01
+
+
+### Changed
+- implemented new userpagelinks
+- implemented new userpagelink class
 
 ## [8.3.4] - 2025-11-03
 
