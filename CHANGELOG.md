@@ -4,6 +4,7 @@
 ### Added
 
 ### Changed
+- implemented new userpagelinks
 
 ### Fixed
 
