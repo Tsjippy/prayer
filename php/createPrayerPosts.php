@@ -82,13 +82,15 @@ function parsePostContent($post){
     	if(!str_contains($heading, '<b>') && !str_contains($heading, '<strong>')){
     		$heading	= "<b>$heading</b>";
     	}
+
+        $userPageLinks  = new SIM\UserPageLinks($heading, false);
     	
         $prayerRequests[$match['date']] = [
             'heading'   => $heading,
         
         	'prayer'	=> cleanMessage($html),
         
-        	'userIds'	=> array_keys(SIM\findUsers($heading, false)),
+        	'userIds'	=> $userPageLinks->foundUsers,
         ];
     }
     
