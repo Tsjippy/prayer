@@ -13,8 +13,8 @@ function beforeMainContent(){
     if(!$prayerRequest){
         return;
     }
-
-    $message        = SIM\userPageLinks(apply_filters('sim_prayer_message', $prayerRequest['message']));
+    $userPageLinks	= new SIM\UserPageLinks(apply_filters('sim_prayer_message', $prayerRequest['message']), true);
+    $message        = $userPageLinks->string;
     foreach($prayerRequest['pictures'] as $index => $path){
         $url        = $prayerRequest['urls'][$index];
         $pictureUrl = SIM\pathToUrl($path);
