@@ -6,9 +6,14 @@
 ### Changed
 
 ### Fixed
-- parse prayer requests without br for a new line
 
 ### Updated
+
+## [8.3.6] - 2026-04-06
+
+
+### Fixed
+- parse prayer requests without br for a new line
 
 ## [8.3.5] - 2025-12-01
 
