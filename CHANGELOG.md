@@ -6,6 +6,7 @@
 ### Changed
 
 ### Fixed
+- parse prayer requests without br for a new line
 
 ### Updated
 
