@@ -51,13 +51,13 @@ function parsePostContent($post){
 	$dateRegex      = dateRegex(); 
 
     // makes sure the date is not part of a bigger word and is on its own line
-    $charsAfterDate = "(?=(?:\R|<|\s)).{0,10}?(?:<br>|<br \/>|<br\/>)"; 
+    $charsAfterDate = "(?=(?:\R|<|\s)).{0,20}?(?:<br>|<br \/>|<br\/>|\R)";
 
     // This captures the first line, the date
     $dateLine       = "(?P<date>$dateRegex)$charsAfterDate";
 
     // Captures the heading of the prayer request
-    $heading        = "(?P<heading>.+?)(?:<br>|<br \/>|<br\/>)"; 
+    $heading        = "(?P<heading>.+?)(?:<br>|<br \/>|<br\/>|\R)";
 
     // The actual message
     $message        = "(?P<message>.+?)";
