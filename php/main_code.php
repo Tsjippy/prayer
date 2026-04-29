@@ -1,13 +1,17 @@
 <?php
-namespace SIM\PRAYER;
-use SIM;
+namespace TSJIPPY\PRAYER;
+use TSJIPPY;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 add_action('init', function(){
-	SIM\registerPostTypeAndTax('prayer-request', 'prayer-requests');
+	TSJIPPY\registerPostTypeAndTax('prayer-request', 'prayer-requests');
 });
 
 //give prayer coordinator acces to prayer items
-add_filter('sim_frontend_content_edit_rights', __NAMESPACE__.'\editRights', 10, 2);
+add_filter('tsjippy_frontend_content_edit_rights', __NAMESPACE__.'\editRights', 10, 2);
 function editRights($editRight, $postCategory){
 	
 	if(
@@ -40,7 +44,7 @@ function prayerRequest($plainText = false, $verified=false, $date='') {
 		return false;
 	}
 
-	$family	= new SIM\FAMILY\Family();
+	$family	= new TSJIPPY\FAMILY\Family();
 
 	if(empty($date)){
 		$date = date("Y-m-d");
@@ -121,7 +125,7 @@ function prayerRequest($plainText = false, $verified=false, $date='') {
 		if(is_numeric($attachmentId)){
 			$picture 	= get_attached_file($attachmentId);
 		}else{
-			$picture 	= SIM\urlToPath($attachmentId);
+			$picture 	= TSJIPPY\urlToPath($attachmentId);
 		}
 
 		if(!in_array($picture, $pictures)){
@@ -129,7 +133,7 @@ function prayerRequest($plainText = false, $verified=false, $date='') {
 		}
 
 		// user page url
-		$url		= SIM\maybeGetUserPageUrl($userId);
+		$url		= TSJIPPY\maybeGetUserPageUrl($userId);
 		if($url && !in_array($url, $urls)){
 			$urls[]	= $url;
 		}
@@ -149,7 +153,7 @@ function prayerRequest($plainText = false, $verified=false, $date='') {
 
 	// skip filter if we are not returning it for a signal message for today
 	if($plainText && $date == date("Y-m-d")){
-		$params	= apply_filters('sim_after_bot_payer', $params);
+		$params	= apply_filters('tsjippy_after_bot_payer', $params);
 
 		//prevent duplicate urls
 		$params['urls']		= array_unique($params['urls']);

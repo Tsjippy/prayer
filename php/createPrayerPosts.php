@@ -1,6 +1,10 @@
 <?php
-namespace SIM\PRAYER;
-use SIM;
+namespace TSJIPPY\PRAYER;
+use TSJIPPY;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 function dateRegex(){
     /* $year = [
@@ -83,7 +87,7 @@ function parsePostContent($post){
     		$heading	= "<b>$heading</b>";
     	}
 
-        $userPageLinks  = new SIM\UserPageLinks($heading, false);
+        $userPageLinks  = new TSJIPPY\UserPageLinks($heading, false);
     	
         $prayerRequests[$match['date']] = [
             'heading'   => $heading,
@@ -178,7 +182,7 @@ function createPrayerPosts( $postId, $post, $update ) {
         $postId = wp_insert_post( $postData, false, false );
         
         if ( is_wp_error( $postId ) ) {
-            SIM\printArray('Error inserting post: ' . $postId->get_error_message());
+            TSJIPPY\printArray('Error inserting post: ' . $postId->get_error_message());
         } 
         
         add_post_meta( $postId, 'date', date('Y-m-d', strtotime($date)), true );

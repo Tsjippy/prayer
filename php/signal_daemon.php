@@ -1,8 +1,12 @@
 <?php
-namespace SIM\PRAYER;
-use SIM;
+namespace TSJIPPY\PRAYER;
+use TSJIPPY;
 
-add_filter('sim-signal-daemon-response', __NAMESPACE__.'\addPrayerResponse', 10, 6);
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+add_filter('tsjippy-signal-daemon-response', __NAMESPACE__.'\addPrayerResponse', 10, 6);
 function addPrayerResponse($response, $message, $source, $users, $name, $signal){
     if($response['message'] != 'I have no clue, do you know?'){
         return $response;

@@ -1,6 +1,10 @@
 <?php
-namespace SIM\PRAYER;
-use SIM;
+namespace TSJIPPY\PRAYER;
+use TSJIPPY;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 add_action('delete_user', __NAMESPACE__.'\onUserDelete');
 function onUserDelete($userId){

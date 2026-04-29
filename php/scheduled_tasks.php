@@ -1,6 +1,10 @@
 <?php
-namespace SIM\PRAYER;
-use SIM;
+namespace TSJIPPY\PRAYER;
+use TSJIPPY;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 add_action('init', __NAMESPACE__.'\init');
 function init(){
@@ -12,9 +16,9 @@ function init(){
 }
 
 function scheduleTasks(){
-    SIM\scheduleTask('send_prayer_action', 'quarterly');
+    TSJIPPY\scheduleTask('send_prayer_action', 'quarterly');
 
-	SIM\scheduleTask('check_prayer_action', 'daily');
+	TSJIPPY\scheduleTask('check_prayer_action', 'daily');
 }
 
 function createNewSchedule($schedule){
@@ -37,7 +41,7 @@ function createNewSchedule($schedule){
 		update_option('signal_prayers', $schedule);
 	}
 
-	$groups			= SIM\getModuleOption(MODULE_SLUG, 'groups');
+	$groups			= SETTINGS['groups'] ?? [];
 	foreach($groups as $group){
 		if(isset($schedule[$group['time']])){
 			$schedule[$group['time']][]	= $group['name'];
@@ -106,7 +110,7 @@ function sendPrayerRequests(){
 
 				// make this available thrue an action to be used by the signal module, potentially others
 				do_action(
-					'sim-prayer-send-message',
+					'tsjippy-prayer-send-message',
 					"Good $dayPart,\n\n$message", 
 					$user, 
 					$prayerRequest['pictures']
@@ -123,7 +127,7 @@ function sendPrayerRequests(){
  */
 function checkPrayerRequests(){
 	// Get the amount of days between this check and the actual publishing
-	$days			= SIM\getModuleOption('prayer', 'prayercheck');
+	$days			= SETTINGS['prayercheck'] ?? [];
 	if(empty($days)){
 		return;
 	}
@@ -167,7 +171,7 @@ function checkPrayerRequests(){
 
 			// make this available thrue an action to be used by the signal module, potentially others
 			do_action(
-				'sim-prayer-send-message',
+				'tsjippy-prayer-send-message',
 				$msg, 
 				$user
 			);
@@ -176,7 +180,7 @@ function checkPrayerRequests(){
 }
 
 // Remove scheduled tasks upon module deactivation
-add_action('sim_module_prayer_deactivated', __NAMESPACE__.'\moduleDeActivated');
+add_action('tsjippy_module_prayer_deactivated', __NAMESPACE__.'\moduleDeActivated');
 function moduleDeActivated(){
 	wp_clear_scheduled_hook( 'send_prayer_action' );
 

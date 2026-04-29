@@ -1,8 +1,12 @@
 <?php
-namespace SIM\PRAYER;
-use SIM;
+namespace TSJIPPY\PRAYER;
+use TSJIPPY;
 
-add_filter('sim_personal_signal_settings', __NAMESPACE__.'\signalSettings', 10, 3);
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+add_filter('tsjippy_personal_signal_settings', __NAMESPACE__.'\signalSettings', 10, 3);
 function signalSettings($settings, $user, $prefs){
     $prayerTime = '';
     if(isset($prefs['prayertime'])){
@@ -17,7 +21,7 @@ function signalSettings($settings, $user, $prefs){
     return $settings;
 }
 
-add_action('sim_signal_before_pref_save', __NAMESPACE__.'\beforePrevSafe', 10, 2);
+add_action('tsjippy_signal_before_pref_save', __NAMESPACE__.'\beforePrevSafe', 10, 2);
 function beforePrevSafe($userId, $prefs){
     $prayerTimes    = (array)get_option('signal_prayers');
     $time           = $prefs['prayertime'];

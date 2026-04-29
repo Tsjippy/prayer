@@ -1,8 +1,12 @@
 <?php
-namespace SIM\PRAYER;
-use SIM;
+namespace TSJIPPY\PRAYER;
+use TSJIPPY;
 
-add_action('sim_frontpage_before_main_content', __NAMESPACE__.'\beforeMainContent', 5);
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+add_action('tsjippy_frontpage_before_main_content', __NAMESPACE__.'\beforeMainContent', 5);
 function beforeMainContent(){
     if(!is_user_logged_in()){
         return;
@@ -13,11 +17,11 @@ function beforeMainContent(){
     if(!$prayerRequest){
         return;
     }
-    $userPageLinks	= new SIM\UserPageLinks(apply_filters('sim_prayer_message', $prayerRequest['message']), true);
+    $userPageLinks	= new TSJIPPY\UserPageLinks(apply_filters('tsjippy_prayer_message', $prayerRequest['message']), true);
     $message        = $userPageLinks->string;
     foreach($prayerRequest['pictures'] as $index => $path){
         $url        = $prayerRequest['urls'][$index];
-        $pictureUrl = SIM\pathToUrl($path);
+        $pictureUrl = TSJIPPY\pathToUrl($path);
 
         if(!$pictureUrl ){
             continue;
