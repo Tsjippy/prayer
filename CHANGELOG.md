@@ -2,6 +2,17 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+
+### Changed
+
+### Fixed
+
+### Updated
+
+## [10.0.0] - 2026-05-01
+
+
+### Added
 - redirection to settings page on plugin activation
 
 ### Changed
@@ -9,10 +20,6 @@
 - module to plugin
 - exclude .vscode from releases
 - updated github workflow versions
-
-### Fixed
-
-### Updated
 
 ## [8.3.6] - 2026-04-06
 
