@@ -8,6 +8,7 @@
 - main plugin name from sim-base to tsjippy-shared-functionality
 - module to plugin
 - exclude .vscode from releases
+- updated github workflow versions
 
 ### Fixed
 
