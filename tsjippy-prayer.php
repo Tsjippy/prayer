@@ -4,7 +4,7 @@ namespace TSJIPPY\PRAYER;
 /**
  * Plugin Name:  		Tsjippy Prayer
  * Description:  		This plugin adds 1 post category: 'Prayer' You should add a new post with the prayer category each month. This post should have a prayer request for each day on seperate lines. The lines should have this format: '1(T) – ' So an example will look like this: <code> 1(M) – Prayer for day 1 2(T) – Prayer for day 2 </code> If such a post is available the daily prayerrequest will be displayed on the homepage and will be available via the rest-api.
- * Version:      		10.0.1
+ * Version:      		10.0.2
  * Author:       		Ewald Harmsen
  * AuthorURI:			harmseninnigeria.nl
  * Requires at least:	6.3
