@@ -4,6 +4,7 @@
 ### Added
 
 ### Changed
+- removed admin login for cron
 
 ### Fixed
 
