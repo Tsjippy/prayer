@@ -63,8 +63,6 @@ function createNewSchedule($schedule){
  * a seperate schedule for each day to be sure everyone gets what they requested
  */
 function sendPrayerRequests(){
-	//Change the user to the admin account otherwise get_users will not work
-	wp_set_current_user(1);
 
  	$prayerRequest	= prayerRequest(true);
 
