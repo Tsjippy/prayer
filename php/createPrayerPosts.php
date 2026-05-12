@@ -43,6 +43,8 @@ function dateRegex(){
 
 /**
  * Parse Prayers Post
+ * 
+ * @param   object  $post   The post object of the prayer post
  */
 function parsePostContent($post){
 	$text		= preg_replace("/(*UTF8)(\x{002D}|\x{058A}|\x{05BE}|\x{2010}|\x{2011}|\x{2012}|\x{2013}|\x{2014}|\x{2015}|\x{2E3A}|\x{2E3B}|\x{FE58}|\x{FE63}|\x{FF0D})/mus", "-", $post->post_content);
@@ -101,6 +103,13 @@ function parsePostContent($post){
     return $prayerRequests;
 }
 
+/**
+ * Strips HTML tags from the content
+ *
+ * @param   string  $content    The content to strip tags from
+ *
+ * @return  string  The content with tags stripped
+ */
 function stripTags($content){
 	// Content of page with all prayer requests of this month
 	return trim(strip_tags($content, ['strong', 'b', 'em', 'i', 'details', 's', 'br']));
@@ -108,6 +117,10 @@ function stripTags($content){
 
 /**
  * Removes and balances html tags
+ * 
+ * @param   string  $msg    The message to clean
+ * 
+ * @return  string  The cleaned message
  */
 function cleanMessage($msg){
 	// < SOME TAG > one or more spaces followed by the same tag closing </ (\g1) >
@@ -128,6 +141,13 @@ function cleanMessage($msg){
 	return $msg;
 }
 
+/**
+ * Creates prayer posts from a parent post
+ *
+ * @param   int     $postId   The ID of the parent post
+ * @param   object  $post     The parent post object
+ * @param   bool    $update   Whether this is an update or a new post
+ */
 function createPrayerPosts( $postId, $post, $update ) {
     // Check if it's an autosave or a revision
     if ( 

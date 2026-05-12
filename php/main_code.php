@@ -12,6 +12,14 @@ add_action('init', function(){
 
 //give prayer coordinator acces to prayer items
 add_filter('tsjippy_frontend_content_edit_rights', __NAMESPACE__.'\editRights', 10, 2);
+/**
+ * Tweaks the edit rights for prayer requests
+ *
+ * @param   bool    $editRight      Whether the user has edit rights
+ * @param   array   $postCategory     The categories of the post
+ *
+ * @return  bool    Whether the user has edit rights
+ */
 function editRights($editRight, $postCategory){
 	
 	if(
