@@ -14,6 +14,13 @@ if ( ! defined( 'ABSPATH' ) ) {
  * returns an error when it does not have the month and year in the title
  */
 add_filter('tsjippy_frontend_content_validation', __NAMESPACE__.'\contentValidation', 10, 2);
+/**
+ * Validates the content of the frontend post
+ *
+ * @param WP_Error $error The error object
+ * @param object $frontEndContent The frontend content object
+ * @return WP_Error The error object
+ */
 function contentValidation($error, $frontEndContent){
     // do not continue if the post content contains less than 28 prayerpoints
     if(

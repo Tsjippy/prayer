@@ -17,8 +17,11 @@ function beforeMainContent(){
     if(!$prayerRequest){
         return;
     }
-    $userPageLinks	= new TSJIPPY\UserPageLinks(apply_filters('tsjippy_prayer_message', $prayerRequest['message']), true);
-    $message        = $userPageLinks->string;
+
+    $filteredMessage    = apply_filters('tsjippy_prayer_message', $prayerRequest['message']);
+    $userPageLinks	    = new TSJIPPY\UserPageLinks($filteredMessage, true);
+    $message            = $userPageLinks->string;
+    
     foreach($prayerRequest['pictures'] as $index => $path){
         $url        = $prayerRequest['urls'][$index];
         $pictureUrl = TSJIPPY\pathToUrl($path);
