@@ -7,6 +7,7 @@
 - date( to gmdate(
 
 ### Fixed
+- saving signal group when empty name
 
 ### Updated
 
