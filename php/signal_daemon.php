@@ -63,7 +63,7 @@ function updatePrayerRequest($message, $users, $signal){
         false
     );
 
-    $date   = date(DATEFORMAT, strtotime($replacementData['date']));
+    $date   = gmdate(DATEFORMAT, strtotime($replacementData['date']));
     return "Updated your prayer request for $date\n\nto:\n'{$replacementData['replacement']}'";
 }
 

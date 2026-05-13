@@ -31,7 +31,7 @@ function contentValidation($error, $frontEndContent){
         return $error;
     }
 
-    $years  = [Date('Y')-2, Date('Y')-1, Date('Y'), Date('Y')+1];
+    $years  = [Date('Y')-2, gmdate('Y')-1, gmdate('Y'), gmdate('Y')+1];
     $found  = false;
     foreach($years as $year){
         if(str_contains($frontEndContent->postTitle, strval($year))){

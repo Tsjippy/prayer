@@ -51,7 +51,7 @@ function createNewSchedule($schedule){
 	}
 
 	// remove the old schedule
-	$yesterday	= date('Y-m-d', strtotime('-1 day'));
+	$yesterday	= gmdate('Y-m-d', strtotime('-1 day'));
 	delete_option("prayer_schedule_$yesterday");
 
 	return $schedule;
@@ -132,7 +132,7 @@ function checkPrayerRequests(){
 
 	// Get the actual prayer request this warning is for
 	$dateTime		= strtotime("+$days day", time());
-	$dateString		= date(DATEFORMAT, $dateTime);
+	$dateString		= gmdate(DATEFORMAT, $dateTime);
 
 	$prayerRequests = get_posts(
 		array(
@@ -143,7 +143,7 @@ function checkPrayerRequests(){
         		'relation' => 'AND',
 				array(
 					'key'     => 'date',
-					'value'   => date('Y-m-d', $dateTime)
+					'value'   => gmdate('Y-m-d', $dateTime)
 				),
 				array(
 					'key'     => 'user-id',

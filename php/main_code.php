@@ -55,7 +55,7 @@ function prayerRequest($plainText = false, $verified=false, $date='') {
 	$family	= new TSJIPPY\FAMILY\Family();
 
 	if(empty($date)){
-		$date = date("Y-m-d");
+		$date = gmdate("Y-m-d");
 	}else{
 		// epoch
 		if(is_numeric($date)){
@@ -65,7 +65,7 @@ function prayerRequest($plainText = false, $verified=false, $date='') {
 			$datetime 	= strtotime($date);
 		}
 
-		$date			= date("Y-m-d", $datetime);
+		$date			= gmdate("Y-m-d", $datetime);
 	}
 
 	//Get all the prayer posts for this date
@@ -160,7 +160,7 @@ function prayerRequest($plainText = false, $verified=false, $date='') {
 	];
 
 	// skip filter if we are not returning it for a signal message for today
-	if($plainText && $date == date("Y-m-d")){
+	if($plainText && $date == gmdate("Y-m-d")){
 		$params	= apply_filters('tsjippy_after_bot_payer', $params);
 
 		//prevent duplicate urls

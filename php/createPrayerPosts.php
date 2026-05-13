@@ -188,7 +188,7 @@ function createPrayerPosts( $postId, $post, $update ) {
     }
     
     foreach($prayerRequests as $date => $prayerRequest){
-        $date       = date(DATEFORMAT, strtotime($date));
+        $date       = gmdate(DATEFORMAT, strtotime($date));
         $postData   = array(
             'post_title'    => "Prayer Request for $date: {$prayerRequest['heading']}",
             'post_content'  => $prayerRequest['prayer'],
@@ -205,7 +205,7 @@ function createPrayerPosts( $postId, $post, $update ) {
             TSJIPPY\printArray('Error inserting post: ' . $postId->get_error_message());
         } 
         
-        add_post_meta( $postId, 'date', date('Y-m-d', strtotime($date)), true );
+        add_post_meta( $postId, 'date', gmdate('Y-m-d', strtotime($date)), true );
 
         foreach($prayerRequest['userIds'] as $userId){
             add_post_meta( $postId, 'user-id', $userId, false );
