@@ -6,6 +6,7 @@
 ### Changed
 
 ### Fixed
+- do not add groups with empty names
 
 ### Updated
 
