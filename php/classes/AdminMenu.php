@@ -49,7 +49,7 @@ class AdminMenu extends \TSJIPPY\ADMIN\SubAdminMenu{
             <h4>Give optional Signal group name(s) to send a daily prayer message to:</h4>
             <div class="clone-divs-wrapper">
                 <?php
-                foreach($groups as $index=>$group){
+                foreach($groups as $index => $group){
                     ?>
                     <div class="clone-div" data-div-id="<?php echo $index;?>" style="display:flex;border: #dedede solid; padding: 10px; margin-bottom: 10px;">
                         <div class="multi-input-wrapper">
@@ -60,6 +60,7 @@ class AdminMenu extends \TSJIPPY\ADMIN\SubAdminMenu{
                             if(defined('TSJIPPY\SIGNAL\SETTINGS') && TSJIPPY\SIGNAL\SETTINGS['local'] ?? false){
                                 ?>
                                 <select  name="groups[<?php echo $index;?>][name]">
+                                    <option value="">---</option>
                                     <?php
                                     $signal 		= TSJIPPY\SIGNAL\getSignalInstance();
 
@@ -175,7 +176,7 @@ class AdminMenu extends \TSJIPPY\ADMIN\SubAdminMenu{
                 }
             }
 
-            if(!$found){
+            if(!$found && !empty($group['name']) && !empty($group['time'])){
                 $added[]	= $group;
             }
         }
