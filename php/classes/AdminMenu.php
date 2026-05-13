@@ -148,7 +148,15 @@ class AdminMenu extends \TSJIPPY\ADMIN\SubAdminMenu{
             // Check in old groups
             $found	= false;
             foreach(SETTINGS['groups'] as $key => $oldGroup){
-                if($oldGroup['name'] == $group['name']){
+                if(empty($oldGroup['name'])){
+                    $settings = SETTINGS;
+                    unset($settings['groups'][$key]);
+
+                    update_option('signal_prayers', $settings);
+
+                    continue;
+                }
+                elseif($oldGroup['name'] == $group['name']){
                     if($oldGroup['time'] == $group['time']){
                         $found	= true;
                     }else{

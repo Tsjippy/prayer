@@ -21,8 +21,14 @@ function scheduleTasks(){
 	TSJIPPY\scheduleTask('check_prayer_action', 'daily');
 }
 
+/**
+ * Create a new schedule for prayer requests if needed
+ *
+ * @param array $schedule The current schedule
+ *
+ * @return array The updated schedule
+ */
 function createNewSchedule($schedule){
-
 	if($schedule !== false){
 		return $schedule;
 	}
@@ -30,7 +36,7 @@ function createNewSchedule($schedule){
 	// add the new schedule
 	$schedule		= (array)get_option('signal_prayers');
 	$updated		= false;
-	foreach($schedule as $index=>$slot){
+	foreach($schedule as $index => $slot){
 		if(empty($slot)){
 			unset($schedule[$index]);
 			$updated	= true;
@@ -184,3 +190,7 @@ function moduleDeActivated(){
 
 	wp_clear_scheduled_hook( 'check_prayer_action' );
 }
+
+add_action('init', function(){
+	//sendPrayerRequests();
+});
