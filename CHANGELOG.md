@@ -4,12 +4,19 @@
 ### Added
 
 ### Changed
+
+### Fixed
+
+### Updated
+
+## [10.0.6] - 2026-05-13
+
+
+### Changed
 - date( to gmdate(
 
 ### Fixed
 - saving signal group when empty name
-
-### Updated
 
 ## [10.0.5] - 2026-05-12
 
