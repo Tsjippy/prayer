@@ -79,7 +79,11 @@ function sendPrayerRequests(){
 	$date			= \Date('y-m-d');
 	$schedule		= get_option("prayer_schedule_$date");
 
+	TSJIPPY\printArray($schedule);
+
 	$schedule		= createNewSchedule($schedule);
+
+	TSJIPPY\printArray($schedule);
 
 	$time	= current_time('H:i');
 	foreach($schedule as $t=>$users){
