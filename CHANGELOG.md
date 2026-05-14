@@ -6,9 +6,14 @@
 ### Changed
 
 ### Fixed
-- do not add groups with empty names
 
 ### Updated
+
+## [10.0.7] - 2026-05-14
+
+
+### Fixed
+- do not add groups with empty names
 
 ## [10.0.6] - 2026-05-13
 
