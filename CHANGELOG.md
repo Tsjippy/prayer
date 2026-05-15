@@ -4,6 +4,7 @@
 ### Added
 
 ### Changed
+- store prayer times in db
 
 ### Fixed
 - get prayer on cron
