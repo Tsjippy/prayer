@@ -27,7 +27,6 @@ function scheduleTasks(){
  * a seperate schedule for each day to be sure everyone gets what they requested
  */
 function sendPrayerRequests(){
-
  	$prayerRequest	= prayerRequest(true, true);
 
 	$message	 	= "The prayer request of today is:\n";
@@ -38,49 +37,55 @@ function sendPrayerRequests(){
 	$schedule		= $prayerSchedule->getTodaySchedule();
 
 	$time	= current_time('H:i');
-	foreach($schedule as $t => $users){
-		if(is_array($users)){
-			// Do not continue for times in the future
-			if($t > $time){
-				continue;
+	foreach($schedule as $t => $recipients){
+		if(
+			!is_array($recipients) ||	// Recipients should always be an array
+			$t > $time					// Do not continue for times in the future
+		){
+			continue;
+		}
+
+		// Remove the curent entry from todays schedule to indicate we have processed it
+		unset($schedule[$t]);
+
+		$dayPart	= "morning";
+		$hour		= current_time('H');
+		if($hour > 11 && $hour < 18){
+			$dayPart	= 'afternoon';
+		}elseif($hour > 17){
+			$dayPart	= 'evening';
+		}elseif($hour < 4){
+			$dayPart	= 'night';
+		}
+
+		foreach($recipients as $recipient){
+			$userdata	= false;
+			if(is_numeric($recipient)){
+				$userdata	= get_userdata($recipient);
+
+				if(!$userdata){
+					continue;
+				}
 			}
 
-			unset($schedule[$t]);
+			TSJIPPY\printArray($recipient);
 
-			foreach($users as $user){
-				$dayPart	= "morning";
-				$hour		= current_time('H');
-				if($hour > 11 && $hour < 18){
-					$dayPart	= 'afternoon';
-				}elseif($hour > 17){
-					$dayPart	= 'evening';
-				}elseif($hour < 4){
-					$dayPart	= 'night';
-				}
-
-				if(is_numeric($user)){
-					$userdata	= get_userdata($user);
-
-					if(!$userdata){
-						continue;
-					}
-					
-					$dayPart	.= " ".$userdata->first_name;
-				}
-
-				// make this available thrue an action to be used by the signal module, potentially others
-				do_action(
-					'tsjippy-prayer-send-message',
-					"Good $dayPart,\n\n$message", 
-					$user, 
-					$prayerRequest['pictures']
-				);
-			}
+			// make this available through an action to be used by the signal module, potentially others
+			do_action(
+				'tsjippy-prayer-send-message',
+				"Good $dayPart {$userdata->first_name},\n\n$message", 
+				$recipient, 
+				$prayerRequest['pictures']
+			);
 		}
 	}
 
 	$date			= \Date('y-m-d');
-	update_option("prayer_schedule_$date", $schedule);
+	if(empty($schedule)){
+		delete_option("prayer_schedule_$date");
+	} else {
+		update_option("prayer_schedule_$date", $schedule);
+	}
 }
 
 /**
@@ -130,7 +135,7 @@ function checkPrayerRequests(){
 			$user		= get_userdata($userId);
 			$msg		= str_replace('%name%', $user->first_name, $signalMessage);
 
-			// make this available thrue an action to be used by the signal module, potentially others
+			// make this available through an action to be used by the signal module, potentially others
 			do_action(
 				'tsjippy-prayer-send-message',
 				$msg, 

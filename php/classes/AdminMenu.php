@@ -122,8 +122,88 @@ class AdminMenu extends \TSJIPPY\ADMIN\SubAdminMenu{
     }
 
     public function functions($parent){
+        if(isset($_POST['prayer-recipient']) && TSJIPPY\verifyNonce('nonce', 'send-prayer-nonce')){
+            $recipient        = sanitize_text_field($_POST['prayer-recipient']);
 
-        return false;
+            $prayerRequest	= prayerRequest(true, true);
+
+            $message	 	= "The prayer request of today is:\n";
+            $message 		.= $prayerRequest['message'];
+
+            $dayPart	= "morning";
+            $hour		= current_time('H');
+            if($hour > 11 && $hour < 18){
+                $dayPart	= 'afternoon';
+            }elseif($hour > 17){
+                $dayPart	= 'evening';
+            }elseif($hour < 4){
+                $dayPart	= 'night';
+            }
+
+            // make this available through an action to be used by the signal module, potentially others
+            do_action(
+                'tsjippy-prayer-send-message',
+                "Good $dayPart ,\n\n$message", 
+                $recipient, 
+                $prayerRequest['pictures']
+            );
+        }
+
+        ob_start();
+        ?>
+        <h4>Send Prayer Now</h4>
+        <p>
+            Send a prayer message
+        </p>
+
+        <form method='POST' enctype="multipart/form-data">
+            <input type='hidden' name='nonce' value='<?php echo wp_create_nonce('send-prayer-nonce');?>'>
+            <label>
+                Recipient: phonenumber or group id <br>
+                <input type='text' name='prayer-recipient' list="recipients">
+            </label>
+            <datalist id="recipients">
+                <?php
+                foreach($this->settings['groups'] ?? [] as $index => $group){
+                    ?>
+                    <option value='<?php echo esc_attr($group['name']);?>'>
+                        <?php echo esc_html($group['name']);?>
+                    </option>
+                    <?php
+                }
+                $users			= get_users( [
+                    'meta_query' => array(
+                        array(
+                            'key'     => 'phonenumbers',
+                            'compare' => 'EXISTS'
+                        )
+                    ),
+                    'orderby'	=> 'meta_value',
+                    'order' 	=> 'ASC'
+                ]);
+
+                foreach ($users as $user) {
+                    $phones	= (array)get_user_meta($user->ID, 'phonenumbers', true);
+                    foreach($phones as $phone){
+                        ?>
+                        <option value='<?php echo esc_attr($phone);?>'>
+                            <?php echo esc_html("{$user->display_name} ({$phone})");?>
+                        </option>
+                        <?php
+                    }
+                }
+                ?>
+            </datalist>
+            <br>
+            <br>
+            <button type='submit' name='send-prayer'>Send Prayer</button>
+        </form>
+
+        <?php
+
+        addRawHtml(ob_get_clean(), $parent);
+
+        return true;
     }
 
     /**

@@ -63,6 +63,8 @@ class PrayerSchedule {
             $schedule[$result->time][] = $result->recipient;
         }
 
+        ksort($schedule);
+
         return $schedule;
     }
 
@@ -170,9 +172,9 @@ class PrayerSchedule {
      */
     public function getTodaySchedule(){
         $date			= \Date('y-m-d');
-        $schedule		= get_option("prayer_schedule_$date");
+        $schedule		= get_option("prayer_schedule_$date", false);
 
-        if($schedule === false){
+        if(empty($schedule)){
             // Create a new schedule for today
             $schedule = $this->getSchedule();
 
