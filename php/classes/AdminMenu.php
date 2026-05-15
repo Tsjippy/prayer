@@ -188,7 +188,7 @@ class AdminMenu extends \TSJIPPY\ADMIN\SubAdminMenu{
             if(empty($recipient)){
                 continue;
             }
-            
+
             // Add the group to the schedule
             $prayerSchedule->update($recipient, $added[$recipient]); 
         }

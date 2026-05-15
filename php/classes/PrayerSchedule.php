@@ -78,6 +78,20 @@ class PrayerSchedule {
     public function add($recipient, $time){
         global $wpdb;
 
+        /**
+         * Double check we do not have duplicates
+         */
+        $existing   = $wpdb->get_results( $wpdb->prepare("SELECT * FROM %i WHERE recipient = %s", $this->tableName, $recipient));
+
+        foreach($existing as $result){
+            // Only update if needed
+            if($result-> time != $time){
+                $this->update($recipient, $time);
+            }
+
+            return true;
+        }
+
         // Insert booking in db
         $wpdb->insert(
             $this->tableName,
