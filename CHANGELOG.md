@@ -6,6 +6,7 @@
 ### Changed
 
 ### Fixed
+- get prayer on cron
 
 ### Updated
 
