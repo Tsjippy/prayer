@@ -123,7 +123,7 @@ class AdminMenu extends \TSJIPPY\ADMIN\SubAdminMenu{
 
     public function functions($parent){
         if(isset($_POST['prayer-recipient']) && TSJIPPY\verifyNonce('nonce', 'send-prayer-nonce')){
-            $recipient        = sanitize_text_field($_POST['prayer-recipient']);
+            $recipient      = sanitize_text_field($_POST['prayer-recipient']);
 
             $prayerRequest	= prayerRequest(true, true);
 
