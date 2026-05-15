@@ -32,3 +32,20 @@ define(__NAMESPACE__ .'\PLUGINVERSION', $pluginData['Version']);
 define(__NAMESPACE__ .'\PLUGINSLUG', str_replace('tsjippy-', '', basename(__FILE__, '.php')));
 define(__NAMESPACE__ .'\SETTINGS', get_option('tsjippy_'.PLUGINSLUG.'_settings', []));
 
+// run right before activation
+register_activation_hook( __FILE__, function(){
+	$roleSet = get_role( 'contributor' )->capabilities;
+
+	// Only add the new role if it does not exist
+	if(!wp_roles()->is_role( 'prayercoordinator' )){
+		add_role(
+			'prayercoordinator',
+			'Prayer coordinator',
+			$roleSet
+		);
+	}
+
+	// Create db
+	$prayerSchedule    = new PrayerSchedule();
+	$prayerSchedule->createDbTables();
+} );

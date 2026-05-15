@@ -7,25 +7,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 add_action('delete_user', __NAMESPACE__.'\onUserDelete');
+/**
+ * Function to handle user deletion and update prayer schedule accordingly
+ *
+ * @param int $userId The ID of the user being deleted
+ */
 function onUserDelete($userId){
-	$schedule		= (array)get_option('signal_prayers');
-	$updated		= false;
+	$prayerSchedule    = new PrayerSchedule();
 
-	// loop over all the timeslots
-	foreach($schedule as $index=>$slot){
-		if(is_array($slot)){
-			// loop over all the user id's in this time slot
-			foreach($slot as $i=>$id){
-				if($id == $userId){
-					// remove this user-id from the timeslot
-					unset($schedule[$index][$i]);
-					$updated	= true;
-				}
-			}
-		}
-	}
-
-	if($updated){
-		update_option('signal_prayers', $schedule);
-	}
+	$prayerSchedule->delete($userId);
 }

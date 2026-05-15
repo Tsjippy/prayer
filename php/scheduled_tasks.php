@@ -22,51 +22,6 @@ function scheduleTasks(){
 }
 
 /**
- * Create a new schedule for prayer requests if needed
- *
- * @param array $schedule The current schedule
- *
- * @return array The updated schedule
- */
-function createNewSchedule($schedule){
-	if($schedule !== false){
-		TSJIPPY\printArray($schedule);
-		return $schedule;
-	}
-
-	TSJIPPY\printArray($schedule);
-
-	// add the new schedule
-	$schedule		= (array)get_option('signal_prayers');
-	$updated		= false;
-	foreach($schedule as $index => $slot){
-		if(empty($slot)){
-			unset($schedule[$index]);
-			$updated	= true;
-		}
-	}
-
-	if($updated){
-		update_option('signal_prayers', $schedule);
-	}
-
-	$groups			= SETTINGS['groups'] ?? [];
-	foreach($groups as $group){
-		if(isset($schedule[$group['time']])){
-			$schedule[$group['time']][]	= $group['name'];
-		}else{
-			$schedule[$group['time']]	= [$group['name']];
-		}
-	}
-
-	// remove the old schedule
-	$yesterday	= gmdate('Y-m-d', strtotime('-1 day'));
-	delete_option("prayer_schedule_$yesterday");
-
-	return $schedule;
-}
-
-/**
  * We will send the prayer request based on the times as given by people
  * As we are not sure about the timeliness of the cron schedule we keep
  * a seperate schedule for each day to be sure everyone gets what they requested
@@ -79,18 +34,11 @@ function sendPrayerRequests(){
 	$message 		.= $prayerRequest['message'];
 	
 	// Get the schedule for today
-	$date			= \Date('y-m-d');
-	$schedule		= get_option("prayer_schedule_$date");
-
-	TSJIPPY\printArray($schedule);
-	$schedule			= false;
-
-	$schedule		= createNewSchedule($schedule);
-
-	TSJIPPY\printArray($schedule);
+	$prayerSchedule = new PrayerSchedule();
+	$schedule		= $prayerSchedule->getTodaySchedule();
 
 	$time	= current_time('H:i');
-	foreach($schedule as $t=>$users){
+	foreach($schedule as $t => $users){
 		if(is_array($users)){
 			// Do not continue for times in the future
 			if($t > $time){
@@ -131,6 +79,7 @@ function sendPrayerRequests(){
 		}
 	}
 
+	$date			= \Date('y-m-d');
 	update_option("prayer_schedule_$date", $schedule);
 }
 

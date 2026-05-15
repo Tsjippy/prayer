@@ -7,6 +7,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 add_filter('tsjippy_personal_signal_settings', __NAMESPACE__.'\signalSettings', 10, 3);
+/**
+ * Add prayer time setting to personal signal settings
+ *
+ * @param string $settings The existing settings
+ * @param \WP_User $user The user object
+ * @param array $prefs The user preferences
+ *
+ * @return string The updated settings
+ */
 function signalSettings($settings, $user, $prefs){
     $prayerTime = '';
     if(isset($prefs['prayertime'])){
@@ -22,54 +31,17 @@ function signalSettings($settings, $user, $prefs){
 }
 
 add_action('tsjippy_signal_before_pref_save', __NAMESPACE__.'\beforePrevSafe', 10, 2);
+
+/**
+ * Update prayer time schedule before saving preferences
+ *
+ * @param int $userId The user ID
+ * @param array $prefs The user preferences
+ */
 function beforePrevSafe($userId, $prefs){
-    $prayerTimes    = (array)get_option('signal_prayers');
-    $time           = $prefs['prayertime'];
-    $oldTime        = get_user_meta($userId, 'signal_preferences', true);
-    if(isset($oldTime['prayertime'])){
-        $oldTime        = $oldTime['prayertime'];
-    }
+    $prayerSchedule    = new PrayerSchedule();
 
-    // nothing changed
-    if($time == $oldTime){
-        return;
-    }
+    $newTime    = $prefs['prayertime'] ?? null;
 
-    // Remove the old time
-    if(isset($prayerTimes[$oldTime])){
-        $key    = array_search($userId, $prayerTimes[$oldTime]);
-        unset($prayerTimes[$oldTime][$key]);
-    }
-
-    // There is already an user with a prayer schedule for this time
-    if(isset($prayerTimes[$time])){
-        $prayerTimes[$time][]   = $userId;
-    }else{
-        $prayerTimes[$time]  = [$userId];
-    }
-
-    update_option('signal_prayers', $prayerTimes);
-
-    // Also add to todays schedule if time is later today
-    $curTime	= current_time('H:i');
-    if($time > $curTime){
-        $date			= \Date('y-m-d');
-        $schedule		= (array)get_option("prayer_schedule_$date");
-
-        // Remove the old time
-        if(isset($schedule[$oldTime])){
-            $key    = array_search($userId, $schedule[$oldTime]);
-            unset($schedule[$oldTime][$key]);
-        }
-
-        // There is already an user with a prayer schedule for this time
-        if(isset($schedule[$time])){
-            $schedule[$time][]   = $userId;
-        }else{
-            $schedule[$time]  = [$userId];
-        }
-
-        update_option("prayer_schedule_$date", $schedule);
-    }
-
+    $prayerSchedule->update($userId, $newTime);
 }

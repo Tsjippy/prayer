@@ -134,76 +134,66 @@ class AdminMenu extends \TSJIPPY\ADMIN\SubAdminMenu{
     }
 
     /**
+     * Indexes the groups array by the group name, so it is easier to compare the old and new groups when saving the settings
+     * 
+     * @param array $array The array to index
+     * 
+     * @return array The indexed array
+     */
+    private function indexArray($array){
+        $newArray	= [];
+        foreach($array as $item){
+            $newArray[$item['name']]	= $item['time'];
+        }
+
+        return $newArray;
+    }
+
+    /**
      * Schedules the tasks for this plugin
      *
     */
     public function postSettingsSave(){
         scheduleTasks();
 
-        $date			= \Date('y-m-d');
-        $schedule		= (array)get_option("prayer_schedule_$date");
+        $date			    = \Date('y-m-d');
 
-        // add newly added groups to todays schedule
-        $added		= [];
-        foreach($this->settings['groups'] as $group){
-            // Check in old groups
-            $found	= false;
-            foreach(SETTINGS['groups'] as $key => $oldGroup){
-                if(empty($oldGroup['name'])){
-                    $settings = SETTINGS;
-                    unset($settings['groups'][$key]);
+        $oldGroups          = $this->indexArray(SETTINGS['groups'] ?? []);
+        $newGroups          = $this->indexArray($this->settings['groups'] ?? []);
 
-                    update_option('signal_prayers', $settings);
+        // Compute the difference between the old and new groups to find out which groups have been added and which have been removed
+        $added		= array_diff_assoc($newGroups, $oldGroups);
+        $removed	= array_diff_assoc($oldGroups, $newGroups);
+        $updated    = array_intersect(array_keys($added), array_keys($removed));
 
-                    continue;
-                }
-                elseif($oldGroup['name'] == $group['name']){
-                    if($oldGroup['time'] == $group['time']){
-                        $found	= true;
-                    }else{
-                        // Time has changed remove the old one
-                        if(isset($schedule[$oldGroup['time']])){
-                            $key    = array_search($oldGroup['name'], $schedule[$oldGroup['time']]);
-                            unset($schedule[$oldGroup['time']][$key]);
-                        }
-
-                        // remove the time if its an empty entry
-                        if(empty($schedule[$oldGroup['time']])){
-                            unset($schedule[$oldGroup['time']]);
-                        }
-                    }
-                    break;
-                }
+        $prayerSchedule    = new PrayerSchedule();
+        foreach($removed as $recipient => $time){
+            if(empty($recipient) || in_array($recipient, $updated)){
+                continue;
             }
-
-            if(!$found && !empty($group['name']) && !empty($group['time'])){
-                $added[]	= $group;
-            }
+            // Remove the group from the schedule
+            $prayerSchedule->delete($recipient); 
         }
 
-        $curTime	= current_time('H:i');
-        foreach($added as $key => $group){
-            // only add times in the future
-            if($group['time'] > $curTime){
-                // There is already an user with a prayer schedule for this time
-                if(isset($schedule[$group['time']])){
-                    $schedule[$group['time']][]   = $group['name'];
-                }else{
-                    $schedule[$group['time']]  = [$group['name']];
-                }
+        foreach($added as $recipient => $time){
+            if(empty($recipient) || in_array($recipient, $updated)){
+                continue;
             }
-        }
-        update_option("prayer_schedule_$date", $schedule);
 
-        $roleSet = get_role( 'contributor' )->capabilities;
-
-        // Only add the new role if it does not exist
-        if(!wp_roles()->is_role( 'prayercoordinator' )){
-            add_role(
-                'prayercoordinator',
-                'Prayer coordinator',
-                $roleSet
-            );
+            // Add the group to the schedule
+            $prayerSchedule->add($recipient, $time); 
         }
+
+        foreach($updated as $recipient){
+            if(empty($recipient)){
+                continue;
+            }
+            
+            // Add the group to the schedule
+            $prayerSchedule->update($recipient, $added[$recipient]); 
+        }
+
+        // Mark todays chedule as outdated so it will be renewed with the new groups and times
+        update_option("prayer_schedule_$date", false);
     }
 }
