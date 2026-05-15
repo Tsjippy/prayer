@@ -30,8 +30,11 @@ function scheduleTasks(){
  */
 function createNewSchedule($schedule){
 	if($schedule !== false){
+		TSJIPPY\printArray($schedule);
 		return $schedule;
 	}
+
+	TSJIPPY\printArray($schedule);
 
 	// add the new schedule
 	$schedule		= (array)get_option('signal_prayers');
@@ -70,7 +73,7 @@ function createNewSchedule($schedule){
  */
 function sendPrayerRequests(){
 
- 	$prayerRequest	= prayerRequest(true);
+ 	$prayerRequest	= prayerRequest(true, true);
 
 	$message	 	= "The prayer request of today is:\n";
 	$message 		.= $prayerRequest['message'];
@@ -80,6 +83,7 @@ function sendPrayerRequests(){
 	$schedule		= get_option("prayer_schedule_$date");
 
 	TSJIPPY\printArray($schedule);
+	$schedule			= false;
 
 	$schedule		= createNewSchedule($schedule);
 
