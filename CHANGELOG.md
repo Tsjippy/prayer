@@ -4,13 +4,20 @@
 ### Added
 
 ### Changed
+
+### Fixed
+
+### Updated
+
+## [10.0.8] - 2026-05-15
+
+
+### Changed
 - store prayer times in db
 - prevent duplicates
 
 ### Fixed
 - get prayer on cron
-
-### Updated
 
 ## [10.0.7] - 2026-05-14
 
