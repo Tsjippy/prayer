@@ -5,6 +5,7 @@
 
 ### Changed
 - store prayer times in db
+- prevent duplicates
 
 ### Fixed
 - get prayer on cron
