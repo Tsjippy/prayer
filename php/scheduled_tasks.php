@@ -68,8 +68,6 @@ function sendPrayerRequests(){
 				}
 			}
 
-			TSJIPPY\printArray($recipient);
-
 			// make this available through an action to be used by the signal module, potentially others
 			do_action(
 				'tsjippy-prayer-send-message',

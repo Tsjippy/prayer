@@ -7,6 +7,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 add_filter('tsjippy-signal-daemon-response', __NAMESPACE__.'\addPrayerResponse', 10, 6);
+/**
+ * Add prayer response to the signal daemon response
+ *
+ * @param array $response The signal daemon response
+ * @param string $message The message received
+ * @param string $source The source of the message
+ * @param array $users The users associated with the message
+ * @param string $name The name of the user
+ * @param object $signal The signal object
+ *
+ * @return array The modified response
+ */
 function addPrayerResponse($response, $message, $source, $users, $name, $signal){
     if($response['message'] != 'I have no clue, do you know?'){
         return $response;
@@ -29,6 +41,15 @@ function addPrayerResponse($response, $message, $source, $users, $name, $signal)
     return $response;
 }
 
+/**
+ * Update a prayer request
+ *
+ * @param string $message The message received
+ * @param array $users The users associated with the message
+ * @param object $signal The signal object
+ *
+ * @return string The response message
+ */
 function updatePrayerRequest($message, $users, $signal){
     // mark as updated for affected users
     foreach($users as $user){
@@ -67,7 +88,18 @@ function updatePrayerRequest($message, $users, $signal){
     return "Updated your prayer request for $date\n\nto:\n'{$replacementData['replacement']}'";
 }
 
+/**
+ * Check a prayer request to update
+ *
+ * @param string $message The message received
+ * @param array $users The users associated with the message
+ * @param object $signal The signal object
+ *
+ * @return string The response message
+ */
 function checkPrayerRequestToUpdate($message, $users, $signal){
+    $prayerRequests    = false;
+
     foreach($users as $user){
         // get the prayer request to be replaced
         $prayerRequests        = get_posts(
