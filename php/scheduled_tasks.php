@@ -151,7 +151,3 @@ function moduleDeActivated(){
 
 	wp_clear_scheduled_hook( 'check_prayer_action' );
 }
-
-add_action('init', function(){
-	//sendPrayerRequests();
-});
