@@ -2,14 +2,21 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- send prayer form functions
 
 ### Changed
 
 ### Fixed
-- small bug
 
 ### Updated
+
+## [10.0.9] - 2026-05-16
+
+
+### Added
+- send prayer form functions
+
+### Fixed
+- small bug
 
 ## [10.0.8] - 2026-05-15
 
