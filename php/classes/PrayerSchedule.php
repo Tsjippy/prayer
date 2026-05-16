@@ -106,6 +106,9 @@ class PrayerSchedule {
         if(!empty($wpdb->last_error)){
 			return new \WP_Error('prayer', $wpdb->last_error);
 		}
+        
+        // Rebuild todays schedule
+        $this->getTodaySchedule(true);
 
         return true;
     }
@@ -136,6 +139,9 @@ class PrayerSchedule {
 			return new \WP_Error('prayer', $wpdb->last_error);
 		}
 
+        // Rebuild todays schedule
+        $this->getTodaySchedule(true);
+
         return true;
     }
 
@@ -162,17 +168,27 @@ class PrayerSchedule {
 			return new \WP_Error('prayer', $wpdb->last_error);
 		}
 
+        // Rebuild todays schedule
+        $this->getTodaySchedule(true);
+
         return true;
     }
 
     /**
      * Get the prayer schedule for today
      * 
+     * @param   bool    $force      Recreate the schedule even if one exists already
+     * 
      * @return array The prayer schedule for today indexed by time with an array of recipients for each time
      */
-    public function getTodaySchedule(){
+    public function getTodaySchedule($force=false){
         $date			= \Date('y-m-d');
-        $schedule		= get_option("prayer_schedule_$date", false);
+
+        $schedule       = false;
+
+        if(!$force){
+            $schedule		= get_option("prayer_schedule_$date", false);
+        }
 
         if(empty($schedule)){
             // Create a new schedule for today
