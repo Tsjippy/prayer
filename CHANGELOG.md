@@ -4,6 +4,7 @@
 ### Added
 
 ### Changed
+- force update of schedule after change
 
 ### Fixed
 - after update
