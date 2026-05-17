@@ -140,7 +140,7 @@ class AdminMenu extends \TSJIPPY\ADMIN\SubAdminMenu{
                 $dayPart	= 'night';
             }
 
-            // make this available through an action to be used by the signal module, potentially others
+            // make this available through an action to be used by the signal plugin, potentially others
             do_action(
                 'tsjippy-prayer-send-message',
                 "Good $dayPart ,\n\n$message", 

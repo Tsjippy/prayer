@@ -69,7 +69,7 @@ function sendPrayerRequests(){
 			}
 
 			TSJIPPY\printArray($message);
-			// make this available through an action to be used by the signal module, potentially others
+			// make this available through an action to be used by the signal plugin, potentially others
 			do_action(
 				'tsjippy-prayer-send-message',
 				"Good $dayPart {$userdata->first_name},\n\n$message", 
@@ -134,7 +134,7 @@ function checkPrayerRequests(){
 			$user		= get_userdata($userId);
 			$msg		= str_replace('%name%', $user->first_name, $signalMessage);
 
-			// make this available through an action to be used by the signal module, potentially others
+			// make this available through an action to be used by the signal plugin, potentially others
 			do_action(
 				'tsjippy-prayer-send-message',
 				$msg, 
@@ -142,12 +142,4 @@ function checkPrayerRequests(){
 			);
 		}
 	}
-}
-
-// Remove scheduled tasks upon module deactivation
-add_action('tsjippy_module_prayer_deactivated', __NAMESPACE__.'\moduleDeActivated');
-function moduleDeActivated(){
-	wp_clear_scheduled_hook( 'send_prayer_action' );
-
-	wp_clear_scheduled_hook( 'check_prayer_action' );
 }
