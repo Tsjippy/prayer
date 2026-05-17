@@ -4,12 +4,19 @@
 ### Added
 
 ### Changed
+
+### Fixed
+
+### Updated
+
+## [10.1.0] - 2026-05-16
+
+
+### Changed
 - force update of schedule after change
 
 ### Fixed
 - after update
-
-### Updated
 
 ## [10.0.9] - 2026-05-16
 
