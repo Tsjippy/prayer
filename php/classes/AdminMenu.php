@@ -159,49 +159,53 @@ class AdminMenu extends \TSJIPPY\ADMIN\SubAdminMenu{
             'order' 	=> 'ASC'
         ]);
 
-        ob_start();
-        ?>
-        <h4>Send Prayer Now</h4>
-        <p>
-            Send a prayer message
-        </p>
+        TSJIPPY\addElement('h4', $parent, [], 'Send Prayer Now');
 
-        <form method='POST' enctype="multipart/form-data">
-            <input type='hidden' name='nonce' value='<?php echo wp_create_nonce('send-prayer-nonce');?>'>
-            <label>
-                Recipient: phonenumber or group id <br>
-                <input type='text' name='prayer-recipient' list="recipients">
-            </label>
-            <datalist id="recipients">
-                <?php
-                foreach($this->settings['groups'] ?? [] as $group){
-                    ?>
-                    <option value='<?php echo esc_attr($group['name']);?>'>
-                        <?php echo esc_html($group['name']);?>
-                    </option>
-                    <?php
-                }
+        TSJIPPY\addElement('p', $parent, [], 'Send a prayer message');
 
-                foreach ($users as $user) {
-                    $phones	= (array)get_user_meta($user->ID, 'phonenumbers', true);
-                    foreach($phones as $phone){
-                        ?>
-                        <option value='<?php echo esc_attr($phone);?>'>
-                            <?php echo esc_html("{$user->display_name} ({$phone})");?>
-                        </option>
-                        <?php
-                    }
-                }
-                ?>
-            </datalist>
-            <br>
-            <br>
-            <button type='submit' name='send-prayer'>Send Prayer</button>
-        </form>
+        $form   = TSJIPPY\addElement('form', $parent, ['method' => 'POST', 'enctype' => "multipart/form-data"]);
 
-        <?php
+        TSJIPPY\addElement(
+            'input', 
+            $form, 
+            [
+                'type'		=> 'hidden',
+                'name'		=> 'nonce',
+                'value'		=> wp_create_nonce('send-prayer-nonce')
+            ], 
+            'Send a prayer message'
+        );
 
-        addRawHtml(ob_get_clean(), $parent);
+        $label  = TSJIPPY\addElement('label', $form, [], 'Recipient: phonenumber or group id');
+
+        TSJIPPY\addElement('br', $label);
+
+        TSJIPPY\addElement(
+            'input', 
+            $label,
+            [
+                'type'		=> 'text',
+                'name'		=> 'prayer-recipient',
+                'list'		=> 'recipients'
+            ]
+        );
+
+        $dataList   = TSJIPPY\addElement('datalist', $form, ['id' => "recipients"]);
+
+        foreach($this->settings['groups'] ?? [] as $group){
+            TSJIPPY\addElement('option', $dataList, ['value' => $group['name']], $group['name']);
+        }
+
+        foreach ($users as $user) {
+            $phones	= (array)get_user_meta($user->ID, 'phonenumbers', true);
+            foreach($phones as $phone){
+                TSJIPPY\addElement('option', $dataList, ['value' => $phone], "{$user->display_name} ({$phone})");
+            }
+        }
+
+        TSJIPPY\addElement('br', $form);
+
+        TSJIPPY\addElement('button', $form, ['type' => 'submit', 'name' => 'send-prayer'], 'Send Prayer');
 
         return true;
     }
