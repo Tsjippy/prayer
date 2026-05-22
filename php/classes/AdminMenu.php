@@ -148,6 +148,16 @@ class AdminMenu extends \TSJIPPY\ADMIN\SubAdminMenu{
                 $prayerRequest['pictures']
             );
         }
+        $users			= get_users( [
+            'meta_query' => array(
+                array(
+                    'key'     => 'phonenumbers',
+                    'compare' => 'EXISTS'
+                )
+            ),
+            'orderby'	=> 'meta_value',
+            'order' 	=> 'ASC'
+        ]);
 
         ob_start();
         ?>
@@ -164,23 +174,13 @@ class AdminMenu extends \TSJIPPY\ADMIN\SubAdminMenu{
             </label>
             <datalist id="recipients">
                 <?php
-                foreach($this->settings['groups'] ?? [] as $index => $group){
+                foreach($this->settings['groups'] ?? [] as $group){
                     ?>
                     <option value='<?php echo esc_attr($group['name']);?>'>
                         <?php echo esc_html($group['name']);?>
                     </option>
                     <?php
                 }
-                $users			= get_users( [
-                    'meta_query' => array(
-                        array(
-                            'key'     => 'phonenumbers',
-                            'compare' => 'EXISTS'
-                        )
-                    ),
-                    'orderby'	=> 'meta_value',
-                    'order' 	=> 'ASC'
-                ]);
 
                 foreach ($users as $user) {
                     $phones	= (array)get_user_meta($user->ID, 'phonenumbers', true);
