@@ -4,6 +4,7 @@
 ### Added
 
 ### Changed
+- raw html to dom element implementation
 
 ### Fixed
 
