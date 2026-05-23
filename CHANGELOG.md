@@ -4,11 +4,16 @@
 ### Added
 
 ### Changed
-- raw html to dom element implementation
 
 ### Fixed
 
 ### Updated
+
+## [10.1.2] - 2026-05-23
+
+
+### Changed
+- raw html to dom element implementation
 
 ## [10.1.1] - 2026-05-17
 
