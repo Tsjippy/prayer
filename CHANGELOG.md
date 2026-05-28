@@ -2,14 +2,21 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- js dependency
 
 ### Changed
 
 ### Fixed
-- empty username error
 
 ### Updated
+
+## [10.1.3] - 2026-05-28
+
+
+### Added
+- js dependency
+
+### Fixed
+- empty username error
 
 ## [10.1.2] - 2026-05-23
 
