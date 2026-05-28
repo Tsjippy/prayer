@@ -59,19 +59,21 @@ function sendPrayerRequests(){
 		}
 
 		foreach($recipients as $recipient){
-			$userdata	= false;
+			$userName	= '';
 			if(is_numeric($recipient)){
 				$userdata	= get_userdata($recipient);
 
 				if(!$userdata){
 					continue;
 				}
+
+				$userName	= ' '.$userdata->first_name;
 			}
 
 			// make this available through an action to be used by the signal plugin, potentially others
 			do_action(
 				'tsjippy-prayer-send-message',
-				"Good $dayPart {$userdata->first_name},\n\n$message", 
+				"Good $dayPart$userName,\n\n$message", 
 				$recipient, 
 				$prayerRequest['pictures']
 			);
