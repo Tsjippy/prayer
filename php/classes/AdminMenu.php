@@ -21,7 +21,7 @@ class AdminMenu extends \TSJIPPY\ADMIN\SubAdminMenu{
     }
 
     public function settings($parent){
-        wp_enqueue_script('tsjippy_prayer_admin', TSJIPPY\pathToUrl(PLUGINPATH.'js/admin.min.js'), array(), PLUGINVERSION, true);
+        wp_enqueue_script('tsjippy_prayer_admin', TSJIPPY\pathToUrl(PLUGINPATH.'js/admin.min.js'), array('tsjippy_script'), PLUGINVERSION, true);
 
         ob_start();
         

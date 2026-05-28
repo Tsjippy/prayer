@@ -1,6 +1,6 @@
 import {copyFormInput, fixNumbering, removeNode} from '../../tsjippy-forms/js/form_exports.js'
 
-document.addEventListener('click',function(event) {
+document.addEventListener('click', function(event) {
 	let target = event.target;
 	
 	//add element
