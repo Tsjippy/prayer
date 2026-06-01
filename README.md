@@ -1,3 +1,4 @@
+== Description ==
 This module adds 1 post category: 'Prayer'<br>
 You should add a new post with the prayer category each month.
 This post should have a prayer request for each day on seperate lines.<br>
@@ -10,3 +11,9 @@ So an example will look like this:<br>
 <br>
 <br>
 If such a post is available the daily prayerrequest will be displayed on the homepage and will be available via the rest-api.<br>
+
+== Hooks ==
+# FILTERS
+- apply_filters('sim_prayer_message', $prayerRequest['message'])
+- apply_filters('sim_after_bot_payer', $params);
+- $params	= apply_filters('sim-prayer-params', $params, $datetime, $post, $plainText), $signal;

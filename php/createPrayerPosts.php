@@ -112,7 +112,7 @@ function parsePostContent($post){
  */
 function stripTags($content){
 	// Content of page with all prayer requests of this month
-	return trim(strip_tags($content, ['strong', 'b', 'em', 'i', 'details', 's', 'br']));
+	return trim(wp_strip_all_tags($content, ['strong', 'b', 'em', 'i', 'details', 's', 'br']));
 }
 
 /**

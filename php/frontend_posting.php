@@ -26,7 +26,7 @@ function contentValidation($error, $frontEndContent){
     if(
         $frontEndContent->postType   != 'prayer' ||
         is_wp_error($error) || 
-        preg_match_all('/\d{1,2}\([S|M|T|W|F]\)/i', strip_tags($frontEndContent->postContent), $matches) < 20
+        preg_match_all('/\d{1,2}\([S|M|T|W|F]\)/i', wp_strip_all_tags($frontEndContent->postContent), $matches) < 20
     ){
         return $error;
     }
