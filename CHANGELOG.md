@@ -4,6 +4,7 @@
 ### Added
 
 ### Changed
+- show group name in functions
 
 ### Fixed
 
