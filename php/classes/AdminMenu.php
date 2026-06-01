@@ -51,15 +51,15 @@ class AdminMenu extends \TSJIPPY\ADMIN\SubAdminMenu{
                 <?php
                 foreach($groups as $index => $group){
                     ?>
-                    <div class="clone-div" data-div-id="<?php echo $index;?>" style="display:flex;border: #dedede solid; padding: 10px; margin-bottom: 10px;">
+                    <div class="clone-div" data-div-id="<?php echo esc_attr($index);?>" style="display:flex;border: #dedede solid; padding: 10px; margin-bottom: 10px;">
                         <div class="multi-input-wrapper">
                             <label>
-                                <h4 style='margin: 0px;'>Signal groupname <?php echo $index+1;?></h4>
+                                <h4 style='margin: 0px;'>Signal groupname <?php echo esc_attr($index + 1);?></h4>
                             </label>
                             <?php
                             if(defined('TSJIPPY\SIGNAL\SETTINGS') && TSJIPPY\SIGNAL\SETTINGS['local'] ?? false){
                                 ?>
-                                <select  name="groups[<?php echo $index;?>][name]">
+                                <select  name="groups[<?php echo esc_attr($index);?>][name]">
                                     <option value="">---</option>
                                     <?php
                                     $signal 		= TSJIPPY\SIGNAL\getSignalInstance();
@@ -68,11 +68,11 @@ class AdminMenu extends \TSJIPPY\ADMIN\SubAdminMenu{
                                         if(empty($g->name)){
                                             continue;
                                         }
-                                        $selected	= '';
-                                        if($group['name'] == $g->id){
-                                            $selected	= 'selected="selected"';
-                                        }
-                                        echo "<option value='$g->id' $selected>$g->name</option>";
+                                        ?>
+                                        <option value='<?php echo esc_attr($g->id);?>' <?php if($group['name'] == $g->id){echo 'selected="selected"';}?>>
+                                            <?php echo esc_attr($g->name);?>
+                                        </option>
+                                        <?php
                                     }
                                     ?>
                                 </select>
@@ -192,8 +192,15 @@ class AdminMenu extends \TSJIPPY\ADMIN\SubAdminMenu{
 
         $dataList   = TSJIPPY\addElement('datalist', $form, ['id' => "recipients"]);
 
-        foreach($this->settings['groups'] ?? [] as $group){
-            TSJIPPY\addElement('option', $dataList, ['value' => $group['name']], $group['name']);
+        if(defined('TSJIPPY\SIGNAL\SETTINGS') && TSJIPPY\SIGNAL\SETTINGS['local'] ?? false){
+            $signal 		= TSJIPPY\SIGNAL\getSignalInstance();
+            foreach($signal->listGroups() as $g){
+                if(empty($g->name)){
+                    continue;
+                }
+
+                TSJIPPY\addElement('option', $dataList, ['value' => $g->id], $g->name);
+            }
         }
 
         foreach ($users as $user) {
