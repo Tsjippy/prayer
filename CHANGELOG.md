@@ -4,11 +4,16 @@
 ### Added
 
 ### Changed
-- show group name in functions
 
 ### Fixed
 
 ### Updated
+
+## [10.1.7] - 2026-06-01
+
+
+### Changed
+- show group name in functions
 
 ## [10.1.6] - 2026-06-01
 
