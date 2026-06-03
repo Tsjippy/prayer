@@ -182,7 +182,7 @@ class PrayerSchedule {
      * @return array The prayer schedule for today indexed by time with an array of recipients for each time
      */
     public function getTodaySchedule($force=false){
-        $date			= \Date('y-m-d');
+        $date			= \gmdate('y-m-d');
 
         $schedule       = false;
 

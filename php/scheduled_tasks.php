@@ -80,7 +80,7 @@ function sendPrayerRequests(){
 		}
 	}
 
-	$date			= \Date('y-m-d');
+	$date			= \gmdate('y-m-d');
 	if(empty($schedule)){
 		delete_option("prayer_schedule_$date");
 	} else {
