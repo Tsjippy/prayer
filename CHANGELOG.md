@@ -8,6 +8,7 @@
 - use of gmdate and not date
 
 ### Fixed
+- do not use wp_strip_all_tags
 
 ### Updated
 
