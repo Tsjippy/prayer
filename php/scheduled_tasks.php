@@ -123,7 +123,7 @@ function checkPrayerRequests(){
 
 	// loop over all found prayer requests for the date with users attached to it. 
 	foreach($prayerRequests as $prayerRequest){
-		$message 		= wp_strip_all_tags($prayerRequest->post_content);
+		$message 		= strip_tags($prayerRequest->post_content);
 
 		if(empty($message)){
 			continue;

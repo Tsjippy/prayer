@@ -148,8 +148,8 @@ function prayerRequest($plainText = false, $verified=false, $date='') {
 	}
 	
 	if($plainText){
-		$message	= str_replace(['<br>', '</br>', '</ br>', '<br />'], "\n", $message);
 		$message 	= stripTags($message);
+		$message	= str_replace(['<br>', '</br>', '</ br>', '<br />'], "\n", $message);
 	}
 	
 	$params	= [
