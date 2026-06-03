@@ -5,6 +5,7 @@
 - echo escaping
 
 ### Changed
+- use of gmdate and not date
 
 ### Fixed
 
