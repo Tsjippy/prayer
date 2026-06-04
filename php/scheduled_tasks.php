@@ -2,23 +2,23 @@
 namespace TSJIPPY\PRAYER;
 use TSJIPPY;
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
+if ( ! defined('ABSPATH')) {
+    exit;
 }
 
-add_action('init', __NAMESPACE__.'\init');
-function init(){
-	//add action for use in scheduled task
-	add_action( 'send_prayer_action', __NAMESPACE__.'\sendPrayerRequests' );
-	
-	//add action for use in scheduled task
-	add_action( 'check_prayer_action', __NAMESPACE__.'\checkPrayerRequests' );
+add_action('init', __NAMESPACE__ . '\init');
+function init() {
+    //add action for use in scheduled task
+    add_action('send_prayer_action', __NAMESPACE__ . '\sendPrayerRequests');
+
+    //add action for use in scheduled task
+    add_action('check_prayer_action', __NAMESPACE__ . '\checkPrayerRequests');
 }
 
-function scheduleTasks(){
+function scheduleTasks() {
     TSJIPPY\scheduleTask('send_prayer_action', 'quarterly');
 
-	TSJIPPY\scheduleTask('check_prayer_action', 'daily');
+    TSJIPPY\scheduleTask('check_prayer_action', 'daily');
 }
 
 /**
@@ -26,121 +26,121 @@ function scheduleTasks(){
  * As we are not sure about the timeliness of the cron schedule we keep
  * a seperate schedule for each day to be sure everyone gets what they requested
  */
-function sendPrayerRequests(){
- 	$prayerRequest	= prayerRequest(true, true);
+function sendPrayerRequests() {
+     $prayerRequest    = prayerRequest(true, true);
 
-	$message	 	= "The prayer request of today is:\n";
-	$message 		.= $prayerRequest['message'];
-	
-	// Get the schedule for today
-	$prayerSchedule = new PrayerSchedule();
-	$schedule		= $prayerSchedule->getTodaySchedule();
+    $message         = "The prayer request of today is:\n";
+    $message         .= $prayerRequest['message'];
 
-	$time	= current_time('H:i');
-	foreach($schedule as $t => $recipients){
-		if(
-			!is_array($recipients) ||	// Recipients should always be an array
-			$t > $time					// Do not continue for times in the future
-		){
-			continue;
-		}
+    // Get the schedule for today
+    $prayerSchedule = new PrayerSchedule();
+    $schedule        = $prayerSchedule->getTodaySchedule();
 
-		// Remove the curent entry from todays schedule to indicate we have processed it
-		unset($schedule[$t]);
+    $time    = current_time('H:i');
+    foreach ($schedule as $t => $recipients) {
+        if (
+            !is_array($recipients) ||    // Recipients should always be an array
+            $t > $time                    // Do not continue for times in the future
+       ) {
+            continue;
+        }
 
-		$dayPart	= "morning";
-		$hour		= current_time('H');
-		if($hour > 11 && $hour < 18){
-			$dayPart	= 'afternoon';
-		}elseif($hour > 17){
-			$dayPart	= 'evening';
-		}elseif($hour < 4){
-			$dayPart	= 'night';
-		}
+        // Remove the curent entry from todays schedule to indicate we have processed it
+        unset($schedule[$t]);
 
-		foreach($recipients as $recipient){
-			$userName	= '';
-			if(is_numeric($recipient)){
-				$userdata	= get_userdata($recipient);
+        $dayPart    = "morning";
+        $hour        = current_time('H');
+        if ($hour > 11 && $hour < 18) {
+            $dayPart    = 'afternoon';
+        }elseif ($hour > 17) {
+            $dayPart    = 'evening';
+        }elseif ($hour < 4) {
+            $dayPart    = 'night';
+        }
 
-				if(!$userdata){
-					continue;
-				}
+        foreach ($recipients as $recipient) {
+            $userName    = '';
+            if (is_numeric($recipient)) {
+                $userdata    = get_userdata($recipient);
 
-				$userName	= ' '.$userdata->first_name;
-			}
+                if (!$userdata) {
+                    continue;
+                }
 
-			// make this available through an action to be used by the signal plugin, potentially others
-			do_action(
-				'tsjippy-prayer-send-message',
-				"Good $dayPart$userName,\n\n$message", 
-				$recipient, 
-				$prayerRequest['pictures']
-			);
-		}
-	}
+                $userName    = ' ' .$userdata->first_name;
+            }
 
-	$date			= \gmdate('y-m-d');
-	if(empty($schedule)){
-		delete_option("prayer_schedule_$date");
-	} else {
-		update_option("prayer_schedule_$date", $schedule);
-	}
+            // make this available through an action to be used by the signal plugin, potentially others
+            do_action(
+                'tsjippy-prayer-send-message',
+                "Good $dayPart$userName,\n\n$message",
+                $recipient,
+                $prayerRequest['pictures']
+           );
+        }
+    }
+
+    $date            = \gmdate('y-m-d');
+    if (empty($schedule)) {
+        delete_option("prayer_schedule_$date");
+    } else {
+        update_option("prayer_schedule_$date", $schedule);
+    }
 }
 
 /**
  * Check if a prayer request needs an update
  */
-function checkPrayerRequests(){
-	// Get the amount of days between this check and the actual publishing
-	$days			= SETTINGS['prayercheck'] ?? [];
-	if(empty($days)){
-		return;
-	}
+function checkPrayerRequests() {
+    // Get the amount of days between this check and the actual publishing
+    $days            = SETTINGS['prayercheck'] ?? [];
+    if (empty($days)) {
+        return;
+    }
 
-	// Get the actual prayer request this warning is for
-	$dateTime		= strtotime("+$days day", time());
-	$dateString		= gmdate(DATEFORMAT, $dateTime);
+    // Get the actual prayer request this warning is for
+    $dateTime        = strtotime("+$days day", time());
+    $dateString        = gmdate(DATEFORMAT, $dateTime);
 
-	$prayerRequests = get_posts(
-		array(
-			'post_type'		=> 'prayer-request',
-			'post_status'  	=> 'publish',
-			'numberposts'	=> -1,
-			'meta_query'    => array(
-        		'relation' => 'AND',
-				array(
-					'key'     => 'date',
-					'value'   => gmdate('Y-m-d', $dateTime)
-				),
-				array(
-					'key'     => 'user-id',
-					'compare' => 'EXISTS',
-				),
-			)
-		)
-	);
+    $prayerRequests = get_posts(
+        array(
+            'post_type'        => 'prayer-request',
+            'post_status'      => 'publish',
+            'numberposts'    => -1,
+            'meta_query'    => array(
+                'relation' => 'AND',
+                array(
+                    'key'     => 'date',
+                    'value'   => gmdate('Y-m-d', $dateTime)
+               ),
+                array(
+                    'key'     => 'user-id',
+                    'compare' => 'EXISTS',
+               ),
+           )
+       )
+   );
 
-	// loop over all found prayer requests for the date with users attached to it. 
-	foreach($prayerRequests as $prayerRequest){
-		$message 		= strip_tags($prayerRequest->post_content);
+    // loop over all found prayer requests for the date with users attached to it.
+    foreach ($prayerRequests as $prayerRequest) {
+        $message         = strip_tags($prayerRequest->post_content);
 
-		if(empty($message)){
-			continue;
-		}
+        if (empty($message)) {
+            continue;
+        }
 
-		$signalMessage	= "Good day %name%, $days days from now your prayer request will be sent out.\n\nPlease reply to me with an updated request if needed.\n\nThis is the request I have now:\n\n$message\n\nIt will be sent on $dateString\n\nStart your reply with 'update prayer'";
+        $signalMessage    = "Good day %name%, $days days from now your prayer request will be sent out.\n\nPlease reply to me with an updated request if needed.\n\nThis is the request I have now:\n\n$message\n\nIt will be sent on $dateString\n\nStart your reply with 'update prayer'";
 
-		foreach(get_post_meta($prayerRequest->ID, 'user-id') as $userId){
-			$user		= get_userdata($userId);
-			$msg		= str_replace('%name%', $user->first_name, $signalMessage);
+        foreach (get_post_meta($prayerRequest->ID, 'user-id') as $userId) {
+            $user        = get_userdata($userId);
+            $msg        = str_replace('%name%', $user->first_name, $signalMessage);
 
-			// make this available through an action to be used by the signal plugin, potentially others
-			do_action(
-				'tsjippy-prayer-send-message',
-				$msg, 
-				$user
-			);
-		}
-	}
+            // make this available through an action to be used by the signal plugin, potentially others
+            do_action(
+                'tsjippy-prayer-send-message',
+                $msg,
+                $user
+           );
+        }
+    }
 }

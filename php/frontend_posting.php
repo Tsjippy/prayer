@@ -3,17 +3,17 @@ namespace TSJIPPY\PRAYER;
 use TSJIPPY;
 use WP_Error;
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
+if ( ! defined('ABSPATH')) {
+    exit;
 }
 
 /**
  * Checks if the current post has the prayer category
  * if so checks if it has an word attachment
- * 
+ *
  * returns an error when it does not have the month and year in the title
  */
-add_filter('tsjippy_frontend_content_validation', __NAMESPACE__.'\contentValidation', 10, 2);
+add_filter('tsjippy_frontend_content_validation', __NAMESPACE__ . '\contentValidation', 10, 2);
 /**
  * Validates the content of the frontend post
  *
@@ -21,27 +21,27 @@ add_filter('tsjippy_frontend_content_validation', __NAMESPACE__.'\contentValidat
  * @param object $frontEndContent The frontend content object
  * @return WP_Error The error object
  */
-function contentValidation($error, $frontEndContent){
+function contentValidation($error, $frontEndContent) {
     // do not continue if the post content contains less than 28 prayerpoints
-    if(
+    if (
         $frontEndContent->postType   != 'prayer' ||
-        is_wp_error($error) || 
+        is_wp_error($error) ||
         preg_match_all('/\d{1,2}\([S|M|T|W|F]\)/i', wp_strip_all_tags($frontEndContent->postContent), $matches) < 20
-    ){
+   ) {
         return $error;
     }
 
     $years  = [gmdate('Y')-2, gmdate('Y')-1, gmdate('Y'), gmdate('Y')+1];
     $found  = false;
-    foreach($years as $year){
-        if(str_contains($frontEndContent->postTitle, strval($year))){
+    foreach ($years as $year) {
+        if (str_contains($frontEndContent->postTitle, strval($year))) {
             $found  = true;
             break;
         }
     }
 
-    if(!$found){
-        return new WP_Error('prayer', "I guess you are submitting a post with prayerpoints?<br><br>Please make sure the year is included in the post title.");
+    if (!$found) {
+        return new WP_Error('prayer', "I guess you are submitting a post with prayerpoints?<br><br>Please make sure the year is included in the post title. ");
     }
 
     //month year

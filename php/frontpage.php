@@ -2,36 +2,36 @@
 namespace TSJIPPY\PRAYER;
 use TSJIPPY;
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
+if ( ! defined('ABSPATH')) {
+    exit;
 }
 
-add_action('tsjippy_frontpage_before_main_content', __NAMESPACE__.'\beforeMainContent', 5);
-function beforeMainContent(){
-    if(!is_user_logged_in()){
+add_action('tsjippy_frontpage_before_main_content', __NAMESPACE__ . '\beforeMainContent', 5);
+function beforeMainContent() {
+    if (!is_user_logged_in()) {
         return;
     }
 
     // Get the prayer request of the day, add extra messages to it, replace names with urls
-    $prayerRequest	= prayerRequest();
-    if(!$prayerRequest){
+    $prayerRequest    = prayerRequest();
+    if (!$prayerRequest) {
         return;
     }
 
     $filteredMessage    = apply_filters('tsjippy_prayer_message', $prayerRequest['message']);
-    $userPageLinks	    = new TSJIPPY\UserPageLinks($filteredMessage, true);
+    $userPageLinks        = new TSJIPPY\UserPageLinks($filteredMessage, true);
     $message            = $userPageLinks->string;
-    
-    foreach($prayerRequest['pictures'] as $index => $path){
+
+    foreach ($prayerRequest['pictures'] as $index => $path) {
         $url        = $prayerRequest['urls'][$index];
         $pictureUrl = TSJIPPY\pathToUrl($path);
 
-        if(!$pictureUrl ){
+        if (!$pictureUrl) {
             continue;
         }
-        
-        $picture	= "<img width='50' height='50' src='$pictureUrl' class='attachment-avatar size-avatar' alt='' style='border-radius: 50%;' decoding='async'/>";
-        $message	= "<a href='$url'>$picture</a>$message";
+
+        $picture    = "<img width='50' height='50' src='$pictureUrl' class='attachment-avatar size-avatar' alt='' style='border-radius: 50%;' decoding='async'/>";
+        $message    = "<a href='$url'>$picture</a>$message";
     }
 
     ?>

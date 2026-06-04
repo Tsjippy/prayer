@@ -2,11 +2,11 @@
 namespace TSJIPPY\PRAYER;
 use TSJIPPY;
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
+if ( ! defined('ABSPATH')) {
+    exit;
 }
 
-add_filter('tsjippy_personal_signal_settings', __NAMESPACE__.'\signalSettings', 10, 3);
+add_filter('tsjippy_personal_signal_settings', __NAMESPACE__ . '\signalSettings', 10, 3);
 /**
  * Add prayer time setting to personal signal settings
  *
@@ -16,9 +16,9 @@ add_filter('tsjippy_personal_signal_settings', __NAMESPACE__.'\signalSettings', 
  *
  * @return string The updated settings
  */
-function signalSettings($settings, $user, $prefs){
+function signalSettings($settings, $user, $prefs) {
     $prayerTime = '';
-    if(isset($prefs['prayertime'])){
+    if (isset($prefs['prayertime'])) {
         $prayerTime = $prefs['prayertime'];
     }
 
@@ -30,7 +30,7 @@ function signalSettings($settings, $user, $prefs){
     return $settings;
 }
 
-add_action('tsjippy_signal_before_pref_save', __NAMESPACE__.'\beforePrevSafe', 10, 2);
+add_action('tsjippy_signal_before_pref_save', __NAMESPACE__ . '\beforePrevSafe', 10, 2);
 
 /**
  * Update prayer time schedule before saving preferences
@@ -38,7 +38,7 @@ add_action('tsjippy_signal_before_pref_save', __NAMESPACE__.'\beforePrevSafe', 1
  * @param int $userId The user ID
  * @param array $prefs The user preferences
  */
-function beforePrevSafe($userId, $prefs){
+function beforePrevSafe($userId, $prefs) {
     $prayerSchedule    = new PrayerSchedule();
 
     $newTime    = $prefs['prayertime'] ?? null;
