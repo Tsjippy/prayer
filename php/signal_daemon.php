@@ -1,8 +1,10 @@
 <?php
+
 namespace TSJIPPY\PRAYER;
+
 use TSJIPPY;
 
-if ( ! defined('ABSPATH')) {
+if (! defined('ABSPATH')) {
     exit;
 }
 
@@ -19,7 +21,8 @@ add_filter('tsjippy-signal-daemon-response', __NAMESPACE__ . '\addPrayerResponse
  *
  * @return array The modified response
  */
-function addPrayerResponse($response, $message, $source, $users, $name, $signal) {
+function addPrayerResponse($response, $message, $source, $users, $name, $signal)
+{
     if ($response['message'] != 'I have no clue, do you know?') {
         return $response;
     }
@@ -28,11 +31,9 @@ function addPrayerResponse($response, $message, $source, $users, $name, $signal)
 
     if (str_starts_with($message, 'update prayer correct')) {
         $response['message']    = updatePrayerRequest($message, $users, $signal);
-    }
-
-    elseif (str_starts_with($lowerMessage, 'update prayer')) {
+    } elseif (str_starts_with($lowerMessage, 'update prayer')) {
         $response['message']    = checkPrayerRequestToUpdate($message, $users, $signal);
-    }elseif (str_contains($lowerMessage, 'prayer') && $name) {
+    } elseif (str_contains($lowerMessage, 'prayer') && $name) {
         $prayerRequest  = prayerRequest(true, true);
         $response['message']    = "This is the prayer for today:\n\n{$prayerRequest['message']}";
         $response['pictures']   = $prayerRequest['pictures'];
@@ -50,7 +51,8 @@ function addPrayerResponse($response, $message, $source, $users, $name, $signal)
  *
  * @return string The response message
  */
-function updatePrayerRequest($message, $users, $signal) {
+function updatePrayerRequest($message, $users, $signal)
+{
     // mark as updated for affected users
     foreach ($users as $user) {
         $replacementData    = get_user_meta($user->ID, 'pending-prayer-update-data', true);
@@ -82,7 +84,7 @@ function updatePrayerRequest($message, $users, $signal) {
         ],
         false,
         false
-   );
+    );
 
     $date   = gmdate(DATEFORMAT, strtotime($replacementData['date']));
     return "Updated your prayer request for $date\n\nto:\n'{$replacementData['replacement']}'";
@@ -97,7 +99,8 @@ function updatePrayerRequest($message, $users, $signal) {
  *
  * @return string The response message
  */
-function checkPrayerRequestToUpdate($message, $users, $signal) {
+function checkPrayerRequestToUpdate($message, $users, $signal)
+{
     $prayerRequests    = false;
 
     foreach ($users as $user) {
@@ -108,7 +111,7 @@ function checkPrayerRequestToUpdate($message, $users, $signal) {
                 'meta_key'      => 'user-id',
                 'meta_value'    => $user->ID
             ]
-       );
+        );
 
         if ($prayerRequests) {
             break;
@@ -141,7 +144,7 @@ function checkPrayerRequestToUpdate($message, $users, $signal) {
                 'post-id'       => $prayerRequests[0]->ID,
                 'date'          => get_post_meta($prayerRequests[0]->ID, 'date', true)
             ]
-       );
+        );
     }
 
     return "I am going to replace:\n'$prayerMessage'\n\nwith\n'$replacetext'\n\nReply with 'update prayer correct' if I should continue";

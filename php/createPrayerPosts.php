@@ -1,12 +1,15 @@
 <?php
+
 namespace TSJIPPY\PRAYER;
+
 use TSJIPPY;
 
-if ( ! defined('ABSPATH')) {
+if (! defined('ABSPATH')) {
     exit;
 }
 
-function dateRegex() {
+function dateRegex()
+{
     /* $year = [
         'Y' => "20(?:0[1-9]|[12]\d)",
         'y' => "(?:0[1-9]|[12]\d)"
@@ -20,7 +23,7 @@ function dateRegex() {
         'm' => "(?:0?[1-9]|1[0-2])",
         //'n' => "(?:[1-9]|1[0-2])"
     ];
-    $months = "(?:" .implode('|', $month). ")";
+    $months = "(?:" . implode('|', $month) . ")";
 
     $day = [
         'd' => "(?:0?[1-9]|[12]\d|3[01])(?:nd|th)?",
@@ -28,7 +31,7 @@ function dateRegex() {
         //'D' => "(?:Sun|Mon|Tues|Tue|Tu|Wed|Thurs|Thu|Th|Fri|Sat)",
         'l' => "(?:Sun(?:day)?|Mon(?:day)?|Tue?s?(?:day)?|Wed(?:nesday)?|Thu?r?s?(?:day)?|Fri(?:day)?|Sat(?:urday)?)"
     ];
-    $days = "\b(?:" .implode('|', $day). ")\b";
+    $days = "\b(?:" . implode('|', $day) . ")\b";
 
     $seperators = "(?:\/|\.|-|\s|,\s)";
 
@@ -46,7 +49,8 @@ function dateRegex() {
  *
  * @param   object  $post   The post object of the prayer post
  */
-function parsePostContent($post) {
+function parsePostContent($post)
+{
     $text        = preg_replace("/(*UTF8)(\x{002D}|\x{058A}|\x{05BE}|\x{2010}|\x{2011}|\x{2012}|\x{2013}|\x{2014}|\x{2015}|\x{2E3A}|\x{2E3B}|\x{FE58}|\x{FE63}|\x{FF0D})/mus", "-", $post->post_content);
 
     /**
@@ -110,7 +114,8 @@ function parsePostContent($post) {
  *
  * @return  string  The content with tags stripped
  */
-function stripTags($content) {
+function stripTags($content)
+{
     // Content of page with all prayer requests of this month
     return strip_tags($content, ['strong', 'b', 'em', 'i', 'details', 's', 'br']);
 }
@@ -122,7 +127,8 @@ function stripTags($content) {
  *
  * @return  string  The cleaned message
  */
-function cleanMessage($msg) {
+function cleanMessage($msg)
+{
     // < SOME TAG > one or more spaces followed by the same tag closing </ (\g1) >
     $re        = "/<([^>]*)>(?:\s|&nbsp;)*<\/\g1>/";
 
@@ -136,7 +142,7 @@ function cleanMessage($msg) {
     $msg    = trim(preg_replace($re, '', $msg));
 
     // Remove starting and ending line breaks
-    $msg    = preg_replace("/(^(<br\s*\/?>)|(<br\s*\/?>\s*)+$)/", "", $msg   );
+    $msg    = preg_replace("/(^(<br\s*\/?>)|(<br\s*\/?>\s*)+$)/", "", $msg);
 
     return $msg;
 }
@@ -148,7 +154,8 @@ function cleanMessage($msg) {
  * @param   object  $post     The parent post object
  * @param   bool    $update   Whether this is an update or a new post
  */
-function createPrayerPosts($postId, $post, $update) {
+function createPrayerPosts($postId, $post, $update)
+{
     // Check if it's an autosave or a revision
     if (
         $post->post_type != 'prayer-request' || // We should only process prayer-request posts
@@ -156,7 +163,7 @@ function createPrayerPosts($postId, $post, $update) {
         wp_is_post_autosave($postId) ||
         wp_is_post_revision($postId) ||
         !empty($post->post_parent)              // only process if this is not a child itself
-   ) {
+    ) {
         return;
     }
 
@@ -170,10 +177,10 @@ function createPrayerPosts($postId, $post, $update) {
     $posts = get_posts(
         array(
             'post_type'     => 'prayer-request',
-            'posts_per_page'=> -1,
+            'posts_per_page' => -1,
             'post_parent'    => $post->ID
-       )
-   );
+        )
+    );
     foreach ($posts as $prevPost) {
         wp_delete_post($prevPost->ID, true);
     }
@@ -183,7 +190,7 @@ function createPrayerPosts($postId, $post, $update) {
         $cats   = $_POST['prayer-requests-ids'];
 
         $cats   = array_map('intval', $cats);
-    }else{
+    } else {
         $cats   = wp_get_post_categories($post->ID);
     }
 
@@ -196,12 +203,12 @@ function createPrayerPosts($postId, $post, $update) {
             'post_type'     => 'prayer-request',
             'post_author'   => isset($prayerRequest['userIds'][0]) ? $prayerRequest['userIds'][0] : $post->post_author,
             'post_parent'   => $post->ID
-       );
+        );
 
         // Insert the post into the database
         $postId = wp_insert_post($postData, false, false);
 
-        if ( is_wp_error($postId)) {
+        if (is_wp_error($postId)) {
             TSJIPPY\printArray('Error inserting post: ' . $postId->get_error_message());
         }
 

@@ -1,13 +1,16 @@
 <?php
+
 namespace TSJIPPY\PRAYER;
+
 use TSJIPPY;
 
-if ( ! defined('ABSPATH')) {
+if (! defined('ABSPATH')) {
     exit;
 }
 
 add_action('tsjippy_frontpage_before_main_content', __NAMESPACE__ . '\beforeMainContent', 5);
-function beforeMainContent() {
+function beforeMainContent()
+{
     if (!is_user_logged_in()) {
         return;
     }
@@ -34,25 +37,25 @@ function beforeMainContent() {
         $message    = "<a href='$url'>$picture</a>$message";
     }
 
-    ?>
+?>
     <style>
-        #prayer-request{
+        #prayer-request {
             padding-left: 80px;
             font-size: 18px;
-            color:#999999;
-            width:80%;
-            max-width:800px;
+            color: #999999;
+            width: 80%;
+            max-width: 800px;
         }
 
         @media(max-width:768px) {
-            #prayer-request{
+            #prayer-request {
                 padding-left: 60px;
             }
         }
     </style>
     <div id='prayer-request'>
         <h3 id='prayertitle'>Today's Prayer Request</h3>
-        <p><?php echo $message;?></p>
+        <p><?php echo $message; ?></p>
     </div>
-    <?php
+<?php
 }

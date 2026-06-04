@@ -1,13 +1,16 @@
 <?php
+
 namespace TSJIPPY\PRAYER;
+
 use TSJIPPY;
 
-if ( ! defined('ABSPATH')) {
+if (! defined('ABSPATH')) {
     exit;
 }
 
 add_action('init', __NAMESPACE__ . '\init');
-function init() {
+function init()
+{
     //add action for use in scheduled task
     add_action('send_prayer_action', __NAMESPACE__ . '\sendPrayerRequests');
 
@@ -15,7 +18,8 @@ function init() {
     add_action('check_prayer_action', __NAMESPACE__ . '\checkPrayerRequests');
 }
 
-function scheduleTasks() {
+function scheduleTasks()
+{
     TSJIPPY\scheduleTask('send_prayer_action', 'quarterly');
 
     TSJIPPY\scheduleTask('check_prayer_action', 'daily');
@@ -26,8 +30,9 @@ function scheduleTasks() {
  * As we are not sure about the timeliness of the cron schedule we keep
  * a seperate schedule for each day to be sure everyone gets what they requested
  */
-function sendPrayerRequests() {
-     $prayerRequest    = prayerRequest(true, true);
+function sendPrayerRequests()
+{
+    $prayerRequest    = prayerRequest(true, true);
 
     $message         = "The prayer request of today is:\n";
     $message         .= $prayerRequest['message'];
@@ -41,7 +46,7 @@ function sendPrayerRequests() {
         if (
             !is_array($recipients) ||    // Recipients should always be an array
             $t > $time                    // Do not continue for times in the future
-       ) {
+        ) {
             continue;
         }
 
@@ -52,9 +57,9 @@ function sendPrayerRequests() {
         $hour        = current_time('H');
         if ($hour > 11 && $hour < 18) {
             $dayPart    = 'afternoon';
-        }elseif ($hour > 17) {
+        } elseif ($hour > 17) {
             $dayPart    = 'evening';
-        }elseif ($hour < 4) {
+        } elseif ($hour < 4) {
             $dayPart    = 'night';
         }
 
@@ -67,7 +72,7 @@ function sendPrayerRequests() {
                     continue;
                 }
 
-                $userName    = ' ' .$userdata->first_name;
+                $userName    = ' ' . $userdata->first_name;
             }
 
             // make this available through an action to be used by the signal plugin, potentially others
@@ -76,7 +81,7 @@ function sendPrayerRequests() {
                 "Good $dayPart$userName,\n\n$message",
                 $recipient,
                 $prayerRequest['pictures']
-           );
+            );
         }
     }
 
@@ -91,7 +96,8 @@ function sendPrayerRequests() {
 /**
  * Check if a prayer request needs an update
  */
-function checkPrayerRequests() {
+function checkPrayerRequests()
+{
     // Get the amount of days between this check and the actual publishing
     $days            = SETTINGS['prayercheck'] ?? [];
     if (empty($days)) {
@@ -112,14 +118,14 @@ function checkPrayerRequests() {
                 array(
                     'key'     => 'date',
                     'value'   => gmdate('Y-m-d', $dateTime)
-               ),
+                ),
                 array(
                     'key'     => 'user-id',
                     'compare' => 'EXISTS',
-               ),
-           )
-       )
-   );
+                ),
+            )
+        )
+    );
 
     // loop over all found prayer requests for the date with users attached to it.
     foreach ($prayerRequests as $prayerRequest) {
@@ -140,7 +146,7 @@ function checkPrayerRequests() {
                 'tsjippy-prayer-send-message',
                 $msg,
                 $user
-           );
+            );
         }
     }
 }

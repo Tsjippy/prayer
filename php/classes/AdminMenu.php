@@ -1,14 +1,17 @@
 <?php
+
 namespace TSJIPPY\PRAYER;
+
 use TSJIPPY;
 
 use function TSJIPPY\addRawHtml;
 
-if ( ! defined('ABSPATH')) {
+if (! defined('ABSPATH')) {
     exit;
 }
 
-class AdminMenu extends \TSJIPPY\ADMIN\SubAdminMenu{
+class AdminMenu extends \TSJIPPY\ADMIN\SubAdminMenu
+{
 
     /**
      * AdminMenu constructor.
@@ -16,33 +19,43 @@ class AdminMenu extends \TSJIPPY\ADMIN\SubAdminMenu{
      * @param array $settings The settings for the plugin
      * @param string $name The name of the plugin
      */
-    public function __construct($settings, $name) {
+    public function __construct($settings, $name)
+    {
         parent::__construct($settings, $name);
     }
 
-    public function settings($parent) {
-        wp_enqueue_script('tsjippy_prayer_admin', TSJIPPY\pathToUrl(PLUGINPATH. 'js/admin.min.js'), array('tsjippy_script'), PLUGINVERSION, true);
+    public function settings($parent)
+    {
+        wp_enqueue_script('tsjippy_prayer_admin', TSJIPPY\pathToUrl(PLUGINPATH . 'js/admin.min.js'), array('tsjippy_script'), PLUGINVERSION, true);
 
         ob_start();
 
         if (empty($this->settings['groups'])) {
             $groups    = [''];
-        }else{
+        } else {
             $groups    = $this->settings['groups'];
         }
 
-        ?>
+?>
         <h4>Show prayer request on homepage</h4>
         <label>
             Frontpage Hook<br>
-            <input type='text' name='frontpagehook' value='<?php if (isset($this->settings['frontpagehook'])) {echo $this->settings['frontpagehook'];}else{echo '';}?>'>
+            <input type='text' name='frontpagehook' value='<?php if (isset($this->settings['frontpagehook'])) {
+                                                                echo $this->settings['frontpagehook'];
+                                                            } else {
+                                                                echo '';
+                                                            } ?>'>
         </label>
         <br>
         <h4>Send prayer message check</h4>
         <label>
             People whom submitted a prayer request will be send their request X days in advance to check if it needs an update <br>
             Leave empty for no check<br>
-            <input type='number' name='prayercheck' value='<?php if (isset($this->settings['prayercheck'])) {echo $this->settings['prayercheck'];}else{echo '';}?>'>
+            <input type='number' name='prayercheck' value='<?php if (isset($this->settings['prayercheck'])) {
+                                                                echo $this->settings['prayercheck'];
+                                                            } else {
+                                                                echo '';
+                                                            } ?>'>
         </label>
         <br>
         <div class="">
@@ -50,16 +63,16 @@ class AdminMenu extends \TSJIPPY\ADMIN\SubAdminMenu{
             <div class="clone-divs-wrapper">
                 <?php
                 foreach ($groups as $index => $group) {
-                    ?>
-                    <div class="clone-div" data-div-id="<?php echo esc_attr($index);?>" style="display:flex;border: #dedede solid; padding: 10px; margin-bottom: 10px;">
+                ?>
+                    <div class="clone-div" data-div-id="<?php echo esc_attr($index); ?>" style="display:flex;border: #dedede solid; padding: 10px; margin-bottom: 10px;">
                         <div class="multi-input-wrapper">
                             <label>
-                                <h4 style='margin: 0px;'>Signal groupname <?php echo esc_attr($index + 1);?></h4>
+                                <h4 style='margin: 0px;'>Signal groupname <?php echo esc_attr($index + 1); ?></h4>
                             </label>
                             <?php
                             if (defined('TSJIPPY\SIGNAL\SETTINGS') && TSJIPPY\SIGNAL\SETTINGS['local'] ?? false) {
-                                ?>
-                                <select  name="groups[<?php echo esc_attr($index);?>][name]">
+                            ?>
+                                <select name="groups[<?php echo esc_attr($index); ?>][name]">
                                     <option value="">---</option>
                                     <?php
                                     $signal         = TSJIPPY\SIGNAL\getSignalInstance();
@@ -68,60 +81,69 @@ class AdminMenu extends \TSJIPPY\ADMIN\SubAdminMenu{
                                         if (empty($g->name)) {
                                             continue;
                                         }
-                                        ?>
-                                        <option value='<?php echo esc_attr($g->id);?>' <?php if ($group['name'] == $g->id) {echo 'selected="selected"';}?>>
-                                            <?php echo esc_attr($g->name);?>
+                                    ?>
+                                        <option value='<?php echo esc_attr($g->id); ?>' <?php if ($group['name'] == $g->id) {
+                                                                                            echo 'selected="selected"';
+                                                                                        } ?>>
+                                            <?php echo esc_attr($g->name); ?>
                                         </option>
-                                        <?php
+                                    <?php
                                     }
                                     ?>
                                 </select>
-                                <?php
-                            }else{
-                                ?>
-                                <input type='text' name="groups[<?php echo esc_attr($index);?>][name]" value='<?php if (!empty($group['name'])) {echo $group['name'];}?>'>
-                                <?php
+                            <?php
+                            } else {
+                            ?>
+                                <input type='text' name="groups[<?php echo esc_attr($index); ?>][name]" value='<?php if (!empty($group['name'])) {
+                                                                                                                    echo $group['name'];
+                                                                                                                } ?>'>
+                            <?php
                             }
                             ?>
                             <label>
                                 <h4 style='margin-bottom: 0px;'>Time the message should be send</h4>
-                                <input type='time' name="groups[<?php echo esc_attr($index);?>][time]" value='<?php if (!empty($group['time'])) {echo $group['time'];}?>'>
+                                <input type='time' name="groups[<?php echo esc_attr($index); ?>][time]" value='<?php if (!empty($group['time'])) {
+                                                                                                                    echo $group['time'];
+                                                                                                                } ?>'>
                             </label>
                         </div>
                         <div class='button-wrapper' style='margin:auto;'>
                             <button type="button" class="add button" style="flex: 1;">+</button>
                             <?php
-                            if (count($groups)> 1) {
-                                ?>
+                            if (count($groups) > 1) {
+                            ?>
                                 <button type="button" class="remove button" style="flex: 1;">-</button>
-                                <?php
+                            <?php
                             }
                             ?>
                         </div>
                     </div>
-                    <?php
+                <?php
                 }
                 ?>
             </div>
         </div>
 
-        <?php
+<?php
 
         addRawHtml(ob_get_clean(), $parent);
 
         return true;
     }
 
-    public function emails($parent) {
+    public function emails($parent)
+    {
         return false;
     }
 
-    public function data($parent='') {
+    public function data($parent = '')
+    {
 
         return false;
     }
 
-    public function functions($parent) {
+    public function functions($parent)
+    {
         if (isset($_POST['prayer-recipient']) && TSJIPPY\verifyNonce('nonce', 'send-prayer-nonce')) {
             $recipient      = sanitize_text_field(wp_unslash($_POST['prayer-recipient']));
 
@@ -134,9 +156,9 @@ class AdminMenu extends \TSJIPPY\ADMIN\SubAdminMenu{
             $hour        = current_time('H');
             if ($hour > 11 && $hour < 18) {
                 $dayPart    = 'afternoon';
-            }elseif ($hour > 17) {
+            } elseif ($hour > 17) {
                 $dayPart    = 'evening';
-            }elseif ($hour < 4) {
+            } elseif ($hour < 4) {
                 $dayPart    = 'night';
             }
 
@@ -146,15 +168,15 @@ class AdminMenu extends \TSJIPPY\ADMIN\SubAdminMenu{
                 "Good $dayPart ,\n\n$message",
                 $recipient,
                 $prayerRequest['pictures']
-           );
+            );
         }
         $users            = get_users([
             'meta_query' => array(
                 array(
                     'key'     => 'phonenumbers',
                     'compare' => 'EXISTS'
-               )
-           ),
+                )
+            ),
             'orderby'    => 'meta_value',
             'order'     => 'ASC'
         ]);
@@ -174,7 +196,7 @@ class AdminMenu extends \TSJIPPY\ADMIN\SubAdminMenu{
                 'value'        => wp_create_nonce('send-prayer-nonce')
             ],
             'Send a prayer message'
-       );
+        );
 
         $label  = TSJIPPY\addElement('label', $form, [], 'Recipient: phonenumber or group id');
 
@@ -188,7 +210,7 @@ class AdminMenu extends \TSJIPPY\ADMIN\SubAdminMenu{
                 'name'        => 'prayer-recipient',
                 'list'        => 'recipients'
             ]
-       );
+        );
 
         $dataList   = TSJIPPY\addElement('datalist', $form, ['id' => "recipients"]);
 
@@ -220,7 +242,8 @@ class AdminMenu extends \TSJIPPY\ADMIN\SubAdminMenu{
     /**
      * Function to do extra actions from $_POST data. Overwrite if needed
      */
-    public function postActions() {
+    public function postActions()
+    {
         return '';
     }
 
@@ -231,7 +254,8 @@ class AdminMenu extends \TSJIPPY\ADMIN\SubAdminMenu{
      *
      * @return array The indexed array
      */
-    private function indexArray($array) {
+    private function indexArray($array)
+    {
         $newArray    = [];
         foreach ($array as $item) {
             $newArray[$item['name']]    = $item['time'];
@@ -243,8 +267,9 @@ class AdminMenu extends \TSJIPPY\ADMIN\SubAdminMenu{
     /**
      * Schedules the tasks for this plugin
      *
-    */
-    public function postSettingsSave() {
+     */
+    public function postSettingsSave()
+    {
         scheduleTasks();
 
         $date                = \gmdate('y-m-d');

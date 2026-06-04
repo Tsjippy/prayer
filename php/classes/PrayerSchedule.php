@@ -1,31 +1,36 @@
 <?php
+
 namespace TSJIPPY\PRAYER;
+
 use TSJIPPY;
 
 
-if ( ! defined('ABSPATH')) {
+if (! defined('ABSPATH')) {
     exit;
 }
 
-class PrayerSchedule {
+class PrayerSchedule
+{
     public string $tableName;
 
     /**
      * Constructor
      */
-    public function __construct() {
+    public function __construct()
+    {
         global $wpdb;
 
-        $this->tableName        = $wpdb->prefix. 'tsjippy_prayer_schedule';
+        $this->tableName        = $wpdb->prefix . 'tsjippy_prayer_schedule';
     }
 
     /**
      * Create the sent messages table if it does not exist
      */
-    public function createDbTables() {
+    public function createDbTables()
+    {
         global $wpdb;
 
-        if ( !function_exists('maybe_create_table')) {
+        if (!function_exists('maybe_create_table')) {
             require_once ABSPATH . 'wp-admin/includes/upgrade.php';
         }
 
@@ -41,7 +46,6 @@ class PrayerSchedule {
        ) $charsetCollate;";
 
         maybe_create_table($this->tableName, $sql);
-
     }
 
     /**
@@ -49,7 +53,8 @@ class PrayerSchedule {
      *
      * @return array The prayer schedule indexed by time with an array of recipients for each time
      */
-    public function getSchedule() {
+    public function getSchedule()
+    {
         global $wpdb;
 
         $results = $wpdb->get_results("SELECT * FROM {$this->tableName}");
@@ -77,7 +82,8 @@ class PrayerSchedule {
      * @return true|\WP_Error True on success, WP_Error on failure
      *
      */
-    public function add($recipient, $time) {
+    public function add($recipient, $time)
+    {
         global $wpdb;
 
         /**
@@ -87,7 +93,7 @@ class PrayerSchedule {
 
         foreach ($existing as $result) {
             // Only update if needed
-            if ($result-> time != $time) {
+            if ($result->time != $time) {
                 $this->update($recipient, $time);
             }
 
@@ -100,8 +106,8 @@ class PrayerSchedule {
             array(
                 'recipient'        => $recipient,
                 'time'            => $time
-           )
-       );
+            )
+        );
 
         if (!empty($wpdb->last_error)) {
             return new \WP_Error('prayer', $wpdb->last_error);
@@ -121,7 +127,8 @@ class PrayerSchedule {
      *
      * @return true|\WP_Error True on success, WP_Error on failure
      */
-    public function update($recipient, $time) {
+    public function update($recipient, $time)
+    {
         global $wpdb;
 
         // Update booking in db
@@ -129,11 +136,11 @@ class PrayerSchedule {
             $this->tableName,
             array(
                 'time'            => $time
-           ),
+            ),
             array(
                 'recipient'        => $recipient,
-           )
-       );
+            )
+        );
 
         if (!empty($wpdb->last_error)) {
             return new \WP_Error('prayer', $wpdb->last_error);
@@ -146,14 +153,15 @@ class PrayerSchedule {
     }
 
     /**
-    * Delete prayer schedule session
-    *
-    * @param int $recipient The recipient to delete from the schedule
-    *
-    * @return true|\WP_Error True on success, WP_Error on failure
-    *
-    */
-    public function delete($recipient) {
+     * Delete prayer schedule session
+     *
+     * @param int $recipient The recipient to delete from the schedule
+     *
+     * @return true|\WP_Error True on success, WP_Error on failure
+     *
+     */
+    public function delete($recipient)
+    {
         global $wpdb;
 
         // Delete booking from db
@@ -161,8 +169,8 @@ class PrayerSchedule {
             $this->tableName,
             array(
                 'recipient' => $recipient
-           )
-       );
+            )
+        );
 
         if (!empty($wpdb->last_error)) {
             return new \WP_Error('prayer', $wpdb->last_error);
@@ -181,7 +189,8 @@ class PrayerSchedule {
      *
      * @return array The prayer schedule for today indexed by time with an array of recipients for each time
      */
-    public function getTodaySchedule($force=false) {
+    public function getTodaySchedule($force = false)
+    {
         $date            = \gmdate('y-m-d');
 
         $schedule       = false;

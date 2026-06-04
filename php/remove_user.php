@@ -1,8 +1,10 @@
 <?php
+
 namespace TSJIPPY\PRAYER;
+
 use TSJIPPY;
 
-if ( ! defined('ABSPATH')) {
+if (! defined('ABSPATH')) {
     exit;
 }
 
@@ -12,7 +14,8 @@ add_action('delete_user', __NAMESPACE__ . '\onUserDelete');
  *
  * @param int $userId The ID of the user being deleted
  */
-function onUserDelete($userId) {
+function onUserDelete($userId)
+{
     $prayerSchedule    = new PrayerSchedule();
 
     $prayerSchedule->delete($userId);

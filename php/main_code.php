@@ -1,8 +1,10 @@
 <?php
+
 namespace TSJIPPY\PRAYER;
+
 use TSJIPPY;
 
-if ( ! defined('ABSPATH')) {
+if (! defined('ABSPATH')) {
     exit;
 }
 
@@ -20,7 +22,8 @@ add_filter('tsjippy_frontend_content_edit_rights', __NAMESPACE__ . '\editRights'
  *
  * @return  bool    Whether the user has edit rights
  */
-function editRights($editRight, $postCategory) {
+function editRights($editRight, $postCategory)
+{
 
     if (
         !$editRight                                                        &&    // If we currently have no edit right
@@ -28,8 +31,8 @@ function editRights($editRight, $postCategory) {
         (
             in_array(get_cat_ID('Prayer'), $postCategory)                 ||
             in_array('prayer', $postCategory)
-       )
-   ) {
+        )
+    ) {
         $editRight = true;
     }
 
@@ -46,8 +49,9 @@ function editRights($editRight, $postCategory) {
  *
  * @return   array|false                 An array containing the prayer request and pictures or false if no prayer request found
  *
-**/
-function prayerRequest($plainText = false, $verified=false, $date='') {
+ **/
+function prayerRequest($plainText = false, $verified = false, $date = '')
+{
     if (!is_user_logged_in() && !$verified) {
         return false;
     }
@@ -56,11 +60,11 @@ function prayerRequest($plainText = false, $verified=false, $date='') {
 
     if (empty($date)) {
         $date = gmdate("Y-m-d");
-    }else{
+    } else {
         // epoch
         if (is_numeric($date)) {
             $datetime    = $date;
-        }else{
+        } else {
             // date string given
             $datetime     = strtotime($date);
         }
@@ -78,8 +82,8 @@ function prayerRequest($plainText = false, $verified=false, $date='') {
             'meta_key'        => 'date',
             'meta_value'       => $date,
             'numberposts'    => -1,
-       )
-   );
+        )
+    );
 
     if (empty($posts)) {
         if ($plainText) {
@@ -106,10 +110,10 @@ function prayerRequest($plainText = false, $verified=false, $date='') {
         }
 
         // Add the heading
-        $message    .= trim(explode(':', $post->post_title)[1]). '<br>';
+        $message    .= trim(explode(':', $post->post_title)[1]) . '<br>';
 
         // Main message
-        $message    .= $post->post_content. '<br><br>';
+        $message    .= $post->post_content . '<br><br>';
 
         $users         = array_merge(get_post_meta($post->ID, 'user-id'), $users);
     }
@@ -120,19 +124,20 @@ function prayerRequest($plainText = false, $verified=false, $date='') {
 
         if (is_numeric($picture)) {
             $attachmentId    = $picture;
-        }else{
+        } else {
             $attachmentId    = get_user_meta($userId, 'profile_picture', true);
             if (is_array($attachmentId)) {
                 if (isset($attachmentId[0])) {
                     $attachmentId    = $attachmentId[0];
-                }else{
-                    $attachmentId    = 0;                        }
+                } else {
+                    $attachmentId    = 0;
+                }
             }
         }
 
         if (is_numeric($attachmentId)) {
             $picture     = get_attached_file($attachmentId);
-        }else{
+        } else {
             $picture     = TSJIPPY\urlToPath($attachmentId);
         }
 
@@ -166,7 +171,7 @@ function prayerRequest($plainText = false, $verified=false, $date='') {
         //prevent duplicate urls
         $params['urls']        = array_unique($params['urls']);
 
-        $params['message']    = $params['message']. "\n\n" .implode("\n", $params['urls']);
+        $params['message']    = $params['message'] . "\n\n" . implode("\n", $params['urls']);
     }
 
     return $params;

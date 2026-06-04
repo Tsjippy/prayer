@@ -1,8 +1,10 @@
 <?php
+
 namespace TSJIPPY\PRAYER;
+
 use TSJIPPY;
 
-if ( ! defined('ABSPATH')) {
+if (! defined('ABSPATH')) {
     exit;
 }
 
@@ -16,15 +18,16 @@ add_filter('tsjippy_personal_signal_settings', __NAMESPACE__ . '\signalSettings'
  *
  * @return string The updated settings
  */
-function signalSettings($settings, $user, $prefs) {
+function signalSettings($settings, $user, $prefs)
+{
     $prayerTime = '';
     if (isset($prefs['prayertime'])) {
         $prayerTime = $prefs['prayertime'];
     }
 
     $settings   .= "<label>";
-        $settings   .= "<h4>Send me a personal prayer request reminder around:</h4>";
-        $settings   .= "<input type='time' name='prayertime' value='$prayerTime'>";
+    $settings   .= "<h4>Send me a personal prayer request reminder around:</h4>";
+    $settings   .= "<input type='time' name='prayertime' value='$prayerTime'>";
     $settings   .= "</label>";
 
     return $settings;
@@ -38,7 +41,8 @@ add_action('tsjippy_signal_before_pref_save', __NAMESPACE__ . '\beforePrevSafe',
  * @param int $userId The user ID
  * @param array $prefs The user preferences
  */
-function beforePrevSafe($userId, $prefs) {
+function beforePrevSafe($userId, $prefs)
+{
     $prayerSchedule    = new PrayerSchedule();
 
     $newTime    = $prefs['prayertime'] ?? null;
