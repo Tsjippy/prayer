@@ -14,7 +14,7 @@ function dateRegex()
         'Y' => "20(?:0[1-9]|[12]\d)",
         'y' => "(?:0[1-9]|[12]\d)"
     ];
-    $years = "(?:" .implode('|', $year). ")"; */
+    $years = "(?:".implode('|', $year). ")"; */
     $years = "(?:20)?(?:0[1-9]|[12]\d)";
 
     $month = [
