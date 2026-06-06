@@ -106,7 +106,7 @@ function checkPrayerRequests()
 
     // Get the actual prayer request this warning is for
     $dateTime        = strtotime("+$days day", time());
-    $dateString        = gmdate(DATEFORMAT, $dateTime);
+    $dateString        = gmdate(TSJIPPY\DATEFORMAT, $dateTime);
 
     $prayerRequests = get_posts(
         array(

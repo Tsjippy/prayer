@@ -195,7 +195,7 @@ function createPrayerPosts($postId, $post, $update)
     }
 
     foreach ($prayerRequests as $date => $prayerRequest) {
-        $date       = gmdate(DATEFORMAT, strtotime($date));
+        $date       = gmdate(TSJIPPY\DATEFORMATTEFORMAT, strtotime($date));
         $postData   = array(
             'post_title'    => "Prayer Request for $date: {$prayerRequest['heading']}",
             'post_content'  => $prayerRequest['prayer'],
