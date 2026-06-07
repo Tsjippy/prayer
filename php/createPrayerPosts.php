@@ -187,7 +187,7 @@ function createPrayerPosts($postId, $post, $update)
 
     // Get the categrories from post
     if (!empty($_POST['prayer-requests-ids'])) {
-        $cats   = $_POST['prayer-requests-ids'];
+        $cats   = TSJIPPY\sanitize($_POST['prayer-requests-ids']);
 
         $cats   = array_map('intval', $cats);
     } else {
