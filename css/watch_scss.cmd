@@ -1,0 +1,1 @@
+sass --style=compressed ".\frontpage.scss" "frontpage.min.css"

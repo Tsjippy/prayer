@@ -1,0 +1,13 @@
+#prayer-request {
+  padding-left: 80px;
+  font-size: 18px;
+  color: #999999;
+  width: 80%;
+  max-width: 800px;
+}
+
+@media (max-width: 768px) {
+  #prayer-request {
+    padding-left: 60px;
+  }
+}
