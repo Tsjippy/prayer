@@ -37,7 +37,7 @@ function beforeMainContent()
         $message    = "<a href='$url'>$picture</a>$message";
     }
 
-    wp_enqueue_style('tsjippy_prayer_frontapeg', TSJIPPY\pathToUrl(TSJIPPY\PLUGINPATH . 'css/frontpage.min.css'), array(), STYLEVERSION);
+    wp_enqueue_style('tsjippy_prayer_frontapeg', TSJIPPY\pathToUrl(TSJIPPY\PLUGINPATH . 'css/frontpage.min.css'), array(), PLUGINVERSION);
 
 ?>
     <div id='prayer-request'>
