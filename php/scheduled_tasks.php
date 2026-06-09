@@ -137,7 +137,7 @@ function checkPrayerRequests()
 
         $signalMessage    = "Good day %name%, $days days from now your prayer request will be sent out.\n\nPlease reply to me with an updated request if needed.\n\nThis is the request I have now:\n\n$message\n\nIt will be sent on $dateString\n\nStart your reply with 'update prayer'";
 
-        foreach (get_post_meta($prayerRequest->ID, 'user-id') as $userId) {
+        foreach (get_post_meta($prayerRequest->ID, 'tsjippy_user-id') as $userId) {
             $user        = get_userdata($userId);
             $msg        = str_replace('%name%', $user->first_name, $signalMessage);
 

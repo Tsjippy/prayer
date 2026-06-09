@@ -115,7 +115,7 @@ function prayerRequest($plainText = false, $verified = false, $date = '')
         // Main message
         $message    .= $post->post_content . '<br><br>';
 
-        $users         = array_merge(get_post_meta($post->ID, 'user-id'), $users);
+        $users         = array_merge(get_post_meta($post->ID, 'tsjippy_user-id'), $users);
     }
 
     foreach ($users as $userId) {

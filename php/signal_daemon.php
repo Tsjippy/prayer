@@ -142,7 +142,7 @@ function checkPrayerRequestToUpdate($message, $users, $signal)
             [
                 'replacement'   => $replacetext,
                 'post-id'       => $prayerRequests[0]->ID,
-                'date'          => get_post_meta($prayerRequests[0]->ID, 'date', true)
+                'date'          => get_post_meta($prayerRequests[0]->ID, 'tsjippy_date', true)
             ]
         );
     }
