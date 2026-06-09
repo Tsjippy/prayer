@@ -15,6 +15,7 @@
 ### Fixed
 - spacing problem
 - space before dot bug
+- use pluginversion
 
 ### Updated
 
