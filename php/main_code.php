@@ -125,7 +125,7 @@ function prayerRequest($plainText = false, $verified = false, $date = '')
         if (is_numeric($picture)) {
             $attachmentId    = $picture;
         } else {
-            $attachmentId    = get_user_meta($userId, 'profile_picture', true);
+            $attachmentId    = get_user_meta($userId, 'tsjippy_profile_picture', true);
             if (is_array($attachmentId)) {
                 if (isset($attachmentId[0])) {
                     $attachmentId    = $attachmentId[0];

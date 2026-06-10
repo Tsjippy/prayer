@@ -55,9 +55,9 @@ function updatePrayerRequest($message, $users, $signal)
 {
     // mark as updated for affected users
     foreach ($users as $user) {
-        $replacementData    = get_user_meta($user->ID, 'pending-prayer-update-data', true);
+        $replacementData    = get_user_meta($user->ID, 'tsjippy_pending-prayer-update-data', true);
 
-        delete_user_meta($user->ID, 'pending-prayer-update-data');
+        delete_user_meta($user->ID, 'tsjippy_pending-prayer-update-data');
 
         if (empty($replacementData)) {
             continue;
