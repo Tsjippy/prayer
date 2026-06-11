@@ -116,11 +116,11 @@ function checkPrayerRequests()
             'meta_query'    => array(
                 'relation' => 'AND',
                 array(
-                    'key'     => 'date',
+                    'key'     => 'tsjippy_date',
                     'value'   => gmdate('Y-m-d', $dateTime)
                 ),
                 array(
-                    'key'     => 'user-id',
+                    'key'     => 'tsjippy_user-id',
                     'compare' => 'EXISTS',
                 ),
             )
