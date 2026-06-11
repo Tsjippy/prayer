@@ -2,6 +2,17 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+
+### Changed
+
+### Fixed
+
+### Updated
+
+## [10.2.1] - 2026-06-11
+
+
+### Added
 - user, post and rest_meta prefixing
 
 ### Changed
@@ -9,8 +20,6 @@
 
 ### Fixed
 - prefix meta_query
-
-### Updated
 
 ## [10.2.0] - 2026-06-09
 
