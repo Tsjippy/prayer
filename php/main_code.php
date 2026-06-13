@@ -75,13 +75,13 @@ function prayerRequest($plainText = false, $verified = false, $date = '')
     //Get all the prayer posts for this date
     $posts = get_posts(
         array(
-            'post_type'        => 'prayer-request',
-            'post_status'      => 'publish',
-            'orderby'       => 'date',
-            'order'         => 'ASC',
-            'meta_key'        => 'date',
-            'meta_value'       => $date,
-            'numberposts'    => -1,
+            'post_type'   => 'prayer-request',
+            'post_status' => 'publish',
+            'orderby'     => 'date',
+            'order'       => 'ASC',
+            'meta_key'    => 'tsjippy_date',
+            'meta_value'  => $date,
+            'numberposts' => -1,
         )
     );
 
