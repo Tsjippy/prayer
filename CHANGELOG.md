@@ -4,13 +4,20 @@
 ### Added
 
 ### Changed
+
+### Fixed
+
+### Updated
+
+## [10.2.2] - 2026-06-13
+
+
+### Changed
 - prefix meta key in get_users
 
 ### Fixed
 - shared code loader
 - activation hook
-
-### Updated
 
 ## [10.2.1] - 2026-06-11
 
