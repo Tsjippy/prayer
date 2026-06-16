@@ -12,17 +12,17 @@ add_action('init', __NAMESPACE__ . '\init');
 function init()
 {
     //add action for use in scheduled task
-    add_action('send_prayer_action', __NAMESPACE__ . '\sendPrayerRequests');
+    add_action('tsjippy-send-prayer', __NAMESPACE__ . '\sendPrayerRequests');
 
     //add action for use in scheduled task
-    add_action('check_prayer_action', __NAMESPACE__ . '\checkPrayerRequests');
+    add_action('tsjippy-check-prayer', __NAMESPACE__ . '\checkPrayerRequests');
 }
 
 function scheduleTasks()
 {
-    TSJIPPY\scheduleTask('send_prayer_action', 'quarterly');
+    TSJIPPY\scheduleTask('tsjippy-send_prayer', 'quarterly');
 
-    TSJIPPY\scheduleTask('check_prayer_action', 'daily');
+    TSJIPPY\scheduleTask('tsjippy-check_prayer', 'daily');
 }
 
 /**

@@ -15,7 +15,7 @@ if (! defined('ABSPATH')) {
  *
  * returns an error when it does not have the month and year in the title
  */
-add_filter('tsjippy_frontend_content_validation', __NAMESPACE__ . '\contentValidation', 10, 2);
+add_filter('tsjippy-frontend-content-validation', __NAMESPACE__ . '\contentValidation', 10, 2);
 /**
  * Validates the content of the frontend post
  *

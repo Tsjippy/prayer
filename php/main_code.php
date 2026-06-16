@@ -13,7 +13,7 @@ add_action('init', function () {
 });
 
 //give prayer coordinator acces to prayer items
-add_filter('tsjippy_frontend_content_edit_rights', __NAMESPACE__ . '\editRights', 10, 2);
+add_filter('tsjippy-frontend-content-edit-rights', __NAMESPACE__ . '\editRights', 10, 2);
 /**
  * Tweaks the edit rights for prayer requests
  *
@@ -166,7 +166,7 @@ function prayerRequest($plainText = false, $verified = false, $date = '')
 
     // skip filter if we are not returning it for a signal message for today
     if ($plainText && $date == gmdate("Y-m-d")) {
-        $params    = apply_filters('tsjippy_after_bot_payer', $params);
+        $params    = apply_filters('tsjippy-after-bot-payer', $params);
 
         //prevent duplicate urls
         $params['urls']        = array_unique($params['urls']);

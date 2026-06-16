@@ -8,7 +8,7 @@ if (! defined('ABSPATH')) {
     exit;
 }
 
-add_filter('tsjippy_personal_signal_settings', __NAMESPACE__ . '\signalSettings', 10, 3);
+add_filter('tsjippy-personal-signal-settings', __NAMESPACE__ . '\signalSettings', 10, 3);
 /**
  * Add prayer time setting to personal signal settings
  *
@@ -33,7 +33,7 @@ function signalSettings($settings, $user, $prefs)
     return $settings;
 }
 
-add_action('tsjippy_signal_before_pref_save', __NAMESPACE__ . '\beforePrevSafe', 10, 2);
+add_action('tsjippy-signal-before-pref-save', __NAMESPACE__ . '\beforePrevSafe', 10, 2);
 
 /**
  * Update prayer time schedule before saving preferences

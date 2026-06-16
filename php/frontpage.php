@@ -8,7 +8,7 @@ if (! defined('ABSPATH')) {
     exit;
 }
 
-add_action('tsjippy_frontpage_before_main_content', __NAMESPACE__ . '\beforeMainContent', 5);
+add_action('tsjippy-frontpage-before-main-content', __NAMESPACE__ . '\beforeMainContent', 5);
 function beforeMainContent()
 {
     if (!is_user_logged_in()) {
@@ -21,7 +21,7 @@ function beforeMainContent()
         return;
     }
 
-    $filteredMessage    = apply_filters('tsjippy_prayer_message', $prayerRequest['message']);
+    $filteredMessage    = apply_filters('tsjippy-prayer-message', $prayerRequest['message']);
     $userPageLinks        = new TSJIPPY\UserPageLinks($filteredMessage, true);
     $message            = $userPageLinks->string;
 
