@@ -4,6 +4,7 @@
 ### Added
 
 ### Changed
+- retrieve single value for family picture
 
 ### Fixed
 
