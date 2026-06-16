@@ -20,9 +20,9 @@ function init()
 
 function scheduleTasks()
 {
-    TSJIPPY\scheduleTask('tsjippy-send_prayer', 'quarterly');
+    TSJIPPY\scheduleTask('tsjippy-send-prayer', 'quarterly');
 
-    TSJIPPY\scheduleTask('tsjippy-check_prayer', 'daily');
+    TSJIPPY\scheduleTask('tsjippy-check-prayer', 'daily');
 }
 
 /**
