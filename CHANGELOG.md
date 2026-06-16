@@ -5,6 +5,7 @@
 
 ### Changed
 - retrieve single value for family picture
+- hook and filter name update
 
 ### Fixed
 
