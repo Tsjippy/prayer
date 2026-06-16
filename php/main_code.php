@@ -120,7 +120,7 @@ function prayerRequest($plainText = false, $verified = false, $date = '')
 
     foreach ($users as $userId) {
         // family picture
-        $picture = $family->getFamilyMeta($userId, 'family_picture');
+        $picture = $family->getFamilyMeta($userId, 'family_picture', true);
 
         if (is_numeric($picture)) {
             $attachmentId    = $picture;
