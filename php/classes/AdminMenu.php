@@ -71,27 +71,31 @@ class AdminMenu extends \TSJIPPY\ADMIN\SubAdminMenu
                             </label>
                             <?php
                             if (defined('TSJIPPY\SIGNAL\SETTINGS') && TSJIPPY\SIGNAL\SETTINGS['local'] ?? false) {
-                            ?>
-                                <select name="groups[<?php echo esc_attr($index); ?>][name]">
-                                    <option value="">---</option>
-                                    <?php
-                                    $signal         = TSJIPPY\SIGNAL\getSignalInstance();
+                                $signal    = TSJIPPY\SIGNAL\getSignalInstance();
 
-                                    foreach ($signal->listGroups() as $g) {
-                                        if (empty($g->name)) {
-                                            continue;
+                                $groups    = $signal->listGroups();
+
+                                if(!is_wp_error($groups)){
+                                    ?>
+                                    <select name="groups[<?php echo esc_attr($index); ?>][name]">
+                                        <option value="">---</option>
+                                        <?php
+                                        foreach ($groups as $g) {
+                                            if (empty($g->name)) {
+                                                continue;
+                                            }
+                                        ?>
+                                            <option value='<?php echo esc_attr($g->id); ?>' <?php if ($group['name'] == $g->id) {
+                                                                                                echo 'selected="selected"';
+                                                                                            } ?>>
+                                                <?php echo esc_attr($g->name); ?>
+                                            </option>
+                                        <?php
                                         }
-                                    ?>
-                                        <option value='<?php echo esc_attr($g->id); ?>' <?php if ($group['name'] == $g->id) {
-                                                                                            echo 'selected="selected"';
-                                                                                        } ?>>
-                                            <?php echo esc_attr($g->name); ?>
-                                        </option>
+                                        ?>
+                                    </select>
                                     <?php
-                                    }
-                                    ?>
-                                </select>
-                            <?php
+                                }
                             } else {
                             ?>
                                 <input type='text' name="groups[<?php echo esc_attr($index); ?>][name]" value='<?php if (!empty($group['name'])) {
@@ -110,7 +114,7 @@ class AdminMenu extends \TSJIPPY\ADMIN\SubAdminMenu
                         <div class='button-wrapper' style='margin:auto;'>
                             <button type="button" class="add button" style="flex: 1;">+</button>
                             <?php
-                            if (count($groups) > 1) {
+                            if(!is_wp_error($groups) && count($groups) > 1) {
                             ?>
                                 <button type="button" class="remove button" style="flex: 1;">-</button>
                             <?php
