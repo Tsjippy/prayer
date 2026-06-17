@@ -59,10 +59,3 @@ register_activation_hook(__FILE__, function () {
     $prayerSchedule->createDbTables();
 });
 
-// run on deactivation
-register_deactivation_hook(__FILE__, function () {
-    // Remove scheduled tasks upon plugin deactivation
-    wp_clear_scheduled_hook('send_prayer_action');
-
-    wp_clear_scheduled_hook('check_prayer_action');
-});

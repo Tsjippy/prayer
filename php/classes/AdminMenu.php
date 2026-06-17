@@ -270,8 +270,6 @@ class AdminMenu extends \TSJIPPY\ADMIN\SubAdminMenu
      */
     public function postSettingsSave()
     {
-        scheduleTasks();
-
         $date                = \gmdate('y-m-d');
 
         $oldGroups          = $this->indexArray(SETTINGS['groups'] ?? []);

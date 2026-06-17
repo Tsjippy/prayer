@@ -8,21 +8,12 @@ if (! defined('ABSPATH')) {
     exit;
 }
 
-add_action('init', __NAMESPACE__ . '\init');
-function init()
-{
-    //add action for use in scheduled task
-    add_action('tsjippy-send-prayer', __NAMESPACE__ . '\sendPrayerRequests');
-
-    //add action for use in scheduled task
-    add_action('tsjippy-check-prayer', __NAMESPACE__ . '\checkPrayerRequests');
-}
-
+add_action('init', __NAMESPACE__ . '\scheduleTasks');
 function scheduleTasks()
 {
-    TSJIPPY\scheduleTask('tsjippy-send-prayer', 'quarterly');
+    TSJIPPY\scheduleTask('tsjippy-send-prayer', 'quarterly', __NAMESPACE__, 'sendPrayerRequests');
 
-    TSJIPPY\scheduleTask('tsjippy-check-prayer', 'daily');
+    TSJIPPY\scheduleTask('tsjippy-check-prayer', 'daily', __NAMESPACE__, 'checkPrayerRequests');
 }
 
 /**

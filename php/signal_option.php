@@ -8,7 +8,7 @@ if (! defined('ABSPATH')) {
     exit;
 }
 
-add_filter('tsjippy-personal-signal-settings', __NAMESPACE__ . '\signalSettings', 10, 3);
+add_filter('tsjippy-signal-personal-settings', __NAMESPACE__ . '\signalSettings', 10, 3);
 /**
  * Add prayer time setting to personal signal settings
  *

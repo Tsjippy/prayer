@@ -158,20 +158,20 @@ function prayerRequest($plainText = false, $verified = false, $date = '')
     }
 
     $params    = [
-        'message'    => $message,
-        'pictures'    => $pictures,
-        'urls'        => $urls,
-        'users'        => $users
+        'message'  => $message,
+        'pictures' => $pictures,
+        'urls'     => $urls,
+        'users'    => $users
     ];
 
     // skip filter if we are not returning it for a signal message for today
     if ($plainText && $date == gmdate("Y-m-d")) {
-        $params    = apply_filters('tsjippy-after-bot-payer', $params);
+        $params    = apply_filters('tsjippy-payer-after-message', $params);
 
         //prevent duplicate urls
-        $params['urls']        = array_unique($params['urls']);
+        $params['urls']    = array_unique($params['urls']);
 
-        $params['message']    = $params['message'] . "\n\n" . implode("\n", $params['urls']);
+        $params['message'] = $params['message'] . "\n\n" . implode("\n", $params['urls']);
     }
 
     return $params;
