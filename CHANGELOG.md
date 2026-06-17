@@ -7,6 +7,7 @@
 - retrieve single value for family picture
 - hook and filter name update
 - hook and filter name update
+- prefix all hooks with plugin name
 
 ### Fixed
 
