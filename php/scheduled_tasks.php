@@ -29,7 +29,7 @@ function sendPrayerRequests()
     $message         .= $prayerRequest['message'];
 
     // Get the schedule for today
-    $prayerSchedule = new PrayerSchedule();
+    $prayerSchedule  = new PrayerSchedule();
     $schedule        = $prayerSchedule->getTodaySchedule();
 
     $time    = current_time('H:i');
