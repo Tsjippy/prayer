@@ -4,6 +4,15 @@
 ### Added
 
 ### Changed
+
+### Fixed
+
+### Updated
+
+## [10.2.7] - 2026-06-18
+
+
+### Changed
 - retrieve single value for family picture
 - hook and filter name update
 - hook and filter name update
@@ -11,8 +20,6 @@
 
 ### Fixed
 - signal groups
-
-### Updated
 
 ## [10.2.6] - 2026-06-15
 
