@@ -55,9 +55,7 @@ class PrayerSchedule
      */
     public function getSchedule()
     {
-        global $wpdb;
-
-        $results = $wpdb->get_results("SELECT * FROM {$this->tableName}");
+        $results = TSJIPPY\getFromDb("get_prayer_schedule", "prayer", "SELECT * FROM %i", $this->tableName);
 
         // Create an array indexed by time
         $schedule = [];
@@ -89,7 +87,13 @@ class PrayerSchedule
         /**
          * Double check we do not have duplicates
          */
-        $existing   = $wpdb->get_results($wpdb->prepare("SELECT * FROM %i WHERE recipient = %s", $this->tableName, $recipient));
+        $existing   = TSJIPPY\getFromDb(
+            "get_schedule_for_$recipient", 
+            "prayer",
+            "SELECT * FROM %i WHERE recipient = %s", 
+            $this->tableName, 
+            $recipient
+        );
 
         foreach ($existing as $result) {
             // Only update if needed
