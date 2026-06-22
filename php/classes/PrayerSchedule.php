@@ -105,16 +105,21 @@ class PrayerSchedule
         }
 
         // Insert booking in db
-        $wpdb->insert(
+        $result = TSJIPPY\insertInDb(
             $this->tableName,
             array(
-                'recipient'        => $recipient,
-                'time'            => $time
-            )
+                'recipient' => $recipient,
+                'time'      => $time
+            ),
+            [
+                '%s',
+                '%d'
+            ],
+            'prayer'
         );
 
-        if (!empty($wpdb->last_error)) {
-            return new \WP_Error('prayer', $wpdb->last_error);
+        if (is_wp_error($result)) {
+            return $result;
         }
 
         // Rebuild todays schedule
@@ -139,12 +144,21 @@ class PrayerSchedule
         $wpdb->update(
             $this->tableName,
             array(
-                'time'            => $time
+                'time'      => $time
             ),
             array(
-                'recipient'        => $recipient,
+                'recipient' => $recipient,
             )
         );
+
+        /**
+         * Flush db cache
+         */
+        if(wp_cache_supports( 'flush_group' )){
+            wp_cache_flush_group('prayer');
+        }else{
+            wp_cache_flush();
+        }
 
         if (!empty($wpdb->last_error)) {
             return new \WP_Error('prayer', $wpdb->last_error);
@@ -169,16 +183,16 @@ class PrayerSchedule
         global $wpdb;
 
         // Delete booking from db
-        $wpdb->delete(
+        TSJIPPY\removeFromDb(
             $this->tableName,
             array(
                 'recipient' => $recipient
-            )
+            ),
+            [
+                '%s'
+            ],
+            'prayer'
         );
-
-        if (!empty($wpdb->last_error)) {
-            return new \WP_Error('prayer', $wpdb->last_error);
-        }
 
         // Rebuild todays schedule
         $this->getTodaySchedule(true);
