@@ -138,30 +138,22 @@ class PrayerSchedule
      */
     public function update($recipient, $time)
     {
-        global $wpdb;
-
         // Update booking in db
-        $wpdb->update(
+        $result = TSJIPPY\updateDbValue(
             $this->tableName,
             array(
                 'time'      => $time
             ),
             array(
                 'recipient' => $recipient,
-            )
+            ),
+            ['%s'],
+            ['%s'],
+            'prayer'
         );
 
-        /**
-         * Flush db cache
-         */
-        if(wp_cache_supports( 'flush_group' )){
-            wp_cache_flush_group('prayer');
-        }else{
-            wp_cache_flush();
-        }
-
-        if (!empty($wpdb->last_error)) {
-            return new \WP_Error('prayer', $wpdb->last_error);
+        if (is_wp_error($result)) {
+            return $result;
         }
 
         // Rebuild todays schedule
