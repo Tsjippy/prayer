@@ -230,7 +230,7 @@ class AdminMenu extends \TSJIPPY\ADMIN\SubAdminMenu
         }
 
         foreach ($users as $user) {
-            $phones    = (array)get_user_meta($user->ID, 'tsjippy_phonenumbers', true);
+            $phones    = get_user_meta($user->ID, 'tsjippy_phonenumbers');
             foreach ($phones as $phone) {
                 TSJIPPY\addElement('option', $dataList, ['value' => $phone], "{$user->display_name} ({$phone})");
             }
