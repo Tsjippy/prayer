@@ -8,7 +8,7 @@ if (! defined('ABSPATH')) {
     exit;
 }
 
-add_action('tsjippy-frontpage-before-main-content', __NAMESPACE__ . '\beforeMainContent', 5);
+add_action('tsjippy-theme-frontpage-before-main-content', __NAMESPACE__ . '\beforeMainContent', 5);
 function beforeMainContent()
 {
     if (!is_user_logged_in()) {
