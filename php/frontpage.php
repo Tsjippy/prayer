@@ -21,9 +21,9 @@ function beforeMainContent()
         return;
     }
 
-    $filteredMessage    = apply_filters('tsjippy-prayer-message', $prayerRequest['message']);
-    $userPageLinks        = new TSJIPPY\UserPageLinks($filteredMessage, true);
-    $message            = $userPageLinks->string;
+    $filteredMessage = apply_filters('tsjippy-prayer-message', $prayerRequest['message']);
+    $userPageLinks   = new TSJIPPY\UserPageLinks($filteredMessage, true);
+    $message         = $userPageLinks->string;
 
     foreach ($prayerRequest['pictures'] as $index => $path) {
         $url        = $prayerRequest['urls'][$index];
@@ -39,12 +39,12 @@ function beforeMainContent()
 
     wp_enqueue_style('tsjippy_prayer_frontapeg', TSJIPPY\pathToUrl(TSJIPPY\PLUGINPATH . 'css/frontpage.min.css'), array(), PLUGINVERSION);
 
-?>
+    ?>
     <div id='prayer-request'>
         <h3 id='prayertitle'>Today's Prayer Request</h3>
         <p>
             <?php echo wp_kses_post($message); ?>
         </p>
     </div>
-<?php
+    <?php
 }
