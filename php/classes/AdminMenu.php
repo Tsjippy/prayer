@@ -244,14 +244,6 @@ class AdminMenu extends \TSJIPPY\ADMIN\SubAdminMenu
     }
 
     /**
-     * Function to do extra actions from $_POST data. Overwrite if needed
-     */
-    public function postActions()
-    {
-        return '';
-    }
-
-    /**
      * Indexes the groups array by the group name, so it is easier to compare the old and new groups when saving the settings
      *
      * @param array $array The array to index
@@ -272,7 +264,7 @@ class AdminMenu extends \TSJIPPY\ADMIN\SubAdminMenu
      * Schedules the tasks for this plugin
      *
      */
-    public function postSettingsSave()
+    public function postSettingsSave($request)
     {
         $date                = \gmdate('y-m-d');
 
