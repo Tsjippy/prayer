@@ -10,9 +10,9 @@ namespace TSJIPPY\PRAYER;
  * AuthorURI:            harmseninnigeria.nl
  * Requires at least:    6.3
  * Requires PHP:         8.3
- * Tested up to:         6.9
+ * Tested up to:         7.0
  * Plugin URI:           https://github.com/Tsjippy/prayer
- * Tested:               6.9
+ * Tested:               7.0
  * TextDomain:           tsjippy
  * Requires Plugins:    
  * License: GPLv2 or later
