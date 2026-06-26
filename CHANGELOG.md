@@ -4,19 +4,12 @@
 ### Added
 
 ### Changed
-
-### Fixed
-
-### Updated
-
-## [10.3.8] - 2026-06-26
-
-
-### Changed
 - sanitize post on original function
 
 ### Fixed
 - non-prefixd post meta's
+
+### Updated
 
 ## [10.3.7] - 2026-06-25
 
