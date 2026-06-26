@@ -212,10 +212,10 @@ function createPrayerPosts($postId, $post, $update)
             TSJIPPY\printArray('Error inserting post: ' . $postId->get_error_message());
         }
 
-        add_post_meta($postId, 'date', gmdate('Y-m-d', strtotime($date)), true);
+        add_post_meta($postId, "tsjippy_date", gmdate('Y-m-d', strtotime($date)), true);
 
         foreach ($prayerRequest['userIds'] as $userId) {
-            add_post_meta($postId, 'user-id', $userId, false);
+            add_post_meta($postId, "tsjippy_user-id", $userId, false);
         }
 
         // Store the cat
