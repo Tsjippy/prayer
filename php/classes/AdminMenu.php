@@ -272,7 +272,7 @@ class AdminMenu extends \TSJIPPY\ADMIN\SubAdminMenu
         $newGroups          = $this->indexArray($this->settings['groups'] ?? []);
 
         // Compute the difference between the old and new groups to find out which groups have been added and which have been removed
-        $added        = array_diff_assoc($newGroups, $oldGroups);
+        $added      = array_diff_assoc($newGroups, $oldGroups);
         $removed    = array_diff_assoc($oldGroups, $newGroups);
         $updated    = array_intersect(array_keys($added), array_keys($removed));
 
