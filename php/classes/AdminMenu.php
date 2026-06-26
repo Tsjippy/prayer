@@ -40,22 +40,14 @@ class AdminMenu extends \TSJIPPY\ADMIN\SubAdminMenu
         <h4>Show prayer request on homepage</h4>
         <label>
             Frontpage Hook<br>
-            <input type='text' name='frontpagehook' value='<?php if (isset($this->settings['frontpagehook'])) {
-                                                                echo $this->settings['frontpagehook'];
-                                                            } else {
-                                                                echo '';
-                                                            } ?>'>
+            <input type='text' name='frontpagehook' value='<?php if (isset($this->settings['frontpagehook'])) echo esc_html($this->settings['frontpagehook']); ?>'>
         </label>
         <br>
         <h4>Send prayer message check</h4>
         <label>
             People whom submitted a prayer request will be send their request X days in advance to check if it needs an update <br>
             Leave empty for no check<br>
-            <input type='number' name='prayercheck' value='<?php if (isset($this->settings['prayercheck'])) {
-                                                                echo $this->settings['prayercheck'];
-                                                            } else {
-                                                                echo '';
-                                                            } ?>'>
+            <input type='number' name='prayercheck' value='<?php if (isset($this->settings['prayercheck'])) echo esc_attr($this->settings['prayercheck']); ?>'>
         </label>
         <br>
         <div class="">
@@ -75,8 +67,8 @@ class AdminMenu extends \TSJIPPY\ADMIN\SubAdminMenu
 
                                 $groups    = $signal->listGroups();
 
-                                if(!is_wp_error($groups)){
-                                    ?>
+                                if (!is_wp_error($groups)) {
+                            ?>
                                     <select name="groups[<?php echo esc_attr($index); ?>][name]">
                                         <option value="">---</option>
                                         <?php
@@ -85,36 +77,30 @@ class AdminMenu extends \TSJIPPY\ADMIN\SubAdminMenu
                                                 continue;
                                             }
                                         ?>
-                                            <option value='<?php echo esc_attr($g->id); ?>' <?php if ($group['name'] == $g->id) {
-                                                                                                echo 'selected="selected"';
-                                                                                            } ?>>
+                                            <option value='<?php echo esc_attr($g->id); ?>' <?php if ($group['name'] == $g->id) echo 'selected="selected"'; ?>>
                                                 <?php echo esc_attr($g->name); ?>
                                             </option>
                                         <?php
                                         }
                                         ?>
                                     </select>
-                                    <?php
+                                <?php
                                 }
                             } else {
-                            ?>
-                                <input type='text' name="groups[<?php echo esc_attr($index); ?>][name]" value='<?php if (!empty($group['name'])) {
-                                                                                                                    echo $group['name'];
-                                                                                                                } ?>'>
+                                ?>
+                                <input type='text' name="groups[<?php echo esc_attr($index); ?>][name]" value='<?php if (!empty($group['name'])) echo esc_attr($group['name']); ?>'>
                             <?php
                             }
                             ?>
                             <label>
                                 <h4 style='margin-bottom: 0px;'>Time the message should be send</h4>
-                                <input type='time' name="groups[<?php echo esc_attr($index); ?>][time]" value='<?php if (!empty($group['time'])) {
-                                                                                                                    echo $group['time'];
-                                                                                                                } ?>'>
+                                <input type='time' name="groups[<?php echo esc_attr($index); ?>][time]" value='<?php if (!empty($group['time'])) echo esc_attr($group['time']); ?>'>
                             </label>
                         </div>
                         <div class='button-wrapper' style='margin:auto;'>
                             <button type="button" class="add button" style="flex: 1;">+</button>
                             <?php
-                            if(!is_wp_error($groups) && count($groups) > 1) {
+                            if (!is_wp_error($groups) && count($groups) > 1) {
                             ?>
                                 <button type="button" class="remove button" style="flex: 1;">-</button>
                             <?php
