@@ -96,10 +96,10 @@ function prayerRequest($plainText = false, $verified = false, $date = '')
         return false;
     }
 
-    $message    = '';
-    $users         = [];
-    $pictures    = [];
-    $urls        = [];
+    $message  = '';
+    $users    = [];
+    $pictures = [];
+    $urls     = [];
 
     foreach ($posts as $post) {
         $cats         = wp_get_post_terms($post->ID, 'prayer-requests');
@@ -141,14 +141,14 @@ function prayerRequest($plainText = false, $verified = false, $date = '')
             $picture     = TSJIPPY\urlToPath($attachmentId);
         }
 
-        if (!in_array($picture, $pictures)) {
-            $pictures[]    = $picture;
+        if (!isset($pictures[$picture])) {
+            $pictures[$picture] = 1;
         }
 
         // user page url
         $url        = TSJIPPY\maybeGetUserPageUrl($userId);
-        if ($url && !in_array($url, $urls)) {
-            $urls[]    = $url;
+        if ($url && !isset($urls[$url])) {
+            $urls[$url] = 1;
         }
     }
 
@@ -159,8 +159,8 @@ function prayerRequest($plainText = false, $verified = false, $date = '')
 
     $params    = [
         'message'  => $message,
-        'pictures' => $pictures,
-        'urls'     => $urls,
+        'pictures' => array_keys($pictures),
+        'urls'     => array_keys($urls),
         'users'    => $users
     ];
 
