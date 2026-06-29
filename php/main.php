@@ -146,7 +146,7 @@ function prayerRequest($plainText = false, $verified = false, $date = '')
         }
 
         // user page url
-        $url        = TSJIPPY\maybeGetUserPageUrl($userId);
+        $url        = get_author_posts_url($userId);
         if ($url && !isset($urls[$url])) {
             $urls[$url] = 1;
         }
