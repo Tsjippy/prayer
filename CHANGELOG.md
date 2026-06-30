@@ -3,6 +3,7 @@
 
 ### Added
 - attribute escaping
+- activate shared code function
 
 ### Changed
 - sanitize post on original function
