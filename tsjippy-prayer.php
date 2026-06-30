@@ -57,5 +57,9 @@ register_activation_hook(__FILE__, function () {
     // Create db
     $prayerSchedule    = new PrayerSchedule();
     $prayerSchedule->createDbTables();
+
+    if(function_exists('TSJIPPY\activate')){
+        \TSJIPPY\activate();
+    }
 });
 
