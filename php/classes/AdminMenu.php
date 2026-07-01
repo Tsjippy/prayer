@@ -37,13 +37,17 @@ class AdminMenu extends \TSJIPPY\ADMIN\SubAdminMenu
         }
 
 ?>
-        <h4>Show prayer request on homepage</h4>
+        <h4>
+            Show prayer request on homepage
+        </h4>
         <label>
             Frontpage Hook<br>
             <input type='text' name='frontpagehook' value='<?php if (isset($this->settings['frontpagehook'])) echo esc_html($this->settings['frontpagehook']); ?>'>
         </label>
         <br>
-        <h4>Send prayer message check</h4>
+        <h4>
+            Send prayer message check
+        </h4>
         <label>
             People whom submitted a prayer request will be send their request X days in advance to check if it needs an update <br>
             Leave empty for no check<br>
@@ -51,7 +55,9 @@ class AdminMenu extends \TSJIPPY\ADMIN\SubAdminMenu
         </label>
         <br>
         <div class="">
-            <h4>Give optional Signal group name(s) to send a daily prayer message to:</h4>
+            <h4>
+                Give optional Signal group name(s) to send a daily prayer message to:
+            </h4>
             <div class="clone-divs-wrapper">
                 <?php
                 foreach ($groups as $index => $group) {
