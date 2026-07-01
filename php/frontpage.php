@@ -37,11 +37,12 @@ function beforeMainContent()
         $message    = "<a href='$url'>$picture</a>$message";
     }
 
-    wp_enqueue_style('tsjippy_prayer_frontapeg', TSJIPPY\pathToUrl(TSJIPPY\PLUGINPATH . 'css/frontpage.min.css'), array(), PLUGINVERSION);
+    wp_enqueue_style('tsjippy_prayer_frontapeg', TSJIPPY\pathToUrl(PLUGINPATH . 'css/frontpage.min.css'), array(), PLUGINVERSION);
 
     ?>
     <div id='prayer-request'>
-        <h3 id='prayertitle'>Today's Prayer Request</h3>
+        <h3 id='prayertitle'>
+            Today's Prayer Request</h3>
         <p>
             <?php echo wp_kses_post($message); ?>
         </p>
