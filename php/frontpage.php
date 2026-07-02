@@ -9,6 +9,9 @@ if (! defined('ABSPATH')) {
 }
 
 add_action('tsjippy-theme-frontpage-before-main-content', __NAMESPACE__ . '\beforeMainContent', 5);
+/**
+ * Displays the prayer request of the day on the frontpage
+ */
 function beforeMainContent()
 {
     if (!is_user_logged_in()) {
