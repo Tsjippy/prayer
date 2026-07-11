@@ -71,10 +71,10 @@ class AdminMenu extends \TSJIPPY\ADMIN\SubAdminMenu
                             if (defined('TSJIPPY\SIGNAL\SETTINGS') && TSJIPPY\SIGNAL\SETTINGS['local'] ?? false) {
                                 $signal    = TSJIPPY\SIGNAL\getSignalInstance();
 
-                                $groups    = $signal->listGroups();
+                                $groups    = (array)$signal->listGroups();
 
                                 if (!is_wp_error($groups)) {
-                            ?>
+                                    ?>
                                     <select name="groups[<?php echo esc_attr($index); ?>][name]">
                                         <option value="">---</option>
                                         <?php
