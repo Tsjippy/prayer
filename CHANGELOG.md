@@ -6,9 +6,14 @@
 ### Changed
 
 ### Fixed
-- error when signal groups is not an array
 
 ### Updated
+
+## [10.4.7] - 2026-07-11
+
+
+### Fixed
+- error when signal groups is not an array
 
 ## [10.4.6] - 2026-07-11
 
