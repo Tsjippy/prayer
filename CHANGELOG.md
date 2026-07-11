@@ -6,6 +6,7 @@
 ### Changed
 
 ### Fixed
+- error when signal groups is not an array
 
 ### Updated
 
