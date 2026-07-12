@@ -2,13 +2,18 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-- daily message block
 
 ### Changed
 
 ### Fixed
 
 ### Updated
+
+## [10.4.9] - 2026-07-12
+
+
+### Added
+- daily message block
 
 ## [10.4.8] - 2026-07-12
 
