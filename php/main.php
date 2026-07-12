@@ -26,12 +26,9 @@ function editRights($editRight, $postCategory)
 {
 
     if (
-        !$editRight                                                        &&    // If we currently have no edit right
-        in_array('message-coordinator', wp_get_current_user()->roles)        &&     // If we have the message coordinator role 
-        (
-            in_array(get_cat_ID('Prayer'), $postCategory)                 ||
-            in_array('prayer', $postCategory)
-        )
+        !$editRight                                                   &&    // If we currently have no edit right
+        in_array('message-coordinator', wp_get_current_user()->roles) &&     // If we have the message coordinator role 
+        get_post_type() == 'daily-message'
     ) {
         $editRight = true;
     }

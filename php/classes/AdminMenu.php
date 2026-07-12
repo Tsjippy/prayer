@@ -47,7 +47,7 @@ class AdminMenu extends \TSJIPPY\ADMIN\SubAdminMenu
             Message prefix
         </h4>
         <label>
-            Prepend the daily message with this text
+            Prepend the daily message with this text<br>
             <input type='text' name='message-prepend' value='<?php echo esc_attr($this->settings['message-prepend'] ?? ''); ?>'>
         </label>
 

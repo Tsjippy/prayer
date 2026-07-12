@@ -11,9 +11,11 @@ if (! defined('ABSPATH')) {
 add_action('init', __NAMESPACE__ . '\scheduleTasks');
 function scheduleTasks()
 {
-    TSJIPPY\scheduleTask('tsjippy-send-daily-message', 'quarterly', __NAMESPACE__, 'sendDailyMessage');
+    TSJIPPY\scheduleTask('tsjippy-daily-message-send', 'quarterly', __NAMESPACE__, 'sendDailyMessage');
 
-    TSJIPPY\scheduleTask('tsjippy-check-daily-message', 'daily', __NAMESPACE__, 'checkDailyMessage');
+    TSJIPPY\scheduleTask('tsjippy-daily-message-check', 'daily', __NAMESPACE__, 'checkDailyMessage');
+
+    TSJIPPY\scheduleTask('tsjippy-daily-message-cleanup', 'daily', __NAMESPACE__, 'cleanup');
 }
 
 /**
@@ -139,5 +141,33 @@ function checkDailyMessage()
                 $user
             );
         }
+    }
+}
+
+
+/**
+ * Removes messages from the past
+ */
+function cleanup(){
+    $dateTime   = strtotime("- 3 days", time());
+
+    $posts  = get_posts(
+        array(
+            'post_type'   => 'daily-message',
+            'post_status' => 'publish',
+            'numberposts' => -1,
+            'fields'      => 'ids',
+            'meta_query'  => array(
+                array(
+                    'key'     => 'tsjippy_date',
+                    'value'   => gmdate('Y-m-d', $dateTime),
+                    'compare' => '<='
+                ),
+            )
+        )
+    );
+
+    foreach($posts as $postId){
+        wp_delete_post($postId, true);
     }
 }
