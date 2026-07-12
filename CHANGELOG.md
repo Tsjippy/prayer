@@ -6,9 +6,14 @@
 ### Changed
 
 ### Fixed
-- duplicate action name
 
 ### Updated
+
+## [10.5.0] - 2026-07-12
+
+
+### Fixed
+- duplicate action name
 
 ## [10.4.9] - 2026-07-12
 
