@@ -6,9 +6,14 @@
 ### Changed
 
 ### Fixed
-- parse daily message post
 
 ### Updated
+
+## [10.5.1] - 2026-07-12
+
+
+### Fixed
+- parse daily message post
 
 ## [10.5.0] - 2026-07-12
 
