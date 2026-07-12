@@ -6,6 +6,7 @@
 ### Changed
 
 ### Fixed
+- parse daily message post
 
 ### Updated
 
