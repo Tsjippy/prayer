@@ -1,6 +1,6 @@
 <?php
 
-namespace TSJIPPY\PRAYER;
+namespace TSJIPPY\DAILYMESSAGE;
 
 use TSJIPPY;
 
@@ -10,7 +10,7 @@ if (! defined('ABSPATH')) {
 
 add_action('tsjippy-theme-frontpage-before-main-content', __NAMESPACE__ . '\beforeMainContent', 5);
 /**
- * Displays the prayer request of the day on the frontpage
+ * Displays the message of the day on the frontpage
  */
 function beforeMainContent()
 {
@@ -18,18 +18,18 @@ function beforeMainContent()
         return;
     }
 
-    // Get the prayer request of the day, add extra messages to it, replace names with urls
-    $prayerRequest    = prayerRequest();
-    if (!$prayerRequest) {
+    // Get the message of the day, add extra messages to it, replace names with urls
+    $message    = getDailyMessage();
+    if (!$message) {
         return;
     }
 
-    $filteredMessage = apply_filters('tsjippy-prayer-message', $prayerRequest['message']);
+    $filteredMessage = apply_filters('tsjippy-daily-message', $message['message']);
     $userPageLinks   = new TSJIPPY\UserPageLinks($filteredMessage, true);
-    $message         = $userPageLinks->string;
+    $msg         = $userPageLinks->string;
 
-    foreach ($prayerRequest['pictures'] as $index => $path) {
-        $url        = $prayerRequest['urls'][$index];
+    foreach ($message['pictures'] as $index => $path) {
+        $url        = $message['urls'][$index];
         $pictureUrl = TSJIPPY\pathToUrl($path);
 
         if (!$pictureUrl) {
@@ -37,17 +37,17 @@ function beforeMainContent()
         }
 
         $picture    = "<img width='50' height='50' src='$pictureUrl' class='attachment-avatar size-avatar' alt='' style='border-radius: 50%;' decoding='async'/>";
-        $message    = "<a href='$url'>$picture</a>$message";
+        $msg    = "<a href='$url'>$picture</a>$msg";
     }
 
-    wp_enqueue_style('tsjippy_prayer_frontapeg', TSJIPPY\pathToUrl(PLUGINPATH . 'css/frontpage.min.css'), array(), PLUGINVERSION);
+    wp_enqueue_style('tsjippy_message_frontpage', TSJIPPY\pathToUrl(PLUGINPATH . 'css/frontpage.min.css'), array(), PLUGINVERSION);
 
     ?>
-    <div id='prayer-request'>
-        <h3 id='prayertitle'>
-            Today's Prayer Request</h3>
+    <div id='daily-message'>
+        <h3 id='message-title'>
+            Today's Message</h3>
         <p>
-            <?php echo wp_kses_post($message); ?>
+            <?php echo wp_kses_post($msg); ?>
         </p>
     </div>
     <?php

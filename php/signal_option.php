@@ -1,6 +1,6 @@
 <?php
 
-namespace TSJIPPY\PRAYER;
+namespace TSJIPPY\DAILYMESSAGE;
 
 use TSJIPPY;
 
@@ -10,7 +10,7 @@ if (! defined('ABSPATH')) {
 
 add_filter('tsjippy-signal-personal-settings', __NAMESPACE__ . '\signalSettings', 10, 3);
 /**
- * Add prayer time setting to personal signal settings
+ * Add message time setting to personal signal settings
  *
  * @param string $settings The existing settings
  * @param \WP_User $user The user object
@@ -20,32 +20,38 @@ add_filter('tsjippy-signal-personal-settings', __NAMESPACE__ . '\signalSettings'
  */
 function signalSettings($settings, $user, $prefs)
 {
-    $prayerTime = '';
-    if (isset($prefs['prayertime'])) {
-        $prayerTime = $prefs['prayertime'];
+    $messagetime = '';
+    if (isset($prefs['messagetime'])) {
+        $messagetime = $prefs['messagetime'];
     }
 
-    $settings   .= "<label>";
-    $settings   .= "<h4>Send me a personal prayer request reminder around:</h4>";
-    $settings   .= "<input type='time' name='prayertime' value='$prayerTime'>";
-    $settings   .= "</label>";
+    ob_start();
+    ?>
 
-    return $settings;
+    <label>
+        <h4>
+            Send me a personal message around:
+        </h4>
+        <input type='time' name='messagetime' value='<?php esc_attr($messagetime);?>'>
+    </label>
+    <?php
+
+    return $settings.ob_get_clean();
 }
 
 add_action('tsjippy-signal-before-pref-save', __NAMESPACE__ . '\beforePrevSafe', 10, 2);
 
 /**
- * Update prayer time schedule before saving preferences
+ * Update message time schedule before saving preferences
  *
- * @param int $userId The user ID
- * @param array $prefs The user preferences
+ * @param int   $userId The user ID
+ * @param array $prefs  The user preferences
  */
 function beforePrevSafe($userId, $prefs)
 {
-    $prayerSchedule    = new PrayerSchedule();
+    $messageSchedule    = new MessageSchedule();
 
-    $newTime    = $prefs['prayertime'] ?? null;
+    $newTime    = $prefs['messagetime'] ?? null;
 
-    $prayerSchedule->update($userId, $newTime);
+    $messageSchedule->update($userId, $newTime);
 }

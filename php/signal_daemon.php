@@ -1,6 +1,6 @@
 <?php
 
-namespace TSJIPPY\PRAYER;
+namespace TSJIPPY\DAILYMESSAGE;
 
 use TSJIPPY;
 
@@ -8,20 +8,20 @@ if (! defined('ABSPATH')) {
     exit;
 }
 
-add_filter('tsjippy-signal-daemon-response', __NAMESPACE__ . '\addPrayerResponse', 10, 6);
+add_filter('tsjippy-signal-daemon-response', __NAMESPACE__ . '\addMessageResponse', 10, 6);
 /**
- * Add prayer response to the signal daemon response
+ * Add pdaily message to the signal daemon response
  *
- * @param array $response The signal daemon response
- * @param string $message The message received
- * @param string $source The source of the message
- * @param array $users The users associated with the message
- * @param string $name The name of the user
- * @param object $signal The signal object
+ * @param array  $response The signal daemon response
+ * @param string $message  The message received
+ * @param string $source   The source of the message
+ * @param array  $users    The users associated with the message
+ * @param string $name     The name of the user
+ * @param object $signal   The signal object
  *
  * @return array The modified response
  */
-function addPrayerResponse($response, $message, $source, $users, $name, $signal)
+function addMessageResponse($response, $message, $source, $users, $name, $signal)
 {
     if ($response['message'] != 'I have no clue, do you know?') {
         return $response;
@@ -29,21 +29,21 @@ function addPrayerResponse($response, $message, $source, $users, $name, $signal)
 
     $lowerMessage = strtolower($message);
 
-    if (str_starts_with($message, 'update prayer correct')) {
-        $response['message']    = updatePrayerRequest($message, $users, $signal);
-    } elseif (str_starts_with($lowerMessage, 'update prayer')) {
-        $response['message']    = checkPrayerRequestToUpdate($message, $users, $signal);
-    } elseif (str_contains($lowerMessage, 'prayer') && $name) {
-        $prayerRequest  = prayerRequest(true, true);
-        $response['message']    = "This is the prayer for today:\n\n{$prayerRequest['message']}";
-        $response['pictures']   = $prayerRequest['pictures'];
+    if (str_starts_with($message, 'update message correct')) {
+        $response['message']    = updateMessage($message, $users, $signal);
+    } elseif (str_starts_with($lowerMessage, 'update message')) {
+        $response['message']    = checkMessageToUpdate($message, $users, $signal);
+    } elseif (str_contains($lowerMessage, 'message') && $name) {
+        $dailyMessage  = getDailyMessage(true, true);
+        $response['message']    = "This is the message for today:\n\n{$dailyMessage['message']}";
+        $response['pictures']   = $dailyMessage['pictures'];
     }
 
     return $response;
 }
 
 /**
- * Update a prayer request
+ * Update a daily message request
  *
  * @param string $message The message received
  * @param array $users The users associated with the message
@@ -51,13 +51,13 @@ function addPrayerResponse($response, $message, $source, $users, $name, $signal)
  *
  * @return string The response message
  */
-function updatePrayerRequest($message, $users, $signal)
+function updateMessage($message, $users, $signal)
 {
     // mark as updated for affected users
     foreach ($users as $user) {
-        $replacementData    = get_user_meta($user->ID, 'tsjippy_pending-prayer-update-data', true);
+        $replacementData    = get_user_meta($user->ID, 'tsjippy_pending-message-update-data', true);
 
-        delete_user_meta($user->ID, 'tsjippy_pending-prayer-update-data');
+        delete_user_meta($user->ID, 'tsjippy_pending-message-update-data');
 
         if (empty($replacementData)) {
             continue;
@@ -87,11 +87,11 @@ function updatePrayerRequest($message, $users, $signal)
     );
 
     $date   = gmdate(TSJIPPY\DATEFORMAT, strtotime($replacementData['date']));
-    return "Updated your prayer request for $date\n\nto:\n'{$replacementData['replacement']}'";
+    return "Updated your message for $date\n\nto:\n'{$replacementData['replacement']}'";
 }
 
 /**
- * Check a prayer request to update
+ * Check a message to update
  *
  * @param string $message The message received
  * @param array $users The users associated with the message
@@ -99,53 +99,53 @@ function updatePrayerRequest($message, $users, $signal)
  *
  * @return string The response message
  */
-function checkPrayerRequestToUpdate($message, $users, $signal)
+function checkMessageToUpdate($message, $users, $signal)
 {
-    $prayerRequests    = false;
+    $dailyMessages    = false;
 
     foreach ($users as $user) {
-        // get the prayer request to be replaced
-        $prayerRequests        = get_posts(
+        // get the message to be replaced
+        $dailyMessages        = get_posts(
             [
-                'post_type'     => 'prayer-request',
+                'post_type'     => 'daily-message',
                 'meta_key'      => 'user-id',
                 'meta_value'    => $user->ID
             ]
         );
 
-        if ($prayerRequests) {
+        if ($dailyMessages) {
             break;
         }
     }
 
-    if (!$prayerRequests) {
-        return "Could not find prayer request to update for you, sorry";
+    if (!$dailyMessages) {
+        return "Could not find any daily message to update for you, sorry";
     }
 
-    $prayerMessage  = trim($prayerRequests[0]->post_content);
+    $dailyMessage  = trim($dailyMessages[0]->post_content);
 
     // confirm the replacement
-    $replacetext    = trim(str_ireplace('update prayer', '', $message));
+    $replacetext    = trim(str_ireplace('update message', '', $message));
 
     if (empty($replacetext)) {
-        return "You did not supply me with the new prayer request. ";
+        return "You did not supply me with the new message ";
     }
 
-    if ($replacetext == $prayerMessage) {
-        return "The prayer message is already just as you want";
+    if ($replacetext == $dailyMessage) {
+        return "The message is already just as you want";
     }
 
     foreach ($users as $user) {
         update_user_meta(
             $user->ID,
-            'pending-prayer-update-data',
+            'pending-message-update-data',
             [
                 'replacement'   => $replacetext,
-                'post-id'       => $prayerRequests[0]->ID,
-                'date'          => get_post_meta($prayerRequests[0]->ID, 'tsjippy_date', true)
+                'post-id'       => $dailyMessages[0]->ID,
+                'date'          => get_post_meta($dailyMessages[0]->ID, 'tsjippy_date', true)
             ]
         );
     }
 
-    return "I am going to replace:\n'$prayerMessage'\n\nwith\n'$replacetext'\n\nReply with 'update prayer correct' if I should continue";
+    return "I am going to replace:\n'$dailyMessage'\n\nwith\n'$replacetext'\n\nReply with 'update message correct' if I should continue";
 }

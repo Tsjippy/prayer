@@ -1,6 +1,6 @@
 <?php
 
-namespace TSJIPPY\PRAYER;
+namespace TSJIPPY\DAILYMESSAGE;
 
 use TSJIPPY;
 
@@ -24,9 +24,15 @@ class AdminMenu extends \TSJIPPY\ADMIN\SubAdminMenu
         parent::__construct($settings, $name);
     }
 
+    /**
+     * Add the settings page to the admin menu
+     *
+     * @param string $parent The parent menu slug
+     * @return bool True if the settings page was added, false otherwise
+     */
     public function settings($parent)
     {
-        wp_enqueue_script('tsjippy_prayer_admin', TSJIPPY\pathToUrl(PLUGINPATH . 'js/admin.min.js'), array('tsjippy_script'), PLUGINVERSION, true);
+        wp_enqueue_script('tsjippy_message_admin', TSJIPPY\pathToUrl(PLUGINPATH . 'js/admin.min.js'), array('tsjippy_script'), PLUGINVERSION, true);
 
         ob_start();
 
@@ -36,27 +42,27 @@ class AdminMenu extends \TSJIPPY\ADMIN\SubAdminMenu
             $groups    = $this->settings['groups'];
         }
 
-?>
+        ?>
         <h4>
-            Show prayer request on homepage
+            Message prefix
         </h4>
         <label>
-            Frontpage Hook<br>
-            <input type='text' name='frontpagehook' value='<?php if (isset($this->settings['frontpagehook'])) echo esc_html($this->settings['frontpagehook']); ?>'>
+            Prepend the daily message with this text
+            <input type='text' name='message-prepend' value='<?php echo esc_attr($this->settings['message-prepend'] ?? ''); ?>'>
         </label>
-        <br>
+
         <h4>
-            Send prayer message check
+            Send daily message check
         </h4>
         <label>
-            People whom submitted a prayer request will be send their request X days in advance to check if it needs an update <br>
+            Send a check message X days in advance to check if the message needs an update <br>
             Leave empty for no check<br>
-            <input type='number' name='prayercheck' value='<?php if (isset($this->settings['prayercheck'])) echo esc_attr($this->settings['prayercheck']); ?>'>
+            <input type='number' name='messagecheck' value='<?php echo esc_attr($this->settings['messagecheck'] ?? ''); ?>'>
         </label>
         <br>
         <div class="">
             <h4>
-                Give optional Signal group name(s) to send a daily prayer message to:
+                Give optional Signal group name(s) to send a daily message to:
             </h4>
             <div class="clone-divs-wrapper">
                 <?php
@@ -120,33 +126,61 @@ class AdminMenu extends \TSJIPPY\ADMIN\SubAdminMenu
             </div>
         </div>
 
-<?php
+        <?php
 
         addRawHtml(ob_get_clean(), $parent);
 
         return true;
     }
 
+    /**
+     * Function to display the emails page
+     *
+     * @param   string  $parent The parent menu slug
+     * 
+     * @return  bool            True if the emails page was displayed, false otherwise
+     */
     public function emails($parent)
     {
         return false;
     }
 
+    /**
+     * Function to display the emails page
+     *
+     * @param   string  $parent The parent menu slug
+     * 
+     * @return  bool            True if the emails page was displayed, false otherwise
+     */
     public function data($parent = '')
     {
 
         return false;
     }
 
-    public function functions($parent)
+    /**
+     * Add the functions page to the admin menu
+     *
+     * @param string $parent The parent menu slug
+     * 
+     * @return bool True if the functions page was added, false otherwise
+     */
+    public function functions($parent = '')
     {
-        if (isset($_POST['prayer-recipient']) && TSJIPPY\verifyNonce('nonce', 'send-prayer-nonce')) {
-            $recipient      = TSJIPPY\sanitize($_POST['prayer-recipient']);
+        /**
+         * Handle sending the daily message
+         */
+        if (isset($_POST['message-recipient']) && TSJIPPY\verifyNonce('nonce', 'send-message-nonce')) {
+            $recipient = TSJIPPY\sanitize($_POST['message-recipient']);
 
-            $prayerRequest    = prayerRequest(true, true);
+            $message   = getDailyMessage(true, true);
 
-            $message         = "The prayer request of today is:\n";
-            $message         .= $prayerRequest['message'];
+            if(!$message){
+                return;
+            }
+
+            $msg  = (SETTINGS['message-prepend'] ?? '') . "\n";
+            $msg .= $message['message'];
 
             $dayPart    = "morning";
             $hour        = current_time('H');
@@ -160,12 +194,13 @@ class AdminMenu extends \TSJIPPY\ADMIN\SubAdminMenu
 
             // make this available through an action to be used by the signal plugin, potentially others
             do_action(
-                'tsjippy-prayer-send-message',
-                "Good $dayPart ,\n\n$message",
+                'tsjippy-daily-message-send',
+                "Good $dayPart ,\n\n$msg",
                 $recipient,
-                $prayerRequest['pictures']
+                $message['pictures']
             );
         }
+
         $users            = get_users([
             'meta_query' => array(
                 array(
@@ -177,9 +212,9 @@ class AdminMenu extends \TSJIPPY\ADMIN\SubAdminMenu
             'order'     => 'ASC'
         ]);
 
-        TSJIPPY\addElement('h4', $parent, [], 'Send Prayer Now');
+        TSJIPPY\addElement('h4', $parent, [], 'Send Daily Message Now');
 
-        TSJIPPY\addElement('p', $parent, [], 'Send a prayer message');
+        TSJIPPY\addElement('p', $parent, [], 'Send a daily message');
 
         $form   = TSJIPPY\addElement('form', $parent, ['method' => 'POST', 'enctype' => "multipart/form-data"]);
 
@@ -187,11 +222,11 @@ class AdminMenu extends \TSJIPPY\ADMIN\SubAdminMenu
             'input',
             $form,
             [
-                'type'        => 'hidden',
-                'name'        => 'nonce',
-                'value'        => wp_create_nonce('send-prayer-nonce')
+                'type'  => 'hidden',
+                'name'  => 'nonce',
+                'value' => wp_create_nonce('send-message-nonce')
             ],
-            'Send a prayer message'
+            'Send a daily message'
         );
 
         $label  = TSJIPPY\addElement('label', $form, [], 'Recipient: phonenumber or group id');
@@ -202,16 +237,16 @@ class AdminMenu extends \TSJIPPY\ADMIN\SubAdminMenu
             'input',
             $label,
             [
-                'type'        => 'text',
-                'name'        => 'prayer-recipient',
-                'list'        => 'recipients'
+                'type'  => 'text',
+                'name'  => 'message-recipient',
+                'list'  => 'recipients'
             ]
         );
 
         $dataList   = TSJIPPY\addElement('datalist', $form, ['id' => "recipients"]);
 
         if (defined('TSJIPPY\SIGNAL\SETTINGS') && TSJIPPY\SIGNAL\SETTINGS['local'] ?? false) {
-            $signal         = TSJIPPY\SIGNAL\getSignalInstance();
+            $signal     = TSJIPPY\SIGNAL\getSignalInstance();
             foreach ($signal->listGroups() as $g) {
                 if (empty($g->name)) {
                     continue;
@@ -230,7 +265,7 @@ class AdminMenu extends \TSJIPPY\ADMIN\SubAdminMenu
 
         TSJIPPY\addElement('br', $form);
 
-        TSJIPPY\addElement('button', $form, ['type' => 'submit', 'name' => 'send-prayer'], 'Send Prayer');
+        TSJIPPY\addElement('button', $form, ['type' => 'submit', 'name' => 'send-message'], 'Send Message');
 
         return true;
     }
@@ -255,26 +290,27 @@ class AdminMenu extends \TSJIPPY\ADMIN\SubAdminMenu
     /**
      * Schedules the tasks for this plugin
      *
+     * @param   array   $request    The sanitized request data
      */
     public function postSettingsSave($request)
     {
-        $date                = \gmdate('y-m-d');
+        $date      = \gmdate('y-m-d');
 
-        $oldGroups          = $this->indexArray(SETTINGS['groups'] ?? []);
-        $newGroups          = $this->indexArray($this->settings['groups'] ?? []);
+        $oldGroups = $this->indexArray(SETTINGS['groups'] ?? []);
+        $newGroups = $this->indexArray($this->settings['groups'] ?? []);
 
         // Compute the difference between the old and new groups to find out which groups have been added and which have been removed
         $added      = array_diff_assoc($newGroups, $oldGroups);
         $removed    = array_diff_assoc($oldGroups, $newGroups);
         $updated    = array_intersect(array_keys($added), array_keys($removed));
 
-        $prayerSchedule    = new PrayerSchedule();
+        $messageSchedule = new MessageSchedule();
         foreach ($removed as $recipient => $time) {
             if (empty($recipient) || in_array($recipient, $updated)) {
                 continue;
             }
             // Remove the group from the schedule
-            $prayerSchedule->delete($recipient);
+            $messageSchedule->delete($recipient);
         }
 
         foreach ($added as $recipient => $time) {
@@ -283,7 +319,7 @@ class AdminMenu extends \TSJIPPY\ADMIN\SubAdminMenu
             }
 
             // Add the group to the schedule
-            $prayerSchedule->add($recipient, $time);
+            $messageSchedule->add($recipient, $time);
         }
 
         foreach ($updated as $recipient) {
@@ -292,10 +328,10 @@ class AdminMenu extends \TSJIPPY\ADMIN\SubAdminMenu
             }
 
             // Add the group to the schedule
-            $prayerSchedule->update($recipient, $added[$recipient]);
+            $messageSchedule->update($recipient, $added[$recipient]);
         }
 
         // Mark todays chedule as outdated so it will be renewed with the new groups and times
-        update_option("prayer_schedule_$date", false);
+        update_option("daily_message_schedule_$date", false);
     }
 }

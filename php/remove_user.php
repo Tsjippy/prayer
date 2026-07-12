@@ -1,6 +1,6 @@
 <?php
 
-namespace TSJIPPY\PRAYER;
+namespace TSJIPPY\DAILYMESSAGE;
 
 use TSJIPPY;
 
@@ -10,13 +10,13 @@ if (! defined('ABSPATH')) {
 
 add_action('delete_user', __NAMESPACE__ . '\onUserDelete');
 /**
- * Function to handle user deletion and update prayer schedule accordingly
+ * Function to handle user deletion and update daily message schedule accordingly
  *
  * @param int $userId The ID of the user being deleted
  */
 function onUserDelete($userId)
 {
-    $prayerSchedule    = new PrayerSchedule();
+    $messageSchedule    = new MessageSchedule();
 
-    $prayerSchedule->delete($userId);
+    $messageSchedule->delete($userId);
 }

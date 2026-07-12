@@ -1,6 +1,6 @@
 <?php
 
-namespace TSJIPPY\PRAYER;
+namespace TSJIPPY\DAILYMESSAGE;
 
 use TSJIPPY;
 
@@ -11,26 +11,26 @@ if (! defined('ABSPATH')) {
 add_action('init', __NAMESPACE__ . '\scheduleTasks');
 function scheduleTasks()
 {
-    TSJIPPY\scheduleTask('tsjippy-send-prayer', 'quarterly', __NAMESPACE__, 'sendPrayerRequests');
+    TSJIPPY\scheduleTask('tsjippy-send-daily-message', 'quarterly', __NAMESPACE__, 'sendDailyMessage');
 
-    TSJIPPY\scheduleTask('tsjippy-check-prayer', 'daily', __NAMESPACE__, 'checkPrayerRequests');
+    TSJIPPY\scheduleTask('tsjippy-check-daily-message', 'daily', __NAMESPACE__, 'checkDailyMessage');
 }
 
 /**
- * We will send the prayer request based on the times as given by people
+ * We will send the daily message based on the times as given by people
  * As we are not sure about the timeliness of the cron schedule we keep
  * a seperate schedule for each day to be sure everyone gets what they requested
  */
-function sendPrayerRequests()
+function sendDailyMessage()
 {
-    $prayerRequest    = prayerRequest(true, true);
+    $dailyMessage    = getDailyMessage(true, true);
 
-    $message         = "The prayer request of today is:\n";
-    $message         .= $prayerRequest['message'];
+    $message         = (SETTINGS['message-prepend'] ?? '') . "\n";
+    $message         .= $dailyMessage['message'];
 
     // Get the schedule for today
-    $prayerSchedule  = new PrayerSchedule();
-    $schedule        = $prayerSchedule->getTodaySchedule();
+    $messageSchedule  = new MessageSchedule();
+    $schedule        = $messageSchedule->getTodaySchedule();
 
     $time    = current_time('H:i');
     foreach ($schedule as $t => $recipients) {
@@ -68,43 +68,43 @@ function sendPrayerRequests()
 
             // make this available through an action to be used by the signal plugin, potentially others
             do_action(
-                'tsjippy-prayer-send-message',
+                'tsjippy-daily-message-send',
                 "Good $dayPart$userName,\n\n$message",
                 $recipient,
-                $prayerRequest['pictures']
+                $dailyMessage['pictures']
             );
         }
     }
 
     $date            = \gmdate('y-m-d');
     if (empty($schedule)) {
-        delete_option("prayer_schedule_$date");
+        delete_option("daily_message_schedule_$date");
     } else {
-        update_option("prayer_schedule_$date", $schedule);
+        update_option("daily_message_schedule_$date", $schedule);
     }
 }
 
 /**
- * Check if a prayer request needs an update
+ * Check if a message needs an update
  */
-function checkPrayerRequests()
+function checkDailyMessage()
 {
     // Get the amount of days between this check and the actual publishing
-    $days            = SETTINGS['prayercheck'] ?? [];
+    $days            = SETTINGS['messagecheck'] ?? [];
     if (empty($days)) {
         return;
     }
 
-    // Get the actual prayer request this warning is for
-    $dateTime        = strtotime("+$days day", time());
-    $dateString        = gmdate(TSJIPPY\DATEFORMAT, $dateTime);
+    // Get the actual message this warning is for
+    $dateTime   = strtotime("+$days day", time());
+    $dateString = gmdate(TSJIPPY\DATEFORMAT, $dateTime);
 
-    $prayerRequests = get_posts(
+    $dailyMessages = get_posts(
         array(
-            'post_type'        => 'prayer-request',
-            'post_status'      => 'publish',
-            'numberposts'    => -1,
-            'meta_query'    => array(
+            'post_type'   => 'daily-message',
+            'post_status' => 'publish',
+            'numberposts' => -1,
+            'meta_query'  => array(
                 'relation' => 'AND',
                 array(
                     'key'     => 'tsjippy_date',
@@ -118,23 +118,23 @@ function checkPrayerRequests()
         )
     );
 
-    // loop over all found prayer requests for the date with users attached to it.
-    foreach ($prayerRequests as $prayerRequest) {
-        $message         = strip_tags($prayerRequest->post_content);
+    // loop over all found mesages for the date with users attached to it.
+    foreach ($dailyMessages as $dailyMessage) {
+        $message         = strip_tags($dailyMessage->post_content);
 
         if (empty($message)) {
             continue;
         }
 
-        $signalMessage    = "Good day %name%, $days days from now your prayer request will be sent out.\n\nPlease reply to me with an updated request if needed.\n\nThis is the request I have now:\n\n$message\n\nIt will be sent on $dateString\n\nStart your reply with 'update prayer'";
+        $signalMessage    = "Good day %name%, $days days from now your message will be sent out.\n\nPlease reply to me with an updated version if needed.\n\nThis is the request I have now:\n\n$message\n\nIt will be sent on $dateString\n\nStart your reply with 'update message'";
 
-        foreach (get_post_meta($prayerRequest->ID, 'tsjippy_user-id') as $userId) {
-            $user        = get_userdata($userId);
-            $msg        = str_replace('%name%', $user->first_name, $signalMessage);
+        foreach (get_post_meta($dailyMessage->ID, 'tsjippy_user-id') as $userId) {
+            $user = get_userdata($userId);
+            $msg  = str_replace('%name%', $user->first_name, $signalMessage);
 
             // make this available through an action to be used by the signal plugin, potentially others
             do_action(
-                'tsjippy-prayer-send-message',
+                'tsjippy-daily-message-send',
                 $msg,
                 $user
             );

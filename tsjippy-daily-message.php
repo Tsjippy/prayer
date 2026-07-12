@@ -1,17 +1,17 @@
 <?php
 
-namespace TSJIPPY\PRAYER;
+namespace TSJIPPY\DAILYMESSAGE;
 
 /**
- * Plugin Name:          Tsjippy Prayer
- * Description:          This plugin adds 1 post category: 'Prayer' You should add a new post with the prayer category each month. This post should have a prayer request for each day on seperate lines. The lines should have this format: '1(T) – ' So an example will look like this: <code> 1(M) – Prayer for day 1 2(T) – Prayer for day 2 </code> If such a post is available the daily prayerrequest will be displayed on the homepage and will be available via the rest-api.
+ * Plugin Name:          Tsjippy Message
+ * Description:          This plugin adds the message post type. Use it to display daily messages on frontend or send thrue e-mail or signal.
  * Version:              10.4.7
  * Author:               Ewald Harmsen
  * AuthorURI:            harmseninnigeria.nl
  * Requires at least:    6.3
  * Requires PHP:         8.3
  * Tested up to:         7.0
- * Plugin URI:           https://github.com/Tsjippy/prayer
+ * Plugin URI:           https://github.com/Tsjippy/daily-message
  * Tested:               7.0
  * TextDomain:           tsjippy
  * Requires Plugins:    
@@ -46,17 +46,17 @@ register_activation_hook(__FILE__, function () {
     $roleSet = get_role('contributor')->capabilities;
 
     // Only add the new role if it does not exist
-    if (!wp_roles()->is_role('prayercoordinator')) {
+    if (!wp_roles()->is_role('message-coordinator')) {
         add_role(
-            'prayercoordinator',
-            'Prayer coordinator',
+            'message-coordinator',
+            'Message coordinator',
             $roleSet
         );
     }
 
     // Create db
-    $prayerSchedule    = new PrayerSchedule();
-    $prayerSchedule->createDbTables();
+    $messageSchedule    = new MessageSchedule();
+    $messageSchedule->createDbTables();
 
     if(function_exists('TSJIPPY\activate')){
         \TSJIPPY\activate();

@@ -1,6 +1,6 @@
 <?php
 
-namespace TSJIPPY\PRAYER;
+namespace TSJIPPY\DAILYMESSAGE;
 
 use TSJIPPY;
 
@@ -9,7 +9,7 @@ if (! defined('ABSPATH')) {
     exit;
 }
 
-class PrayerSchedule
+class MessageSchedule
 {
     public string $tableName;
 
@@ -20,7 +20,7 @@ class PrayerSchedule
     {
         global $wpdb;
 
-        $this->tableName        = $wpdb->prefix . 'tsjippy_prayer_schedule';
+        $this->tableName = $wpdb->prefix . 'tsjippy_message_schedule';
     }
 
     /**
@@ -49,13 +49,13 @@ class PrayerSchedule
     }
 
     /**
-     * Get the prayer schedule
+     * Get the message schedule
      *
-     * @return array The prayer schedule indexed by time with an array of recipients for each time
+     * @return array The message schedule indexed by time with an array of recipients for each time
      */
     public function getSchedule()
     {
-        $results = TSJIPPY\getFromDb("get_prayer_schedule", "prayer", "SELECT * FROM %i", $this->tableName);
+        $results = TSJIPPY\getFromDb("get_message_schedule", "message", "SELECT * FROM %i", $this->tableName);
 
         // Create an array indexed by time
         $schedule = [];
@@ -72,7 +72,7 @@ class PrayerSchedule
     }
 
     /**
-     * Add prayer schedule session
+     * Add message schedule session
      *
      * @param int $recipient The recipient to add to the schedule
      * @param string $time The time to add to the schedule
@@ -82,14 +82,12 @@ class PrayerSchedule
      */
     public function add($recipient, $time)
     {
-        global $wpdb;
-
         /**
          * Double check we do not have duplicates
          */
         $existing   = TSJIPPY\getFromDb(
             "get_schedule_for_$recipient", 
-            "prayer",
+            "message",
             "SELECT * FROM %i WHERE recipient = %s", 
             $this->tableName, 
             $recipient
@@ -115,7 +113,7 @@ class PrayerSchedule
                 '%s',
                 '%d'
             ],
-            'prayer'
+            'daily-message'
         );
 
         if (is_wp_error($result)) {
@@ -129,7 +127,7 @@ class PrayerSchedule
     }
 
     /**
-     * Update prayer schedule session
+     * Update daily message schedule session
      *
      * @param int $recipient The recipient to update
      * @param string $time The time to update
@@ -149,7 +147,7 @@ class PrayerSchedule
             ),
             ['%s'],
             ['%s'],
-            'prayer'
+            'daily-message'
         );
 
         if (is_wp_error($result)) {
@@ -163,7 +161,7 @@ class PrayerSchedule
     }
 
     /**
-     * Delete prayer schedule session
+     * Delete daily message schedule session
      *
      * @param int $recipient The recipient to delete from the schedule
      *
@@ -172,9 +170,7 @@ class PrayerSchedule
      */
     public function delete($recipient)
     {
-        global $wpdb;
-
-        // Delete booking from db
+        // Delete schedule from db
         TSJIPPY\removeFromDb(
             $this->tableName,
             array(
@@ -183,7 +179,7 @@ class PrayerSchedule
             [
                 '%s'
             ],
-            'prayer'
+            'daily-message'
         );
 
         // Rebuild todays schedule
@@ -193,11 +189,11 @@ class PrayerSchedule
     }
 
     /**
-     * Get the prayer schedule for today
+     * Get the daily message schedule for today
      *
-     * @param   bool    $force      Recreate the schedule even if one exists already
+     * @param   bool    $force  Recreate the schedule even if one exists already
      *
-     * @return array The prayer schedule for today indexed by time with an array of recipients for each time
+     * @return  array           The daily message schedule for today indexed by time with an array of recipients for each time
      */
     public function getTodaySchedule($force = false)
     {
@@ -206,7 +202,7 @@ class PrayerSchedule
         $schedule       = false;
 
         if (!$force) {
-            $schedule        = get_option("prayer_schedule_$date", false);
+            $schedule        = get_option("daily_message_schedule_$date", false);
         }
 
         if (empty($schedule)) {
@@ -221,7 +217,7 @@ class PrayerSchedule
                 }
             }
 
-            update_option("prayer_schedule_$date", $schedule);
+            update_option("daily_message_schedule_$date", $schedule);
         }
 
         return $schedule;

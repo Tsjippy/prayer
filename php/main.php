@@ -1,6 +1,6 @@
 <?php
 
-namespace TSJIPPY\PRAYER;
+namespace TSJIPPY\DAILYMESSAGE;
 
 use TSJIPPY;
 
@@ -9,13 +9,13 @@ if (! defined('ABSPATH')) {
 }
 
 add_action('init', function () {
-    TSJIPPY\registerPostTypeAndTax('prayer-request', 'prayer-requests');
+    TSJIPPY\registerPostTypeAndTax('daily-message', 'daily-messages');
 });
 
-//give prayer coordinator acces to prayer items
+//give message coordinator acces to message items
 add_filter('tsjippy-frontend-content-edit-rights', __NAMESPACE__ . '\editRights', 10, 2);
 /**
- * Tweaks the edit rights for prayer requests
+ * Tweaks the edit rights for messages
  *
  * @param   bool    $editRight      Whether the user has edit rights
  * @param   array   $postCategory     The categories of the post
@@ -27,7 +27,7 @@ function editRights($editRight, $postCategory)
 
     if (
         !$editRight                                                        &&    // If we currently have no edit right
-        in_array('prayercoordinator', wp_get_current_user()->roles)        &&     // If we have the prayer coordinator role and the post or page has the prayer category
+        in_array('message-coordinator', wp_get_current_user()->roles)        &&     // If we have the message coordinator role 
         (
             in_array(get_cat_ID('Prayer'), $postCategory)                 ||
             in_array('prayer', $postCategory)
@@ -41,16 +41,16 @@ function editRights($editRight, $postCategory)
 
 /**
  *
- * Get the prayer request of today
+ * Get the message of today
  *
- * @param   string         $plainText      Whether we shuld return the prayer request in html or plain text
- * @param    bool        $verified        If we trust the request, default false
- * @param    string|int    $date            The date or time string for which to get the request, default empty for today
+ * @param   string      $plainText      Whether we shuld return the message in html or plain text
+ * @param    bool       $verified       If we trust the request, default false
+ * @param    string|int $date           The date or time string for which to get the request, default empty for today
  *
- * @return   array|false                 An array containing the prayer request and pictures or false if no prayer request found
+ * @return   array|false                An array containing the message and pictures or false if no message found
  *
  **/
-function prayerRequest($plainText = false, $verified = false, $date = '')
+function getDailyMessage($plainText = false, $verified = false, $date = '')
 {
     if (!is_user_logged_in() && !$verified) {
         return false;
@@ -72,10 +72,10 @@ function prayerRequest($plainText = false, $verified = false, $date = '')
         $date            = gmdate("Y-m-d", $datetime);
     }
 
-    //Get all the prayer posts for this date
+    //Get all the message posts for this date
     $posts = get_posts(
         array(
-            'post_type'   => 'prayer-request',
+            'post_type'   => 'daily-message',
             'post_status' => 'publish',
             'orderby'     => 'date',
             'order'       => 'ASC',
@@ -89,7 +89,7 @@ function prayerRequest($plainText = false, $verified = false, $date = '')
         if ($plainText) {
 
             return [
-                'message'    => 'Sorry I could not find any prayer request for today',
+                'message'    => 'Sorry I could not find any message for today',
                 'pictures'    => []
             ];
         }
@@ -102,7 +102,7 @@ function prayerRequest($plainText = false, $verified = false, $date = '')
     $urls     = [];
 
     foreach ($posts as $post) {
-        $cats         = wp_get_post_terms($post->ID, 'prayer-requests');
+        $cats         = wp_get_post_terms($post->ID, 'daily-messages');
 
         // Show the category name
         foreach ($cats as $cat) {

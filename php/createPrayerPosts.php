@@ -1,6 +1,6 @@
 <?php
 
-namespace TSJIPPY\PRAYER;
+namespace TSJIPPY\DAILYMESSAGE;
 
 use TSJIPPY;
 
@@ -8,6 +8,9 @@ if (! defined('ABSPATH')) {
     exit;
 }
 
+/**
+ * Creates the regex pattern for finding dates in all sort of formats
+ */
 function dateRegex()
 {
     /* $year = [
@@ -45,9 +48,9 @@ function dateRegex()
 }
 
 /**
- * Parse Prayers Post
+ * Parse Message Post
  *
- * @param   object  $post   The post object of the prayer post
+ * @param   object  $post   The post object of the message post
  */
 function parsePostContent($post)
 {
@@ -66,13 +69,13 @@ function parsePostContent($post)
     // This captures the first line, the date
     $dateLine       = "(?P<date>$dateRegex)$charsAfterDate";
 
-    // Captures the heading of the prayer request
+    // Captures the heading of the message
     $heading        = "(?P<heading>.+?)(?:<br>|<br \/>|<br\/>|\R)";
 
     // The actual message
     $message        = "(?P<message>.+?)";
 
-    // the line of the next prayer request or the end of the document
+    // the line of the next message or the end of the document
     $end            = "(?=(?:(?:$dateRegex)$charsAfterDate|$))";
 
     // All combined
@@ -80,10 +83,10 @@ function parsePostContent($post)
     preg_match_all($re, $text, $matches, PREG_SET_ORDER, 0);
 
     if (count($matches) < 28) {
-        return false; // Less than 28 prayer requests found
+        return false; // Less than 28 messages found
     }
 
-    $prayerRequests = [];
+    $messages = [];
 
     foreach ($matches as $match) {
         $html        = $match['message'];
@@ -95,16 +98,16 @@ function parsePostContent($post)
 
         $userPageLinks  = new TSJIPPY\UserPageLinks($heading, false);
 
-        $prayerRequests[$match['date']] = [
-            'heading'   => $heading,
+        $messages[$match['date']] = [
+            'heading' => $heading,
 
-            'prayer'    => cleanMessage($html),
+            'message' => cleanMessage($html),
 
-            'userIds'    => $userPageLinks->foundUsers,
+            'userIds' => $userPageLinks->foundUsers,
         ];
     }
 
-    return $prayerRequests;
+    return $messages;
 }
 
 /**
@@ -116,7 +119,7 @@ function parsePostContent($post)
  */
 function stripTags($content)
 {
-    // Content of page with all prayer requests of this month
+    // Content of page with all messages of this month
     return strip_tags($content, ['strong', 'b', 'em', 'i', 'details', 's', 'br']);
 }
 
@@ -148,17 +151,17 @@ function cleanMessage($msg)
 }
 
 /**
- * Creates prayer posts from a parent post
+ * Creates message posts from a parent post
  *
  * @param   int     $postId   The ID of the parent post
  * @param   object  $post     The parent post object
  * @param   bool    $update   Whether this is an update or a new post
  */
-function createPrayerPosts($postId, $post, $update)
+function createMessagePosts($postId, $post, $update)
 {
     // Check if it's an autosave or a revision
     if (
-        $post->post_type != 'prayer-request' || // We should only process prayer-request posts
+        $post->post_type != 'daily-message' || // We should only process message posts
         $post->post_status != 'publish' ||      // Only process if published
         wp_is_post_autosave($postId) ||
         wp_is_post_revision($postId) ||
@@ -167,16 +170,16 @@ function createPrayerPosts($postId, $post, $update)
         return;
     }
 
-    $prayerRequests = parsePostContent($post);
+    $messages = parsePostContent($post);
 
-    if (!$prayerRequests) {
+    if (!$messages) {
         return;
     }
 
     // remove any children of this post
     $posts = get_posts(
         array(
-            'post_type'     => 'prayer-request',
+            'post_type'     => 'daily-message',
             'posts_per_page' => -1,
             'post_parent'    => $post->ID
         )
@@ -186,22 +189,22 @@ function createPrayerPosts($postId, $post, $update)
     }
 
     // Get the categrories from post
-    if (!empty($_POST['prayer-requests-ids'])) {
-        $cats   = TSJIPPY\sanitize($_POST['prayer-requests-ids']);
+    if (!empty($_POST['messages-ids'])) {
+        $cats   = TSJIPPY\sanitize($_POST['messages-ids']);
 
         $cats   = array_map('intval', $cats);
     } else {
         $cats   = wp_get_post_categories($post->ID);
     }
 
-    foreach ($prayerRequests as $date => $prayerRequest) {
+    foreach ($messages as $date => $message) {
         $date       = gmdate(TSJIPPY\DATEFORMAT, strtotime($date));
         $postData   = array(
-            'post_title'    => "Prayer Request for $date: {$prayerRequest['heading']}",
-            'post_content'  => $prayerRequest['prayer'],
+            'post_title'    => "Message Request for $date: {$message['heading']}",
+            'post_content'  => $message['message'],
             'post_status'   => 'publish',
-            'post_type'     => 'prayer-request',
-            'post_author'   => isset($prayerRequest['userIds'][0]) ? $prayerRequest['userIds'][0] : $post->post_author,
+            'post_type'     => 'message',
+            'post_author'   => isset($message['userIds'][0]) ? $message['userIds'][0] : $post->post_author,
             'post_parent'   => $post->ID
         );
 
@@ -214,12 +217,12 @@ function createPrayerPosts($postId, $post, $update)
 
         add_post_meta($postId, "tsjippy_date", gmdate('Y-m-d', strtotime($date)), true);
 
-        foreach ($prayerRequest['userIds'] as $userId) {
+        foreach ($message['userIds'] as $userId) {
             add_post_meta($postId, "tsjippy_user-id", $userId, false);
         }
 
         // Store the cat
-        wp_set_post_terms($postId, $cats, 'prayer-requests');
+        wp_set_post_terms($postId, $cats, 'message');
     }
 }
-add_action('save_post_prayer-request', __NAMESPACE__ . '\createPrayerPosts', 10, 3);
+add_action('save_post_daily-message', __NAMESPACE__ . '\creatMessagePosts', 10, 3);

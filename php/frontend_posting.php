@@ -1,6 +1,6 @@
 <?php
 
-namespace TSJIPPY\PRAYER;
+namespace TSJIPPY\DAILYMESSAGE;
 
 use TSJIPPY;
 use WP_Error;
@@ -9,12 +9,6 @@ if (! defined('ABSPATH')) {
     exit;
 }
 
-/**
- * Checks if the current post has the prayer category
- * if so checks if it has an word attachment
- *
- * returns an error when it does not have the month and year in the title
- */
 add_filter('tsjippy-frontend-content-validation', __NAMESPACE__ . '\contentValidation', 10, 2);
 /**
  * Validates the content of the frontend post
@@ -25,9 +19,9 @@ add_filter('tsjippy-frontend-content-validation', __NAMESPACE__ . '\contentValid
  */
 function contentValidation($error, $frontEndContent)
 {
-    // do not continue if the post content contains less than 28 prayerpoints
+    // do not continue if the post content contains less than 28 messages
     if (
-        $frontEndContent->postType   != 'prayer' ||
+        $frontEndContent->postType   != 'daily-message' ||
         is_wp_error($error) ||
         preg_match_all('/\d{1,2}\([S|M|T|W|F]\)/i', wp_strip_all_tags($frontEndContent->postContent), $matches) < 20
     ) {
@@ -44,7 +38,7 @@ function contentValidation($error, $frontEndContent)
     }
 
     if (!$found) {
-        return new WP_Error('prayer', "I guess you are submitting a post with prayerpoints?<br><br>Please make sure the year is included in the post title. ");
+        return new WP_Error('daily-message', "I guess you are submitting a post with messages?<br><br>Please make sure the year is included in the post title. ");
     }
 
     //month year
