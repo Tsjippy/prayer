@@ -4,6 +4,7 @@
 ### Added
 
 ### Changed
+- name to daily message to allow a broader usage
 
 ### Fixed
 
