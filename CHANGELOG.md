@@ -9,6 +9,12 @@
 
 ### Updated
 
+## [10.4.8] - 2026-07-12
+
+
+### Changed
+- name to daily message to allow a broader usage
+
 ## [10.4.7] - 2026-07-11
 
 
