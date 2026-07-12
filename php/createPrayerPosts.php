@@ -225,4 +225,4 @@ function createMessagePosts($postId, $post, $update)
         wp_set_post_terms($postId, $cats, 'message');
     }
 }
-add_action('save_post_daily-message', __NAMESPACE__ . '\creatMessagePosts', 10, 3);
+add_action('save_post_daily-message', __NAMESPACE__ . '\createMessagePosts', 10, 3);
