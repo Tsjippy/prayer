@@ -9,6 +9,9 @@ if (! defined('ABSPATH')) {
 }
 
 add_action('init', __NAMESPACE__ . '\scheduleTasks');
+/**
+ * Schedule all tasks for this plugin
+ */
 function scheduleTasks()
 {
     TSJIPPY\scheduleTask('tsjippy-daily-message-send-task', 'quarterly', __NAMESPACE__, 'sendDailyMessage');

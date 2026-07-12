@@ -161,7 +161,6 @@ function createMessagePosts($postId, $post, $update)
 {
     // Check if it's an autosave or a revision
     if (
-        $post->post_type != 'daily-message' || // We should only process message posts
         $post->post_status != 'publish' ||      // Only process if published
         wp_is_post_autosave($postId) ||
         wp_is_post_revision($postId) ||
@@ -203,7 +202,7 @@ function createMessagePosts($postId, $post, $update)
             'post_title'    => "Message Request for $date: {$message['heading']}",
             'post_content'  => $message['message'],
             'post_status'   => 'publish',
-            'post_type'     => 'message',
+            'post_type'     => 'daily-message',
             'post_author'   => isset($message['userIds'][0]) ? $message['userIds'][0] : $post->post_author,
             'post_parent'   => $post->ID
         );

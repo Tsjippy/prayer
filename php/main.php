@@ -24,7 +24,6 @@ add_filter('tsjippy-frontend-content-edit-rights', __NAMESPACE__ . '\editRights'
  */
 function editRights($editRight, $postCategory)
 {
-
     if (
         !$editRight                                                   &&    // If we currently have no edit right
         in_array('message-coordinator', wp_get_current_user()->roles) &&     // If we have the message coordinator role 
