@@ -20,9 +20,9 @@ add_filter('tsjippy-signal-personal-settings', __NAMESPACE__ . '\signalSettings'
  */
 function signalSettings($settings, $user, $prefs)
 {
-    $messagetime = '';
-    if (isset($prefs['messagetime'])) {
-        $messagetime = $prefs['messagetime'];
+    $messageTime = '';
+    if (isset($prefs['message-time'])) {
+        $messageTime = $prefs['message-time'];
     }
 
     ob_start();
@@ -32,7 +32,7 @@ function signalSettings($settings, $user, $prefs)
         <h4>
             Send me a personal message around:
         </h4>
-        <input type='time' name='messagetime' value='<?php esc_attr($messagetime);?>'>
+        <input type='time' name='message-time' value='<?php esc_attr($messageTime);?>'>
     </label>
     <?php
 
@@ -51,7 +51,7 @@ function beforePrevSafe($userId, $prefs)
 {
     $messageSchedule    = new MessageSchedule();
 
-    $newTime    = $prefs['messagetime'] ?? null;
+    $newTime    = $prefs['message-time'] ?? null;
 
     $messageSchedule->update($userId, $newTime);
 }
