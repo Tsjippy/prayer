@@ -6,6 +6,7 @@
 ### Changed
 
 ### Fixed
+- select signal group when none is defined yet
 
 ### Updated
 
