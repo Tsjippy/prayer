@@ -6,6 +6,7 @@
 ### Changed
 
 ### Fixed
+- daily message option
 
 ### Updated
 
