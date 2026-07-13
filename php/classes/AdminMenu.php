@@ -67,7 +67,7 @@ class AdminMenu extends \TSJIPPY\ADMIN\SubAdminMenu
             <div class="clone-divs-wrapper">
                 <?php
                 foreach ($groups as $index => $group) {
-                ?>
+                    ?>
                     <div class="clone-div" data-div-id="<?php echo esc_attr($index); ?>" style="display:flex;border: #dedede solid; padding: 10px; margin-bottom: 10px;">
                         <div class="multi-input-wrapper">
                             <label>
@@ -77,21 +77,19 @@ class AdminMenu extends \TSJIPPY\ADMIN\SubAdminMenu
                             if (defined('TSJIPPY\SIGNAL\SETTINGS') && TSJIPPY\SIGNAL\SETTINGS['local'] ?? false) {
                                 $signal    = TSJIPPY\SIGNAL\getSignalInstance();
 
-                                $groups    = (array)$signal->listGroups();
+                                $signalGroups    = (array)$signal->listGroups();
 
-                                TSJIPPY\printArray($groups);
-
-                                if (!is_wp_error($groups)) {
+                                if (!is_wp_error($signalGroups)) {
                                     ?>
                                     <select name="groups[<?php echo esc_attr($index); ?>][name]">
                                         <option value="">---</option>
                                         <?php
-                                        foreach ($groups as $g) {
+                                        foreach ($signalGroups as $g) {
                                             if (empty($g->name)) {
                                                 continue;
                                             }
                                             ?>
-                                            <option value='<?php echo esc_attr($g->id); ?>' <?php if ($group['name'] == $g->id) echo 'selected="selected"'; ?>>
+                                            <option value='<?php echo esc_attr($g->id); ?>' <?php if (($group['name'] ?? '') == $g->id) echo 'selected="selected"'; ?>>
                                                 <?php echo esc_attr($g->name); ?>
                                             </option>
                                         <?php
