@@ -32,7 +32,7 @@ function signalSettings($settings, $user, $prefs)
         <h4>
             Send me a personal message around:
         </h4>
-        <input type='time' name='message-time' value='<?php esc_attr($messageTime);?>'>
+        <input type='time' name='message-time' value='<?php echo esc_attr($messageTime);?>'>
     </label>
     <?php
 
