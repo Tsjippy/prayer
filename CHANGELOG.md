@@ -6,9 +6,14 @@
 ### Changed
 
 ### Fixed
-- daily message option
 
 ### Updated
+
+## [10.5.4] - 2026-07-13
+
+
+### Fixed
+- daily message option
 
 ## [10.5.3] - 2026-07-13
 
