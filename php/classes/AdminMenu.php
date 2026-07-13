@@ -79,6 +79,8 @@ class AdminMenu extends \TSJIPPY\ADMIN\SubAdminMenu
 
                                 $groups    = (array)$signal->listGroups();
 
+                                TSJIPPY\printArray($groups);
+
                                 if (!is_wp_error($groups)) {
                                     ?>
                                     <select name="groups[<?php echo esc_attr($index); ?>][name]">
@@ -88,7 +90,7 @@ class AdminMenu extends \TSJIPPY\ADMIN\SubAdminMenu
                                             if (empty($g->name)) {
                                                 continue;
                                             }
-                                        ?>
+                                            ?>
                                             <option value='<?php echo esc_attr($g->id); ?>' <?php if ($group['name'] == $g->id) echo 'selected="selected"'; ?>>
                                                 <?php echo esc_attr($g->name); ?>
                                             </option>
