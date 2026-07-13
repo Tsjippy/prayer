@@ -6,9 +6,14 @@
 ### Changed
 
 ### Fixed
-- select signal group when none is defined yet
 
 ### Updated
+
+## [10.5.2] - 2026-07-13
+
+
+### Fixed
+- select signal group when none is defined yet
 
 ## [10.5.1] - 2026-07-12
 
