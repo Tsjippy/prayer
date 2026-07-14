@@ -4,6 +4,7 @@
 ### Added
 
 ### Changed
+- storing message date
 
 ### Fixed
 
