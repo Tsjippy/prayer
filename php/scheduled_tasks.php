@@ -112,8 +112,8 @@ function checkDailyMessage()
             'meta_query'  => array(
                 'relation' => 'AND',
                 array(
-                    'key'     => 'tsjippy_date',
-                    'value'   => gmdate('Y-m-d', $dateTime)
+                    'key'     => 'tsjippy_date_'.gmdate('Y-m-d', $dateTime),
+                    'compare' => 'EXISTS',
                 ),
                 array(
                     'key'     => 'tsjippy_user-id',
@@ -162,9 +162,8 @@ function cleanup(){
             'fields'      => 'ids',
             'meta_query'  => array(
                 array(
-                    'key'     => 'tsjippy_date',
-                    'value'   => gmdate('Y-m-d', $dateTime),
-                    'compare' => '<='
+                    'key'     => 'tsjippy_date_'.gmdate('Y-m-d', $dateTime),
+                    'compare' => 'EXISTS',
                 ),
             )
         )

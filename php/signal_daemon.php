@@ -101,6 +101,8 @@ function updateMessage($message, $users, $signal)
  */
 function checkMessageToUpdate($message, $users, $signal)
 {
+    global $wpdb;
+
     $dailyMessages    = false;
 
     foreach ($users as $user) {
@@ -135,6 +137,16 @@ function checkMessageToUpdate($message, $users, $signal)
         return "The message is already just as you want";
     }
 
+    
+    $date   = TSJIPPY\getFromDb(
+        "daily-message-" . $users[0]->ID,
+        'daily-message',
+        "select meta_value from %i where meta_key like %s and post_id = %d",
+        $wpdb->postmeta,
+        $wpdb->esc_like('tsjippy_date_').'%',
+        $dailyMessages[0]->ID
+    );
+    
     foreach ($users as $user) {
         update_user_meta(
             $user->ID,
@@ -142,7 +154,7 @@ function checkMessageToUpdate($message, $users, $signal)
             [
                 'replacement'   => $replacetext,
                 'post-id'       => $dailyMessages[0]->ID,
-                'date'          => get_post_meta($dailyMessages[0]->ID, 'tsjippy_date', true)
+                'date'          => $date
             ]
         );
     }

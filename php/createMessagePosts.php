@@ -214,7 +214,8 @@ function createMessagePosts($postId, $post, $update)
             TSJIPPY\printArray('Error inserting post: ' . $postId->get_error_message());
         }
 
-        add_post_meta($postId, "tsjippy_date", gmdate('Y-m-d', strtotime($date)), true);
+        $date   = gmdate('Y-m-d', strtotime($date));
+        add_post_meta($postId, "tsjippy_date_$date", $date, true);
 
         foreach ($message['userIds'] as $userId) {
             add_post_meta($postId, "tsjippy_user-id", $userId, false);

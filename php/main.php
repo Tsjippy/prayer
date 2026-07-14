@@ -75,8 +75,7 @@ function getDailyMessage($plainText = false, $verified = false, $date = '')
             'post_status' => 'publish',
             'orderby'     => 'date',
             'order'       => 'ASC',
-            'meta_key'    => 'tsjippy_date',
-            'meta_value'  => $date,
+            'meta_key'    => "tsjippy_date_$date",
             'numberposts' => -1,
         )
     );
