@@ -147,13 +147,10 @@ function checkDailyMessage()
     }
 }
 
-
 /**
  * Removes messages from the past
  */
 function cleanup(){
-    $dateTime   = strtotime("- 3 days", time());
-
     $posts  = get_posts(
         array(
             'post_type'   => 'daily-message',
@@ -162,7 +159,7 @@ function cleanup(){
             'fields'      => 'ids',
             'meta_query'  => array(
                 array(
-                    'key'     => 'tsjippy_date_'.gmdate('Y-m-d', $dateTime),
+                    'key'     => 'tsjippy_date_'.gmdate('Y-m-d', strtotime("- 3 days", time())),
                     'compare' => 'EXISTS',
                 ),
             )
