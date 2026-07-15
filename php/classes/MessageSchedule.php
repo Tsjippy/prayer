@@ -197,12 +197,12 @@ class MessageSchedule
      */
     public function getTodaySchedule($force = false)
     {
-        $date            = \gmdate('y-m-d');
+        $date     = \gmdate('y-m-d');
 
-        $schedule       = false;
+        $schedule = false;
 
         if (!$force) {
-            $schedule        = get_option("daily_message_schedule_$date", false);
+            $schedule = get_option("daily_message_schedule_$date", false);
         }
 
         if (empty($schedule)) {
