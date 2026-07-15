@@ -4,11 +4,16 @@
 ### Added
 
 ### Changed
-- attribute escaping
 
 ### Fixed
 
 ### Updated
+
+## [10.5.8] - 2026-07-15
+
+
+### Changed
+- attribute escaping
 
 ## [10.5.7] - 2026-07-15
 
