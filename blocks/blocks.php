@@ -48,7 +48,7 @@ function dailyMessage($attributes)
         if(($_REQUEST['action'] ?? $_REQUEST['context'] ?? '') == 'edit'){
             return "<div class='warning'>No Message Found</div>";
         }elseif($attributes['default-message']){
-            return "<div>".$attributes['default-message']."</div>";
+            return "<div>".wp_kses_post($attributes['default-message'])."</div>";
         }
 
         return;
@@ -61,19 +61,6 @@ function dailyMessage($attributes)
      */
     $filteredMessage = apply_filters('tsjippy-daily-message', $message['message']);
     $userPageLinks   = new TSJIPPY\UserPageLinks($filteredMessage, true);
-    $msg             = $userPageLinks->string;
-
-    foreach ($message['pictures'] as $index => $path) {
-        $url        = $message['urls'][$index];
-        $pictureUrl = TSJIPPY\pathToUrl($path);
-
-        if (!$pictureUrl) {
-            continue;
-        }
-
-        $picture = "<img width='50' height='50' src='$pictureUrl' class='attachment-avatar size-avatar' alt='' style='border-radius: 50%;' decoding='async'/>";
-        $msg     = "<a href='$url'>$picture</a>$msg";
-    }
 
     wp_enqueue_style('tsjippy_message_frontpage', TSJIPPY\pathToUrl(PLUGINPATH . 'css/frontpage.min.css'), array(), PLUGINVERSION);
 
@@ -84,7 +71,23 @@ function dailyMessage($attributes)
             <?php echo wp_kses_post($attributes['title']);?>
         </h3>
         <p>
-            <?php echo wp_kses_post($msg); ?>
+            <?php 
+                foreach ($message['pictures'] as $index => $path) {
+                    $url        = $message['urls'][$index];
+                    $pictureUrl = TSJIPPY\pathToUrl($path);
+
+                    if (!$pictureUrl) {
+                        continue;
+                    }
+                    ?>
+                    <a href='<?php echo esc_url($url);?>'>
+                        <img width='50' height='50' src='<?php echo esc_url($pictureUrl);?>' class='attachment-avatar size-avatar' alt='' style='border-radius: 50%;' decoding='async'/>
+                    </a>
+                    <?php
+                }
+
+                echo wp_kses_post($userPageLinks->string);
+            ?>
         </p>
     </div>
     <?php

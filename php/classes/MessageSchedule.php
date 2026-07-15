@@ -136,7 +136,7 @@ class MessageSchedule
      */
     public function update($recipient, $time)
     {
-        // Update booking in db
+        // Update schedule in db
         $result = TSJIPPY\updateDbValue(
             $this->tableName,
             array(
