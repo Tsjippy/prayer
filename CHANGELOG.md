@@ -4,6 +4,7 @@
 ### Added
 
 ### Changed
+- attribute escaping
 
 ### Fixed
 
