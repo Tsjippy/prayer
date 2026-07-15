@@ -4,11 +4,16 @@
 ### Added
 
 ### Changed
-- storing message date
 
 ### Fixed
 
 ### Updated
+
+## [10.5.6] - 2026-07-14
+
+
+### Changed
+- storing message date
 
 ## [10.5.5] - 2026-07-14
 
