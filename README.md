@@ -3,7 +3,10 @@ Show a daily message on your website or send it through other channels to your a
 == Description ==
 This plugin allows the creation of daily messages.<br>
 These messages than can displayed on the website using the daily message block or send through other channels using the 'tsjippy-daily-message-send' hook.<br>
-You can send a daily message easily on Signal Messenger using the tsjippy-signal plugin
+You can send a daily message easily on Signal Messenger using the tsjippy-signal plugin<br>
+To make it easier to add daily messages you can add them in bulk using a parent post.<br>
+Just add a post with the 'daily-message' post type that has multiple messages on seperate lines prepended with a date in any format.<br>
+On post save these will be parsed into individual posts with the original post as parent.
 
 == Hooks ==
 # FILTERS
