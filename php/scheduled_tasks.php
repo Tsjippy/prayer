@@ -71,7 +71,13 @@ function sendDailyMessage()
                 $userName    = ' ' . $userdata->first_name;
             }
 
-            // make this available through an action to be used by the signal plugin, potentially others
+            /**
+             * Run this action to actually send the daily message
+             * 
+             * @param  string       $message    The daily message
+             * @param  string|int   $recipient  The Signal group id, phonenumber of wp_user id
+             * @param  array        $pictures   Pictures attached to the message
+             */
             do_action(
                 'tsjippy-daily-message-send',
                 "Good $dayPart$userName,\n\n$message",

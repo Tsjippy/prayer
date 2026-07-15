@@ -171,7 +171,9 @@ class AdminMenu extends \TSJIPPY\ADMIN\SubAdminMenu
         /**
          * Handle sending the daily message
          */
+        // phpcs:ignore
         if (isset($_POST['message-recipient']) && TSJIPPY\verifyNonce('nonce', 'send-message-nonce')) {
+            // phpcs:ignore
             $recipient = TSJIPPY\sanitize($_POST['message-recipient']);
 
             $message   = getDailyMessage(true, true);

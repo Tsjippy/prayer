@@ -1,19 +1,29 @@
+Show a daily message on your website or send it through other channels to your audience. 
+
 == Description ==
-This module adds 1 post category: 'Prayer'<br>
-You should add a new post with the prayer category each month.
-This post should have a prayer request for each day on seperate lines.<br>
-The lines should have this format: '1(T) – '<br>
-So an example will look like this:<br>
-<code>
-    1(M) – Prayer for day 1<br>
-    2(T) – Prayer for day 2
-</code>
-<br>
-<br>
-If such a post is available the daily prayerrequest will be displayed on the homepage and will be available via the rest-api.<br>
+This plugin allows the creation of daily messages.<br>
+These messages than can displayed on the website using the daily message block or send through other channels using the 'tsjippy-daily-message-send' hook.<br>
+You can send a daily message easily on Signal Messenger using the tsjippy-signal plugin
 
 == Hooks ==
 # FILTERS
-- apply_filters('sim_prayer_message', $prayerRequest['message'])
-- apply_filters('sim_after_bot_payer', $params);
-- $params	= apply_filters('sim-prayer-params', $params, $datetime, $post, $plainText), $signal;
+- tsjippy-daily-message
+     * Filters the message for today
+     * @param   string  $message    The message
+- tsjippy-payer-after-message       
+    * Filters the total of messages parameters
+    * @param   array   $parameters Array containing the message, pictures, urls and user ids
+
+# Actions
+- tsjippy-daily-message-send
+    * @param  string       $message    The daily message
+    * @param  string|int   $recipient  The Signal group id, phonenumber of wp_user id
+    * @param  array        $pictures   Pictures attached to the message
+
+== Screenshots ==
+1.
+
+== Issues ==
+Please file any issues on the wp forum or directly on Github: 
+* [captcha](https://github.com/Tsjippy/captcha/issues)
+* [shared functionality](https://github.com/Tsjippy/shared-functionality/issues)

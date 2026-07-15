@@ -188,7 +188,9 @@ function createMessagePosts($postId, $post, $update)
     }
 
     // Get the categrories from post
+    // phpcs:ignore
     if (!empty($_POST['messages-ids'])) {
+        // phpcs:ignore
         $cats   = TSJIPPY\sanitize($_POST['messages-ids']);
 
         $cats   = array_map('intval', $cats);

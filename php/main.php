@@ -161,6 +161,11 @@ function getDailyMessage($plainText = false, $verified = false, $date = '')
 
     // skip filter if we are not returning it for a signal message for today
     if ($plainText && $date == gmdate("Y-m-d")) {
+        /**
+         * Filters the total of messages parameters
+         * 
+         * @param   array   $parameters Array containing the message, pictures, urls and user ids
+         */
         $params    = apply_filters('tsjippy-payer-after-message', $params);
 
         //prevent duplicate urls

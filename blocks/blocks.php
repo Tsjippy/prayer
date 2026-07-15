@@ -44,6 +44,7 @@ function dailyMessage($attributes)
     // Get the message of the day, add extra messages to it, replace names with urls
     $message    = getDailyMessage();
     if (!$message) {
+        // phpcs:ignore
         if(($_REQUEST['action'] ?? $_REQUEST['context'] ?? '') == 'edit'){
             return "<div class='warning'>No Message Found</div>";
         }elseif($attributes['default-message']){
@@ -53,6 +54,11 @@ function dailyMessage($attributes)
         return;
     }
 
+    /**
+     * Filters the message for today
+     * 
+     * @param   string  $message    The message
+     */
     $filteredMessage = apply_filters('tsjippy-daily-message', $message['message']);
     $userPageLinks   = new TSJIPPY\UserPageLinks($filteredMessage, true);
     $msg             = $userPageLinks->string;
