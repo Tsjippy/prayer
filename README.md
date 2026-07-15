@@ -14,7 +14,7 @@ On post save these will be parsed into individual posts with the original post a
      * Filters the message for today
      * @param   string  $message    The message
 - tsjippy-payer-after-message       
-    * Filters the total of messages parameters
+    * Filters all message parameters
     * @param   array   $parameters Array containing the message, pictures, urls and user ids
 
 # Actions
